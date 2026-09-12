@@ -1,0 +1,31 @@
+:root {
+  /* dark (navy) surfaces — splash, start, history, game end */
+  --navy: #0b1b3a;
+  --navy-2: #122a57;
+  --navy-3: #1c3768;
+  --navy-4: #274372;
+
+  /* light (paper) surfaces — tables, dialogs, rules, pdf */
+  --paper: #ffffff;
+  --paper-2: #f3f4f7;
+  --paper-3: #e7e9ef;
+  --line: #d7dbe3;
+  --ink: #16213e;
+  --ink-soft: rgba(22, 33, 62, 0.58);
+  --ink-faint: rgba(22, 33, 62, 0.38);
+
+  /* text on dark surfaces */
+  --white: #ffffff;
+  --white-soft: rgba(255, 255, 255, 0.68);
+  --white-faint: rgba(255, 255, 255, 0.42);
+
+  /* brand accents */
+  --orange: #ff7a29;
+  --orange-2: #e8661a;
+  --orange-soft: #ffa35c;
+  --green: #1da65a;
+  --red: #c23b3b;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+}

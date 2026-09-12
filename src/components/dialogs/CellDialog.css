@@ -1,0 +1,241 @@
+.cd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 27, 58, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.cd-modal {
+  width: 100%;
+  max-width: 340px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 24px 48px rgba(11, 27, 58, 0.32);
+}
+
+.cd-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cd-die-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  flex: none;
+}
+
+.cd-title {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--navy);
+}
+
+.cd-sub {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+.cd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cd-label {
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.cd-count-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cd-count-chip {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--line);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--navy);
+}
+
+.cd-count-chip.selected {
+  background: rgba(255, 122, 41, 0.12);
+  border-color: var(--orange);
+  color: var(--orange-2);
+}
+
+.cd-dice-group,
+.cd-face-row {
+  display: flex;
+  gap: 7px;
+}
+
+.cd-die-slot {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 122, 41, 0.1);
+  border: 1.5px solid var(--orange);
+}
+
+.cd-face-chip {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cd-face-chip.selected {
+  background: rgba(255, 122, 41, 0.1);
+  border-color: var(--orange);
+}
+
+.cd-servit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.cd-servit-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--line);
+  flex: none;
+}
+
+.cd-servit-check.checked {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.cd-servit-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.cd-servit-text span {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.cd-number-input {
+  height: 52px;
+  border-radius: 12px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--line);
+  padding: 0 16px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--navy);
+}
+
+.cd-score-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
+  border: 1.5px solid var(--line);
+  border-radius: 11px;
+  height: 46px;
+}
+
+.cd-score-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--navy);
+}
+
+.cd-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cd-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.cd-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+.cd-btn-taie {
+  background: transparent;
+  border: 1.5px solid #d64545;
+  color: #c23b3b;
+}
+
+.cd-btn-confirm {
+  background: var(--green);
+  color: #fff;
+}
+
+.cd-btn-confirm:disabled {
+  opacity: 0.45;
+}
+
+.cd-btn-clear {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.cd-btn-cancel {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--ink-soft);
+}

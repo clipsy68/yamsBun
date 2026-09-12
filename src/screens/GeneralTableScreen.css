@@ -1,0 +1,64 @@
+.gts-screen {
+  min-height: 100dvh;
+  background: var(--paper-2);
+  color: var(--ink);
+  padding: max(20px, env(safe-area-inset-top)) 18px 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gts-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.gts-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-2);
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  padding: 0 16px;
+  height: 44px;
+  border-radius: 999px;
+}
+
+.gts-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--navy);
+}
+
+.gts-players-row {
+  flex: 1;
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.gts-player-col {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gts-player-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--navy);
+}
+
+.gts-player-name.active {
+  color: var(--orange-2);
+}

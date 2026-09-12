@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">yamsBun</string>
+    <string name="title_activity_main">yamsBun</string>
+    <string name="package_name">ro.yamsbun.app</string>
+    <string name="custom_url_scheme">ro.yamsbun.app</string>
+</resources>

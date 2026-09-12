@@ -1,0 +1,111 @@
+.hs-screen {
+  min-height: 100dvh;
+  background: var(--navy);
+  color: #fff;
+  padding: max(26px, env(safe-area-inset-top)) 22px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hs-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hs-back-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--navy-4);
+  background: var(--navy-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hs-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.hs-empty {
+  color: var(--white-soft);
+  font-size: 13.5px;
+}
+
+.hs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hs-entry {
+  background: var(--navy-2);
+  border: 1.5px solid var(--navy-4);
+  border-radius: 16px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hs-entry-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 10px;
+  min-width: 0;
+}
+
+.hs-date {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--white-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hs-players {
+  font-size: 13.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hs-winner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.hs-score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--orange-soft);
+}
+
+.hs-who {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.hs-delete-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--navy-3);
+  border: 1.5px solid rgba(242, 121, 121, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}

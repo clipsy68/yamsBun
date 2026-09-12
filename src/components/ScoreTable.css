@@ -1,0 +1,80 @@
+.score-table {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.st-grid {
+  width: 100%;
+  max-width: 760px;
+  display: grid;
+  grid-template-columns: minmax(46px, 92px) repeat(5, minmax(0, 1fr)) minmax(46px, 92px);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.st-cell {
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  box-sizing: border-box;
+  border: 0;
+  font-family: inherit;
+}
+
+.st-cell.st-head {
+  background: var(--navy);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #fff;
+}
+
+.st-cell.st-label {
+  background: var(--paper-3);
+  color: var(--navy);
+}
+
+.st-cell.st-bold-row {
+  border-top: 2px solid var(--navy);
+  border-bottom: 2px solid var(--navy);
+}
+
+.st-cell.st-tappable {
+  cursor: pointer;
+}
+
+.st-cell.st-tappable:active {
+  background: rgba(255, 122, 41, 0.14);
+}
+
+.st-cell.st-locked {
+  background: var(--paper-2);
+  color: var(--ink-faint);
+}
+
+.st-cell.st-bank-pos {
+  color: rgba(29, 166, 90, 0.75);
+}
+
+.st-cell.st-bank-neg {
+  color: rgba(194, 59, 59, 0.75);
+}
+
+.st-cell.st-crossed {
+  background-image: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.5px),
+    var(--ink) calc(50% - 0.5px),
+    var(--ink) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}

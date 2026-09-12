@@ -1,0 +1,143 @@
+.rs-screen {
+  min-height: 100dvh;
+  background: var(--paper-2);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+}
+
+.rs-topbar {
+  background: var(--navy);
+  color: #fff;
+  padding: max(18px, env(safe-area-inset-top)) 20px 18px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+}
+
+.rs-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--navy-2);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rs-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.rs-content {
+  padding: 24px 22px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 640px;
+}
+
+.rs-content section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rs-sec-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--navy);
+}
+
+.rs-content p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.rs-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.rs-col-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.rs-col-chip {
+  background: var(--paper-3);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.rs-sym {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--navy);
+}
+
+.rs-desc {
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.rs-formula {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.rs-formula th {
+  text-align: left;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 0 0 6px;
+}
+
+.rs-formula td {
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+}
+
+.rs-cat {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--navy);
+  width: 30px;
+}
+
+.rs-badge-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rs-badge {
+  background: rgba(255, 122, 41, 0.1);
+  border: 1px solid var(--orange);
+  color: var(--orange-2);
+  font-weight: 700;
+  font-size: 11.5px;
+  border-radius: 999px;
+  padding: 6px 12px;
+}

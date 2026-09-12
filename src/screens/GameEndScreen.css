@@ -1,0 +1,155 @@
+.ge-screen {
+  min-height: 100dvh;
+  background: var(--paper-2);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+}
+
+.ge-topbar {
+  background: var(--navy);
+  color: #fff;
+  padding: max(20px, env(safe-area-inset-top)) 22px 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ge-trophy {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(29, 166, 90, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.ge-t1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.ge-t2 {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 2px;
+}
+
+.ge-content {
+  flex: 1;
+  padding: 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.ge-page {
+  width: 100%;
+  max-width: 1100px;
+  background: var(--paper);
+  border-radius: 14px;
+  box-shadow: 0 14px 32px rgba(11, 27, 58, 0.1);
+  padding: 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ge-players-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.ge-player-col {
+  flex: 1;
+  min-width: 240px;
+}
+
+.ge-player-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.ge-totals-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.ge-totals-card {
+  background: var(--paper-2);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ge-totals-card.winner {
+  border-color: var(--green);
+  background: rgba(29, 166, 90, 0.08);
+}
+
+.ge-totals-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ge-totals-name {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.ge-totals-score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--navy);
+}
+
+.ge-totals-card.winner .ge-totals-score {
+  color: var(--green);
+}
+
+.ge-actions {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  gap: 14px;
+}
+
+.ge-btn-new,
+.ge-btn-history {
+  flex: 1;
+  height: 52px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.ge-btn-new {
+  background: var(--orange);
+  color: var(--navy);
+  font-family: var(--font-display);
+  box-shadow: 0 10px 22px rgba(255, 122, 41, 0.22);
+}
+
+.ge-btn-history {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  color: var(--navy-2);
+}
