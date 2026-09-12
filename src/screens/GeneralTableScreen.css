@@ -34,6 +34,18 @@
   font-weight: 700;
   font-size: 18px;
   color: var(--navy);
+  flex: 1;
+}
+
+.gts-quit-btn {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #c23b3b;
+  background: transparent;
+  border: 1.5px solid #d64545;
+  padding: 0 14px;
+  height: 40px;
+  border-radius: 999px;
 }
 
 .gts-table-wrap {
@@ -72,4 +84,20 @@
   font-weight: 700;
   font-size: 16px;
   color: var(--navy);
+}
+
+.gts-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 20px;
+  border-radius: 999px;
+  box-shadow: 0 14px 28px rgba(11, 27, 58, 0.32);
+  z-index: 60;
+  white-space: nowrap;
 }

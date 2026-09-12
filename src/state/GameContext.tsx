@@ -1,7 +1,8 @@
-import { createContext, useContext, useReducer, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useReducer, type ReactNode } from 'react'
 import { createEmptyTable, isTableComplete, playerGrandTotal } from '../lib/scoring'
 import { freshDice, rollDice as rollDiceState, toggleHold as toggleHoldState, type DiceState } from '../lib/dice'
 import { saveHistoryEntry, type HistoryEntry } from '../lib/storage'
+import { clearActiveGame, loadActiveGame, saveActiveGame } from '../lib/activeGameStorage'
 import type { Cell, ColumnKey, FillableRowKey, GameSetup, Player } from '../lib/types'
 
 export type Screen =
@@ -34,6 +35,7 @@ type Action =
   | { type: 'ROLL_DICE' }
   | { type: 'TOGGLE_HOLD'; index: number }
   | { type: 'NEW_GAME' }
+  | { type: 'QUIT_GAME' }
 
 function makePlayers(setup: GameSetup): Player[] {
   return setup.names.map((name, i) => ({
@@ -126,11 +128,20 @@ function reducer(state: State, action: Action): State {
       return { ...state, dice: toggleHoldState(state.dice, action.index) }
 
     case 'NEW_GAME':
+    case 'QUIT_GAME':
       return { ...initialState, dice: freshDice() }
 
     default:
       return state
   }
+}
+
+function loadInitialState(): State {
+  const persisted = loadActiveGame()
+  if (persisted && persisted.players.length > 0) {
+    return { ...initialState, ...persisted, screen: persisted.screen as Screen, lastFinishedId: null }
+  }
+  return initialState
 }
 
 interface GameContextValue extends State {
@@ -140,7 +151,16 @@ interface GameContextValue extends State {
 const GameContext = createContext<GameContextValue | null>(null)
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, undefined, loadInitialState)
+
+  useEffect(() => {
+    if (state.players.length > 0 && state.screen.name !== 'end') {
+      saveActiveGame(state)
+    } else {
+      clearActiveGame()
+    }
+  }, [state])
+
   return <GameContext.Provider value={{ ...state, dispatch }}>{children}</GameContext.Provider>
 }
 

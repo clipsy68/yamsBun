@@ -92,6 +92,14 @@
   color: rgba(194, 59, 59, 0.75);
 }
 
+.gst-cell.gst-tappable {
+  cursor: pointer;
+}
+
+.gst-cell.gst-tappable:active {
+  background: rgba(255, 122, 41, 0.14);
+}
+
 .gst-crossed {
   background-image: linear-gradient(
     to bottom right,

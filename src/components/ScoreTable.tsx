@@ -101,6 +101,16 @@ export default function ScoreTable({ table, interactive = false, onCellTap, mirr
             {mirrorLabel && renderLabelCell(ROW_LABELS[row], `lr-${row}`, row === 'Y' ? 'st-bold-row' : '')}
           </div>
         ))}
+
+        <div style={{ display: 'contents' }}>
+          <div className="st-cell st-footer" />
+          {COLUMNS.map((c) => (
+            <div className="st-cell st-footer" key={`f-${c}`}>
+              {c === 'U' ? '↑' : ''}
+            </div>
+          ))}
+          {mirrorLabel && <div className="st-cell st-footer" />}
+        </div>
       </div>
     </div>
   )

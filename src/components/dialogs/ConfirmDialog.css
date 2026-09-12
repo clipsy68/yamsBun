@@ -1,0 +1,65 @@
+.cfd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 27, 58, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 60;
+}
+
+.cfd-modal {
+  width: 100%;
+  max-width: 320px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 24px 48px rgba(11, 27, 58, 0.32);
+}
+
+.cfd-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--navy);
+}
+
+.cfd-message {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.cfd-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cfd-btn {
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.cfd-btn-danger {
+  background: #c23b3b;
+  color: #fff;
+}
+
+.cfd-btn-cancel {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--ink-soft);
+}

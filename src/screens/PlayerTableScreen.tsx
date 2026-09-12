@@ -1,33 +1,21 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import ScoreTable from '../components/ScoreTable'
 import DiceTray from '../components/DiceTray'
 import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
-import { emptyCell, isRowUnlocked } from '../lib/scoring'
+import { emptyCell, isRowUnlocked, playerGrandTotal } from '../lib/scoring'
+import { useToast } from '../lib/useToast'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './PlayerTableScreen.css'
 
 export default function PlayerTableScreen() {
-  const { players, activePlayerIndex, gameType, dice, turnFilledCell, dispatch } = useGame()
+  const { players, activePlayerIndex, gameType, dice, turnFilledCell, showLiveTotal, dispatch } = useGame()
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
-  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { toast, showToast } = useToast()
 
   const player = players[activePlayerIndex]
 
-  useEffect(() => {
-    return () => {
-      if (toastTimer.current) clearTimeout(toastTimer.current)
-    }
-  }, [])
-
   if (!player) return null
-
-  function showToast(message: string) {
-    setToast(message)
-    if (toastTimer.current) clearTimeout(toastTimer.current)
-    toastTimer.current = setTimeout(() => setToast(null), 1800)
-  }
 
   function handleCellTap(column: ColumnKey, row: FillableRowKey) {
     const cell = player.table[column][row]
@@ -50,6 +38,14 @@ export default function PlayerTableScreen() {
     setOpen(null)
   }
 
+  function handleNextPlayer() {
+    if (!turnFilledCell) {
+      showToast('Completează sau taie o căsuță înainte să treci mai departe')
+      return
+    }
+    dispatch({ type: 'NEXT_PLAYER' })
+  }
+
   return (
     <div className="pts-screen">
       <div className="pts-topbar">
@@ -59,15 +55,11 @@ export default function PlayerTableScreen() {
           </svg>
           Tabel general
         </button>
-        <div className="pts-round-tag">
-          Jucător {activePlayerIndex + 1} din {players.length}
-        </div>
-      </div>
-
-      <div className="pts-heading">
-        <div className="pts-name-group">
-          <div className="pts-name">{player.name}</div>
-          <div className="pts-turn">La rândul lui</div>
+        <div className="pts-topbar-info">
+          <div className="pts-player-name">{player.name}</div>
+          <div className="pts-round-tag">
+            Jucător {activePlayerIndex + 1} din {players.length}
+          </div>
         </div>
       </div>
 
@@ -83,6 +75,13 @@ export default function PlayerTableScreen() {
         <ScoreTable table={player.table} interactive onCellTap={handleCellTap} />
       </div>
 
+      {showLiveTotal && (
+        <div className="pts-total-card">
+          <div className="pts-total-name">{player.name}</div>
+          <div className="pts-total-score">{playerGrandTotal(player.table)} p</div>
+        </div>
+      )}
+
       <div className="pts-bottom-row">
         <button
           className="pts-link-btn"
@@ -90,7 +89,7 @@ export default function PlayerTableScreen() {
         >
           Vezi regulile
         </button>
-        <button className="pts-next-btn" onClick={() => dispatch({ type: 'NEXT_PLAYER' })}>
+        <button className="pts-next-btn" onClick={handleNextPlayer}>
           Următorul jucător
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />

@@ -1,11 +1,51 @@
+import { useState } from 'react'
 import GeneralScoreTable from '../components/GeneralScoreTable'
+import ConfirmDialog from '../components/dialogs/ConfirmDialog'
+import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
-import { playerGrandTotal } from '../lib/scoring'
+import { emptyCell, isRowUnlocked, playerGrandTotal } from '../lib/scoring'
+import { useToast } from '../lib/useToast'
+import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './GeneralTableScreen.css'
 
 export default function GeneralTableScreen() {
-  const { players, activePlayerIndex, showLiveTotal, dispatch } = useGame()
+  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, dispatch } = useGame()
   const active = players[activePlayerIndex]
+  const [confirmingQuit, setConfirmingQuit] = useState(false)
+  const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
+  const { toast, showToast } = useToast()
+
+  function handleCellTap(playerId: string, column: ColumnKey, row: FillableRowKey) {
+    if (!active || playerId !== active.id) return
+    const cell = active.table[column][row]
+    if (cell.kind === 'empty') {
+      if (!isRowUnlocked(active.table, column, row)) {
+        showToast('Nu ai ajuns aici pe această coloană')
+        return
+      }
+      if (turnFilledCell) {
+        showToast('Poți completa o singură căsuță pe rundă')
+        return
+      }
+    }
+    setOpen({ column, row })
+  }
+
+  function commit(cell: Cell) {
+    if (!open) return
+    dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column: open.column, row: open.row, cell })
+    setOpen(null)
+  }
+
+  function handleSelectPlayer(id: string) {
+    if (id === active?.id) {
+      dispatch({ type: 'NAVIGATE', screen: { name: 'player' } })
+      return
+    }
+    const index = players.findIndex((p) => p.id === id)
+    if (index === -1) return
+    dispatch({ type: 'SELECT_FIRST_PLAYER', index })
+  }
 
   return (
     <div className="gts-screen">
@@ -17,10 +57,20 @@ export default function GeneralTableScreen() {
           Înapoi
         </button>
         <div className="gts-title">Tabel general</div>
+        <button className="gts-quit-btn" onClick={() => setConfirmingQuit(true)}>
+          Renunță la joc
+        </button>
       </div>
 
       <div className="gts-table-wrap">
-        <GeneralScoreTable players={players} highlightStyle="turn" highlightedId={active?.id} />
+        <GeneralScoreTable
+          players={players}
+          highlightStyle="turn"
+          highlightedId={active?.id}
+          onSelectPlayer={handleSelectPlayer}
+          interactivePlayerId={active?.id}
+          onCellTap={handleCellTap}
+        />
       </div>
 
       {showLiveTotal && (
@@ -32,6 +82,30 @@ export default function GeneralTableScreen() {
             </div>
           ))}
         </div>
+      )}
+
+      {open && active && (
+        <CellDialog
+          column={open.column}
+          row={open.row}
+          existingCell={active.table[open.column][open.row]}
+          onConfirm={(cell) => commit(cell)}
+          onCross={() => commit({ kind: 'crossed' })}
+          onClear={() => commit(emptyCell())}
+          onCancel={() => setOpen(null)}
+        />
+      )}
+
+      {toast && <div className="gts-toast">{toast}</div>}
+
+      {confirmingQuit && (
+        <ConfirmDialog
+          title="Renunți la joc?"
+          message="Tot progresul din runda curentă se pierde și nu se salvează nimic în istoric."
+          confirmLabel="Renunță la joc"
+          onConfirm={() => dispatch({ type: 'QUIT_GAME' })}
+          onCancel={() => setConfirmingQuit(false)}
+        />
       )}
     </div>
   )

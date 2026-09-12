@@ -50,12 +50,26 @@
   border-bottom: 2px solid var(--navy);
 }
 
+.st-cell.st-val {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 4.6vw, 23px);
+}
+
 .st-cell.st-tappable {
   cursor: pointer;
 }
 
 .st-cell.st-tappable:active {
   background: rgba(255, 122, 41, 0.14);
+}
+
+.st-cell.st-footer {
+  background: var(--paper-2);
+  color: var(--navy-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  min-height: 28px;
 }
 
 .st-cell.st-bank-pos {

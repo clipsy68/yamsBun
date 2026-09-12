@@ -1,4 +1,4 @@
-import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type PlayerTable } from '../lib/types'
+import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
 import { cellDisplayText, COLUMN_LABELS } from '../lib/format'
 import './GeneralScoreTable.css'
@@ -15,6 +15,9 @@ interface GeneralScoreTableProps {
   highlightStyle?: 'turn' | 'select'
   highlightedId?: string
   onSelectPlayer?: (id: string) => void
+  /** When set, this player's empty/crossed data cells become tappable. */
+  interactivePlayerId?: string
+  onCellTap?: (playerId: string, column: ColumnKey, row: FillableRowKey) => void
 }
 
 interface GridCell {
@@ -26,7 +29,14 @@ interface GridCell {
 
 const ROW_LABEL_LIST = [...UPPER_ROWS, 'Tot', ...LOWER_ROWS] as const
 
-export default function GeneralScoreTable({ players, highlightStyle = 'turn', highlightedId, onSelectPlayer }: GeneralScoreTableProps) {
+export default function GeneralScoreTable({
+  players,
+  highlightStyle = 'turn',
+  highlightedId,
+  onSelectPlayer,
+  interactivePlayerId,
+  onCellTap,
+}: GeneralScoreTableProps) {
   const gridTemplateColumns = ['34px', ...players.flatMap(() => ['repeat(5, minmax(0, 1fr))', '34px'])].join(' ')
 
   function isHighlighted(id: string) {
@@ -85,12 +95,14 @@ export default function GeneralScoreTable({ players, highlightStyle = 'turn', hi
         }
       } else {
         const row = label as (typeof UPPER_ROWS)[number] | (typeof LOWER_ROWS)[number]
+        const tappableRow = p.id === interactivePlayerId && !!onCellTap
         for (const col of COLUMNS) {
           const cell = p.table[col][row]
           const crossed = cell.kind === 'crossed'
           cells.push({
             text: crossed ? '' : cellDisplayText(cell, row, col),
-            className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''}`.trim(),
+            className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''}`.trim(),
+            onClick: tappableRow ? () => onCellTap!(p.id, col, row) : undefined,
           })
         }
       }
