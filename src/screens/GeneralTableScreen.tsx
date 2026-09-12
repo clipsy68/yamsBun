@@ -1,9 +1,10 @@
 import GeneralScoreTable from '../components/GeneralScoreTable'
 import { useGame } from '../state/GameContext'
+import { playerGrandTotal } from '../lib/scoring'
 import './GeneralTableScreen.css'
 
 export default function GeneralTableScreen() {
-  const { players, activePlayerIndex, dispatch } = useGame()
+  const { players, activePlayerIndex, showLiveTotal, dispatch } = useGame()
   const active = players[activePlayerIndex]
 
   return (
@@ -21,6 +22,17 @@ export default function GeneralTableScreen() {
       <div className="gts-table-wrap">
         <GeneralScoreTable players={players} highlightStyle="turn" highlightedId={active?.id} />
       </div>
+
+      {showLiveTotal && (
+        <div className="gts-totals-row">
+          {players.map((p) => (
+            <div className={`gts-totals-card ${p.id === active?.id ? 'active' : ''}`} key={p.id}>
+              <div className="gts-totals-name">{p.name}</div>
+              <div className="gts-totals-score">{playerGrandTotal(p.table)} p</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

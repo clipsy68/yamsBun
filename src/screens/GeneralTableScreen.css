@@ -39,3 +39,37 @@
 .gts-table-wrap {
   flex: 1;
 }
+
+.gts-totals-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.gts-totals-card {
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gts-totals-card.active {
+  border-color: var(--orange);
+}
+
+.gts-totals-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.gts-totals-score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--navy);
+}
