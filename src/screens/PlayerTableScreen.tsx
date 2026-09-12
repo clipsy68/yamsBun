@@ -8,7 +8,7 @@ import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './PlayerTableScreen.css'
 
 export default function PlayerTableScreen() {
-  const { players, activePlayerIndex, gameType, dice, dispatch } = useGame()
+  const { players, activePlayerIndex, gameType, dice, turnFilledCell, dispatch } = useGame()
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -31,9 +31,15 @@ export default function PlayerTableScreen() {
 
   function handleCellTap(column: ColumnKey, row: FillableRowKey) {
     const cell = player.table[column][row]
-    if (cell.kind === 'empty' && !isRowUnlocked(player.table, column, row)) {
-      showToast('Nu ai ajuns aici pe această coloană')
-      return
+    if (cell.kind === 'empty') {
+      if (!isRowUnlocked(player.table, column, row)) {
+        showToast('Nu ai ajuns aici pe această coloană')
+        return
+      }
+      if (turnFilledCell) {
+        showToast('Poți completa o singură căsuță pe rundă')
+        return
+      }
     }
     setOpen({ column, row })
   }

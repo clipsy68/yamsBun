@@ -22,6 +22,7 @@ interface State {
   showLiveTotal: boolean
   dice: DiceState
   lastFinishedId: string | null
+  turnFilledCell: { column: ColumnKey; row: FillableRowKey } | null
 }
 
 type Action =
@@ -50,6 +51,7 @@ const initialState: State = {
   showLiveTotal: false,
   dice: freshDice(),
   lastFinishedId: null,
+  turnFilledCell: null,
 }
 
 function finishGameIfComplete(state: State): State {
@@ -83,10 +85,17 @@ function reducer(state: State, action: Action): State {
         activePlayerIndex: 0,
         dice: freshDice(),
         screen: { name: 'selectFirst' },
+        turnFilledCell: null,
       }
 
     case 'SELECT_FIRST_PLAYER':
-      return { ...state, activePlayerIndex: action.index, screen: { name: 'player' }, dice: freshDice() }
+      return {
+        ...state,
+        activePlayerIndex: action.index,
+        screen: { name: 'player' },
+        dice: freshDice(),
+        turnFilledCell: null,
+      }
 
     case 'SET_CELL': {
       const players = state.players.map((p, i) =>
@@ -100,12 +109,13 @@ function reducer(state: State, action: Action): State {
               },
             },
       )
-      return { ...state, players }
+      const turnFilledCell = action.cell.kind === 'empty' ? null : { column: action.column, row: action.row }
+      return { ...state, players, turnFilledCell }
     }
 
     case 'NEXT_PLAYER': {
       const next = (state.activePlayerIndex + 1) % state.players.length
-      const advanced = { ...state, activePlayerIndex: next, dice: freshDice() }
+      const advanced = { ...state, activePlayerIndex: next, dice: freshDice(), turnFilledCell: null }
       return finishGameIfComplete(advanced)
     }
 
