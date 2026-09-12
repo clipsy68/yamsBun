@@ -1,0 +1,103 @@
+.gst-wrap {
+  width: 100%;
+}
+
+.gst-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.gst-cell {
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  box-sizing: border-box;
+  padding: 0 2px;
+  border: 0;
+  font-family: inherit;
+  text-align: center;
+}
+
+.gst-corner {
+  background: var(--navy);
+}
+
+.gst-name {
+  background: var(--navy);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.gst-name-turn {
+  color: var(--orange-2);
+}
+
+.gst-name-select {
+  box-shadow: inset 0 0 0 2px var(--orange);
+  color: var(--orange-2);
+}
+
+.gst-subhead {
+  background: var(--navy-2);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.gst-subhead-select {
+  box-shadow: inset 0 0 0 2px var(--orange);
+}
+
+.gst-label {
+  background: var(--paper-3);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 11.5px;
+}
+
+.gst-val.gst-tot {
+  font-weight: 700;
+}
+
+.gst-bold-row {
+  border-top: 2px solid var(--navy);
+  border-bottom: 2px solid var(--navy);
+}
+
+.gst-footer {
+  background: var(--paper-2);
+  color: var(--navy-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.gst-bank-pos {
+  color: rgba(29, 166, 90, 0.75);
+}
+
+.gst-bank-neg {
+  color: rgba(194, 59, 59, 0.75);
+}
+
+.gst-crossed {
+  background-image: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.5px),
+    var(--ink) calc(50% - 0.5px),
+    var(--ink) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}

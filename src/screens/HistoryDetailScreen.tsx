@@ -1,4 +1,4 @@
-import ScoreTable from '../components/ScoreTable'
+import GeneralScoreTable from '../components/GeneralScoreTable'
 import { getHistoryEntry } from '../lib/storage'
 import { useGame } from '../state/GameContext'
 import './GameEndScreen.css'
@@ -24,6 +24,8 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
     )
   }
 
+  const players = entry.tables.map((t, i) => ({ id: `${i}-${t.name}`, name: t.name, table: t.table }))
+
   return (
     <div className="ge-screen">
       <div className="ge-topbar">
@@ -44,14 +46,7 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
 
       <div className="ge-content">
         <div className="ge-page">
-          <div className="ge-players-row">
-            {entry.tables.map((t) => (
-              <div className="ge-player-col" key={t.name}>
-                <div className="ge-player-name">{t.name}</div>
-                <ScoreTable table={t.table} />
-              </div>
-            ))}
-          </div>
+          <GeneralScoreTable players={players} />
 
           <div className="ge-totals-row">
             {entry.players.map((p) => (

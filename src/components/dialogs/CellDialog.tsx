@@ -26,48 +26,108 @@ interface CellDialogProps {
   onCancel: () => void
 }
 
-const FACES = [1, 2, 3, 4, 5, 6]
+type PickerKey = 'count' | 'triple' | 'pair' | 'single'
 
 export default function CellDialog({ column, row, existingCell, onConfirm, onCross, onClear, onCancel }: CellDialogProps) {
   const category = rowCategory(row)
   const isFilled = existingCell.kind !== 'empty' && existingCell.kind !== 'crossed'
   const allowServit = column !== 'S'
 
-  const [count, setCount] = useState(existingCell.kind === 'upper' ? existingCell.count : 0)
+  const [count, setCount] = useState<number | null>(existingCell.kind === 'upper' ? existingCell.count : null)
   const [servit, setServit] = useState(
     (existingCell.kind === 'fixed' || existingCell.kind === 'fullHouse' || existingCell.kind === 'fourKind' || existingCell.kind === 'yams') &&
       existingCell.servit,
   )
-  const [tripleFace, setTripleFace] = useState(existingCell.kind === 'fullHouse' ? existingCell.tripleFace : 6)
-  const [pairFace, setPairFace] = useState(existingCell.kind === 'fullHouse' ? existingCell.pairFace : 1)
-  const [face, setFace] = useState(
-    existingCell.kind === 'fourKind' ? existingCell.face : existingCell.kind === 'yams' ? existingCell.face : 6,
+  const [tripleFace, setTripleFace] = useState<number | null>(existingCell.kind === 'fullHouse' ? existingCell.tripleFace : null)
+  const [pairFace, setPairFace] = useState<number | null>(existingCell.kind === 'fullHouse' ? existingCell.pairFace : null)
+  const [face, setFace] = useState<number | null>(
+    existingCell.kind === 'fourKind' ? existingCell.face : existingCell.kind === 'yams' ? existingCell.face : null,
   )
   const [sum, setSum] = useState(existingCell.kind === 'chance' ? String(existingCell.sum) : '')
+  const [activePicker, setActivePicker] = useState<PickerKey | null>(null)
 
-  function buildCell(): Cell {
+  function buildCell(): Cell | null {
     switch (category) {
       case 'upper':
-        return { kind: 'upper', count }
+        return count === null ? null : { kind: 'upper', count }
       case 'fixed':
         return { kind: 'fixed', servit: allowServit && servit }
       case 'fullHouse':
-        return { kind: 'fullHouse', tripleFace, pairFace, servit: allowServit && servit }
+        return tripleFace === null || pairFace === null
+          ? null
+          : { kind: 'fullHouse', tripleFace, pairFace, servit: allowServit && servit }
       case 'fourKind':
-        return { kind: 'fourKind', face, servit: allowServit && servit }
+        return face === null ? null : { kind: 'fourKind', face, servit: allowServit && servit }
       case 'yams':
-        return { kind: 'yams', face, servit: allowServit && servit }
+        return face === null ? null : { kind: 'yams', face, servit: allowServit && servit }
       case 'chance':
-        return { kind: 'chance', sum: Number(sum) || 0 }
+        return sum.trim() === '' ? null : { kind: 'chance', sum: Number(sum) || 0 }
     }
   }
 
   const previewCell = buildCell()
-  const score = cellPoints(previewCell, row, column)
-  const canConfirm = category !== 'chance' || sum.trim().length > 0
+  const score = previewCell ? cellPoints(previewCell, row, column) : 0
+  const canConfirm = previewCell !== null
+
+  function handlePick(n: number) {
+    switch (activePicker) {
+      case 'count':
+        setCount(n)
+        break
+      case 'triple':
+        setTripleFace(n)
+        break
+      case 'pair':
+        setPairFace(n)
+        break
+      case 'single':
+        setFace(n)
+        break
+    }
+    setActivePicker(null)
+  }
+
+  function handleOverlayClick() {
+    if (activePicker) {
+      setActivePicker(null)
+      return
+    }
+    onCancel()
+  }
+
+  if (activePicker) {
+    const isCount = activePicker === 'count'
+    const options = isCount ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6]
+    const groupSub =
+      activePicker === 'triple'
+        ? 'pentru grupul de 3 · Full House'
+        : activePicker === 'pair'
+          ? 'pentru grupul de 2 · Full House'
+          : activePicker === 'single' && category === 'fourKind'
+            ? 'pentru grupul de 4 · Careu'
+            : activePicker === 'single' && category === 'yams'
+              ? 'pentru grupul de 5 · Yams'
+              : `căsuța „${row}” · coloana ${COLUMN_LABELS[column]}`
+
+    return (
+      <div className="cd-overlay" onClick={handleOverlayClick}>
+        <div className="cd-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="cd-picker-title">{isCount ? 'Alege numărul de zaruri' : 'Alege fața zarului'}</div>
+          <div className="cd-picker-sub">{groupSub}</div>
+          <div className={isCount ? 'cd-picker-grid cd-picker-grid-5' : 'cd-picker-grid cd-picker-grid-6'}>
+            {options.map((n) => (
+              <button key={n} type="button" className="cd-picker-opt" onClick={() => handlePick(n)}>
+                {isCount ? n : <DieFace face={n} size={24} pipColor="var(--navy)" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="cd-overlay" onClick={onCancel}>
+    <div className="cd-overlay" onClick={handleOverlayClick}>
       <div className="cd-modal" onClick={(e) => e.stopPropagation()}>
         <div className="cd-head">
           <div className="cd-die-icon">{row}</div>
@@ -78,43 +138,35 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
         </div>
 
         {category === 'upper' && (
-          <div className="cd-field">
-            <div className="cd-label">Câte zaruri au ieșit cu fața {row}</div>
-            <div className="cd-count-row">
-              {[0, 1, 2, 3, 4, 5].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  className={`cd-count-chip ${n === count ? 'selected' : ''}`}
-                  onClick={() => setCount(n)}
-                >
-                  {n}
-                </button>
-              ))}
+          <div className="cd-count-row">
+            <button type="button" className={`cd-dice-slot cd-count-slot ${count !== null ? 'filled' : ''}`} onClick={() => setActivePicker('count')}>
+              {count !== null ? count : 'select'}
+            </button>
+            <div className="cd-times">×</div>
+            <div className="cd-face-static">
+              <DieFace face={Number(row)} size={26} pipColor="var(--navy)" />
             </div>
           </div>
         )}
 
         {category === 'fixed' && (
-          <div className="cd-field">
-            <div className="cd-dice-group">
-              {(row === 'q' ? [1, 2, 3, 4, 5] : [2, 3, 4, 5, 6]).map((f, i) => (
-                <div className="cd-die-slot filled" key={i}>
-                  <DieFace face={f} size={24} pipColor="var(--navy)" />
-                </div>
-              ))}
-            </div>
+          <div className="cd-dice-group">
+            {(row === 'q' ? [1, 2, 3, 4, 5] : [2, 3, 4, 5, 6]).map((f, i) => (
+              <div className="cd-dice-slot filled" key={i}>
+                <DieFace face={f} size={24} pipColor="var(--navy)" />
+              </div>
+            ))}
           </div>
         )}
 
-        {(category === 'fullHouse' || category === 'fourKind' || category === 'yams') && (
-          <FacePicker
-            label={category === 'fullHouse' ? 'Careu (3 zaruri)' : category === 'fourKind' ? 'Careu (4 zaruri)' : 'Yams (5 zaruri)'}
-            value={category === 'fullHouse' ? tripleFace : face}
-            onChange={category === 'fullHouse' ? setTripleFace : setFace}
-          />
+        {category === 'fullHouse' && (
+          <>
+            <DiceSlots n={3} value={tripleFace} onTap={() => setActivePicker('triple')} />
+            <DiceSlots n={2} value={pairFace} onTap={() => setActivePicker('pair')} />
+          </>
         )}
-        {category === 'fullHouse' && <FacePicker label="Pereche (2 zaruri)" value={pairFace} onChange={setPairFace} />}
+        {category === 'fourKind' && <DiceSlots n={4} value={face} onTap={() => setActivePicker('single')} />}
+        {category === 'yams' && <DiceSlots n={5} value={face} onTap={() => setActivePicker('single')} />}
 
         {(category === 'fixed' || category === 'fullHouse' || category === 'fourKind' || category === 'yams') && allowServit && (
           <label className="cd-servit-row">
@@ -157,7 +209,7 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
               type="button"
               className="cd-btn cd-btn-confirm"
               disabled={!canConfirm}
-              onClick={() => onConfirm(previewCell)}
+              onClick={() => onConfirm(previewCell!)}
             >
               Confirmă
             </button>
@@ -176,22 +228,14 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
   )
 }
 
-function FacePicker({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) {
+function DiceSlots({ n, value, onTap }: { n: number; value: number | null; onTap: () => void }) {
   return (
-    <div className="cd-field">
-      <div className="cd-label">{label}</div>
-      <div className="cd-face-row">
-        {FACES.map((f) => (
-          <button
-            key={f}
-            type="button"
-            className={`cd-face-chip ${f === value ? 'selected' : ''}`}
-            onClick={() => onChange(f)}
-          >
-            <DieFace face={f} size={22} pipColor={f === value ? 'var(--navy)' : 'var(--ink-soft)'} />
-          </button>
-        ))}
-      </div>
+    <div className="cd-dice-group">
+      {Array.from({ length: n }).map((_, i) => (
+        <button type="button" key={i} className={`cd-dice-slot ${value !== null ? 'filled' : ''}`} onClick={onTap}>
+          {value !== null ? <DieFace face={value} size={24} pipColor="var(--navy)" /> : 'select'}
+        </button>
+      ))}
     </div>
   )
 }

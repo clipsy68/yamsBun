@@ -36,29 +36,6 @@
   color: var(--navy);
 }
 
-.gts-players-row {
+.gts-table-wrap {
   flex: 1;
-  display: flex;
-  gap: 18px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-}
-
-.gts-player-col {
-  flex: 1;
-  min-width: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.gts-player-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--navy);
-}
-
-.gts-player-name.active {
-  color: var(--orange-2);
 }

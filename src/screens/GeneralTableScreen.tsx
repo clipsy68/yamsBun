@@ -1,9 +1,10 @@
-import ScoreTable from '../components/ScoreTable'
+import GeneralScoreTable from '../components/GeneralScoreTable'
 import { useGame } from '../state/GameContext'
 import './GeneralTableScreen.css'
 
 export default function GeneralTableScreen() {
   const { players, activePlayerIndex, dispatch } = useGame()
+  const active = players[activePlayerIndex]
 
   return (
     <div className="gts-screen">
@@ -17,13 +18,8 @@ export default function GeneralTableScreen() {
         <div className="gts-title">Tabel general</div>
       </div>
 
-      <div className="gts-players-row">
-        {players.map((p, i) => (
-          <div className="gts-player-col" key={p.id}>
-            <div className={`gts-player-name ${i === activePlayerIndex ? 'active' : ''}`}>{p.name}</div>
-            <ScoreTable table={p.table} />
-          </div>
-        ))}
+      <div className="gts-table-wrap">
+        <GeneralScoreTable players={players} highlightStyle="turn" highlightedId={active?.id} />
       </div>
     </div>
   )

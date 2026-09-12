@@ -5,19 +5,6 @@
   margin-top: 4px;
 }
 
-.sfp-player-col {
-  background: none;
-  border: 2px solid transparent;
-  border-radius: 14px;
-  padding: 6px;
-  text-align: left;
-}
-
-.sfp-player-col.selected {
-  border-color: var(--orange);
-  background: rgba(255, 122, 41, 0.05);
-}
-
 .sfp-start-btn {
   height: 56px;
   border-radius: 16px;

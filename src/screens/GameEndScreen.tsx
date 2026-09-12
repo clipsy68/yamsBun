@@ -1,4 +1,4 @@
-import ScoreTable from '../components/ScoreTable'
+import GeneralScoreTable from '../components/GeneralScoreTable'
 import { useGame } from '../state/GameContext'
 import { playerGrandTotal } from '../lib/scoring'
 import './GameEndScreen.css'
@@ -22,14 +22,7 @@ export default function GameEndScreen() {
 
       <div className="ge-content">
         <div className="ge-page">
-          <div className="ge-players-row">
-            {players.map((p) => (
-              <div className="ge-player-col" key={p.id}>
-                <div className="ge-player-name">{p.name}</div>
-                <ScoreTable table={p.table} />
-              </div>
-            ))}
-          </div>
+          <GeneralScoreTable players={players} highlightedId={undefined} />
 
           <div className="ge-totals-row">
             {ranked.map((p) => (
