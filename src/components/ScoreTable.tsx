@@ -1,5 +1,5 @@
 import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
-import { isRowUnlocked, upperColumnStatus } from '../lib/scoring'
+import { upperColumnStatus } from '../lib/scoring'
 import { cellDisplayText, COLUMN_LABELS, ROW_LABELS } from '../lib/format'
 import './ScoreTable.css'
 
@@ -24,15 +24,12 @@ export default function ScoreTable({ table, interactive = false, onCellTap, mirr
   function renderDataCell(column: ColumnKey, row: FillableRowKey) {
     const cell = table[column][row]
     const isY = row === 'Y'
-    const locked = interactive && cell.kind === 'empty' && !isRowUnlocked(table, column, row)
-    const tappable = interactive && (cell.kind !== 'empty' || !locked)
     const classes = [
       'st-cell',
       'st-val',
       isY ? 'st-bold-row' : '',
       cell.kind === 'crossed' ? 'st-crossed' : '',
-      locked ? 'st-locked' : '',
-      tappable ? 'st-tappable' : '',
+      interactive ? 'st-tappable' : '',
     ]
       .filter(Boolean)
       .join(' ')
@@ -42,10 +39,10 @@ export default function ScoreTable({ table, interactive = false, onCellTap, mirr
         key={`${column}-${row}`}
         type="button"
         className={classes}
-        disabled={!tappable}
+        disabled={!interactive}
         onClick={() => onCellTap?.(column, row)}
       >
-        {locked ? <LockIcon /> : cellDisplayText(cell, row, column)}
+        {cellDisplayText(cell, row, column)}
       </button>
     )
   }
@@ -106,14 +103,5 @@ export default function ScoreTable({ table, interactive = false, onCellTap, mirr
         ))}
       </div>
     </div>
-  )
-}
-
-function LockIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="2" />
-    </svg>
   )
 }

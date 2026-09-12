@@ -1,20 +1,40 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ScoreTable from '../components/ScoreTable'
 import DiceTray from '../components/DiceTray'
 import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
-import { emptyCell } from '../lib/scoring'
+import { emptyCell, isRowUnlocked } from '../lib/scoring'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './PlayerTableScreen.css'
 
 export default function PlayerTableScreen() {
   const { players, activePlayerIndex, gameType, dice, dispatch } = useGame()
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const player = players[activePlayerIndex]
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current)
+    }
+  }, [])
+
   if (!player) return null
 
+  function showToast(message: string) {
+    setToast(message)
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    toastTimer.current = setTimeout(() => setToast(null), 1800)
+  }
+
   function handleCellTap(column: ColumnKey, row: FillableRowKey) {
+    const cell = player.table[column][row]
+    if (cell.kind === 'empty' && !isRowUnlocked(player.table, column, row)) {
+      showToast('Nu ai ajuns aici pe această coloană')
+      return
+    }
     setOpen({ column, row })
   }
 
@@ -83,6 +103,8 @@ export default function PlayerTableScreen() {
           onCancel={() => setOpen(null)}
         />
       )}
+
+      {toast && <div className="pts-toast">{toast}</div>}
     </div>
   )
 }

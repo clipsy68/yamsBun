@@ -56,11 +56,6 @@
   background: rgba(255, 122, 41, 0.14);
 }
 
-.st-cell.st-locked {
-  background: var(--paper-2);
-  color: var(--ink-faint);
-}
-
 .st-cell.st-bank-pos {
   color: rgba(29, 166, 90, 0.75);
 }
