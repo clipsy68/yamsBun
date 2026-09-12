@@ -1,4 +1,5 @@
 import { GameProvider, useGame } from './state/GameContext'
+import { useOrientationLock } from './lib/useOrientationLock'
 import StartScreen from './screens/StartScreen'
 import SelectFirstPlayerScreen from './screens/SelectFirstPlayerScreen'
 import PlayerTableScreen from './screens/PlayerTableScreen'
@@ -10,6 +11,7 @@ import RulesScreen from './screens/RulesScreen'
 
 function Router() {
   const { screen } = useGame()
+  useOrientationLock(screen.name)
 
   switch (screen.name) {
     case 'start':
