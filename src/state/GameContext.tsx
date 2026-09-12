@@ -8,7 +8,7 @@ import type { Cell, ColumnKey, FillableRowKey, GameSetup, Player } from '../lib/
 export type Screen =
   | { name: 'start' }
   | { name: 'selectFirst' }
-  | { name: 'player' }
+  | { name: 'player'; playerId?: string }
   | { name: 'general' }
   | { name: 'end' }
   | { name: 'history' }

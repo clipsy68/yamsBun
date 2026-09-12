@@ -8,16 +8,23 @@ import { useToast } from '../lib/useToast'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './PlayerTableScreen.css'
 
-export default function PlayerTableScreen() {
+interface PlayerTableScreenProps {
+  playerId?: string
+}
+
+export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) {
   const { players, activePlayerIndex, gameType, dice, turnFilledCell, showLiveTotal, dispatch } = useGame()
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const { toast, showToast } = useToast()
 
-  const player = players[activePlayerIndex]
+  const activePlayer = players[activePlayerIndex]
+  const player = (playerId && players.find((p) => p.id === playerId)) || activePlayer
+  const isActive = !!player && player.id === activePlayer?.id
 
   if (!player) return null
 
   function handleCellTap(column: ColumnKey, row: FillableRowKey) {
+    if (!isActive) return
     const cell = player.table[column][row]
     if (cell.kind === 'empty') {
       if (!isRowUnlocked(player.table, column, row)) {
@@ -58,12 +65,13 @@ export default function PlayerTableScreen() {
         <div className="pts-topbar-info">
           <div className="pts-player-name">{player.name}</div>
           <div className="pts-round-tag">
-            Jucător {activePlayerIndex + 1} din {players.length}
+            Jucător {players.findIndex((p) => p.id === player.id) + 1} din {players.length}
           </div>
+          {!isActive && <div className="pts-view-only">Doar vizualizare</div>}
         </div>
       </div>
 
-      {gameType === 'virtual' && (
+      {gameType === 'virtual' && isActive && (
         <DiceTray
           dice={dice}
           onRoll={() => dispatch({ type: 'ROLL_DICE' })}
@@ -72,7 +80,7 @@ export default function PlayerTableScreen() {
       )}
 
       <div className="pts-table-wrap">
-        <ScoreTable table={player.table} interactive onCellTap={handleCellTap} />
+        <ScoreTable table={player.table} interactive={isActive} onCellTap={handleCellTap} />
       </div>
 
       {showLiveTotal && (
@@ -89,15 +97,17 @@ export default function PlayerTableScreen() {
         >
           Vezi regulile
         </button>
-        <button className="pts-next-btn" onClick={handleNextPlayer}>
-          Următorul jucător
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+        {isActive && (
+          <button className="pts-next-btn" onClick={handleNextPlayer}>
+            Următorul jucător
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        )}
       </div>
 
-      {open && (
+      {open && isActive && (
         <CellDialog
           column={open.column}
           row={open.row}

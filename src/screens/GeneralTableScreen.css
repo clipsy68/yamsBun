@@ -86,6 +86,26 @@
   color: var(--navy);
 }
 
+.gts-bottom-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gts-next-btn {
+  height: 52px;
+  padding: 0 22px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  background: var(--orange);
+  color: var(--navy);
+  box-shadow: 0 10px 20px rgba(255, 122, 41, 0.22);
+}
+
 .gts-toast {
   position: fixed;
   left: 50%;

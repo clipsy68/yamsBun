@@ -6,9 +6,9 @@ const PLAYER_COUNTS = [2, 3, 4, 5, 6]
 
 export default function StartScreen() {
   const { dispatch } = useGame()
-  const [playerCount, setPlayerCount] = useState(4)
-  const [gameType, setGameType] = useState<'fizic' | 'virtual'>('virtual')
-  const [names, setNames] = useState<string[]>(['', '', '', ''])
+  const [playerCount, setPlayerCount] = useState(2)
+  const [gameType, setGameType] = useState<'fizic' | 'virtual'>('fizic')
+  const [names, setNames] = useState<string[]>(['', ''])
   const [showLiveTotal, setShowLiveTotal] = useState(false)
 
   function handlePlayerCount(n: number) {

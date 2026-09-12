@@ -38,13 +38,15 @@ export default function GeneralTableScreen() {
   }
 
   function handleSelectPlayer(id: string) {
-    if (id === active?.id) {
-      dispatch({ type: 'NAVIGATE', screen: { name: 'player' } })
+    dispatch({ type: 'NAVIGATE', screen: { name: 'player', playerId: id } })
+  }
+
+  function handleNextPlayer() {
+    if (!turnFilledCell) {
+      showToast('Completează sau taie o căsuță înainte să treci mai departe')
       return
     }
-    const index = players.findIndex((p) => p.id === id)
-    if (index === -1) return
-    dispatch({ type: 'SELECT_FIRST_PLAYER', index })
+    dispatch({ type: 'NEXT_PLAYER' })
   }
 
   return (
@@ -83,6 +85,15 @@ export default function GeneralTableScreen() {
           ))}
         </div>
       )}
+
+      <div className="gts-bottom-row">
+        <button className="gts-next-btn" onClick={handleNextPlayer}>
+          Următorul jucător
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
 
       {open && active && (
         <CellDialog

@@ -19,7 +19,7 @@ function Router() {
     case 'selectFirst':
       return <SelectFirstPlayerScreen />
     case 'player':
-      return <PlayerTableScreen />
+      return <PlayerTableScreen playerId={screen.playerId} />
     case 'general':
       return <GeneralTableScreen />
     case 'end':
