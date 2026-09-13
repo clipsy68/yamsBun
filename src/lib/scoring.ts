@@ -101,7 +101,7 @@ export function cellPoints(cell: Cell, row: FillableRowKey, column: ColumnKey): 
 export interface UpperColumnStatus {
   /** true once all 6 upper rows are filled or crossed. */
   complete: boolean
-  /** Live "bank": sum of (points - 3×face) across filled rows, ignoring crossed ones. */
+  /** Live "bank": sum of (points - 3×face) across resolved rows; a crossed row counts as 0 points. */
   bank: number
   /** Real total (sum + bonus, ×2 on column S) — only set once `complete`. */
   total: number | null
@@ -120,6 +120,7 @@ export function upperColumnStatus(table: PlayerTable, column: ColumnKey): UpperC
       bank += points - 3 * faceOf(row)
       resolvedCount++
     } else if (cell.kind === 'crossed') {
+      bank += 0 - 3 * faceOf(row)
       resolvedCount++
     }
   }

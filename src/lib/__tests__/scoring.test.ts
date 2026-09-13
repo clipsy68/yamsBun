@@ -26,7 +26,7 @@ describe('upperColumnStatus', () => {
     expect(status.total).toBeNull()
   })
 
-  it('excludes crossed rows from the bank but counts them toward completeness', () => {
+  it('counts a crossed row toward completeness, contributing 0 to the real total', () => {
     const table = createEmptyTable()
     for (const row of ['1', '2', '3', '4', '5', '6'] as const) {
       table.L[row] = row === '6' ? { kind: 'crossed' } : { kind: 'upper', count: 3 }
@@ -35,6 +35,15 @@ describe('upperColumnStatus', () => {
     expect(status.complete).toBe(true)
     // 3x1+3x2+3x3+3x4+3x5 = 45, no bonus (below 63), row 6 crossed contributes 0
     expect(status.total).toBe(45)
+  })
+
+  it('counts a crossed row in the live bank as 0 points against its 3×face par', () => {
+    const table = createEmptyTable()
+    // crossing row '3' (3 bucăți) should pull the bank by -9 (0 achieved vs 3x3 par)
+    table.L['3'] = { kind: 'crossed' }
+    const status = upperColumnStatus(table, 'L')
+    expect(status.complete).toBe(false)
+    expect(status.bank).toBe(-9)
   })
 
   it('awards the 50-point bonus at exactly 63 and doubles everything on column S', () => {
