@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DieFace from '../DieFace'
 import { cellPoints } from '../../lib/scoring'
 import { UPPER_ROWS, type Cell, type ColumnKey, type FillableRowKey } from '../../lib/types'
@@ -44,7 +44,16 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
     existingCell.kind === 'fourKind' ? existingCell.face : existingCell.kind === 'yams' ? existingCell.face : null,
   )
   const [sum, setSum] = useState(existingCell.kind === 'chance' ? String(existingCell.sum) : '')
-  const [activePicker, setActivePicker] = useState<PickerKey | null>(null)
+  const [activePicker, setActivePicker] = useState<PickerKey | null>(() => {
+    if (category === 'upper' && count === null) return 'count'
+    if ((category === 'fourKind' || category === 'yams') && face === null) return 'single'
+    return null
+  })
+  const sumInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (category === 'chance') sumInputRef.current?.focus()
+  }, [category])
 
   function buildCell(): Cell | null {
     switch (category) {
@@ -186,6 +195,8 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
           <div className="cd-field">
             <div className="cd-label">Suma celor 5 zaruri</div>
             <input
+              ref={sumInputRef}
+              autoFocus
               className="cd-number-input"
               type="number"
               inputMode="numeric"
