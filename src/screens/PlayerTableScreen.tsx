@@ -42,6 +42,21 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
     setOpen({ column, row })
   }
 
+  function handleCellLongPress(column: ColumnKey, row: FillableRowKey) {
+    if (!isActive) return
+    const cell = player.table[column][row]
+    if (cell.kind !== 'empty') return
+    if (!isRowUnlocked(player.table, column, row)) {
+      showToast('Nu ai ajuns aici pe această coloană')
+      return
+    }
+    if (turnFilledCell) {
+      showToast('Poți completa o singură căsuță pe rundă')
+      return
+    }
+    dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column, row, cell: { kind: 'crossed' } })
+  }
+
   function commit(cell: Cell) {
     if (!open) return
     dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column: open.column, row: open.row, cell })
@@ -84,7 +99,12 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
         )}
 
         <div className="pts-table-wrap">
-          <ScoreTable table={player.table} interactive={isActive} onCellTap={handleCellTap} />
+          <ScoreTable
+            table={player.table}
+            interactive={isActive}
+            onCellTap={handleCellTap}
+            onCellLongPress={handleCellLongPress}
+          />
         </div>
 
         {showLiveTotal && (

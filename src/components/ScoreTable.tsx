@@ -1,18 +1,52 @@
-import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
+import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type Cell, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
 import { cellDisplayText, COLUMN_LABELS, ROW_LABELS } from '../lib/format'
+import { useLongPress } from '../lib/useLongPress'
 import './ScoreTable.css'
 
 interface ScoreTableProps {
   table: PlayerTable
   interactive?: boolean
   onCellTap?: (column: ColumnKey, row: FillableRowKey) => void
+  onCellLongPress?: (column: ColumnKey, row: FillableRowKey) => void
   mirrorLabel?: boolean
 }
 
 const DISPLAY_ROWS: FillableRowKey[] = [...UPPER_ROWS]
 
-export default function ScoreTable({ table, interactive = false, onCellTap, mirrorLabel = true }: ScoreTableProps) {
+interface DataCellProps {
+  column: ColumnKey
+  row: FillableRowKey
+  cell: Cell
+  interactive: boolean
+  isY: boolean
+  onTap?: (column: ColumnKey, row: FillableRowKey) => void
+  onLongPress?: (column: ColumnKey, row: FillableRowKey) => void
+}
+
+function DataCell({ column, row, cell, interactive, isY, onTap, onLongPress }: DataCellProps) {
+  const longPress = useLongPress({
+    onTap: () => onTap?.(column, row),
+    onLongPress: () => onLongPress?.(column, row),
+  })
+  const classes = [
+    'st-cell',
+    'st-val',
+    isY ? 'st-bold-row' : '',
+    cell.kind === 'crossed' ? 'st-crossed' : '',
+    interactive ? 'st-tappable' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  return (
+    <button type="button" className={classes} disabled={!interactive} {...longPress}>
+      {cellDisplayText(cell, row, column)}
+    </button>
+  )
+}
+
+export default function ScoreTable({ table, interactive = false, onCellTap, onCellLongPress, mirrorLabel = true }: ScoreTableProps) {
   function renderLabelCell(text: string, key: string, extraClass = '') {
     return (
       <div className={`st-cell st-label ${extraClass}`} key={key}>
@@ -22,28 +56,17 @@ export default function ScoreTable({ table, interactive = false, onCellTap, mirr
   }
 
   function renderDataCell(column: ColumnKey, row: FillableRowKey) {
-    const cell = table[column][row]
-    const isY = row === 'Y'
-    const classes = [
-      'st-cell',
-      'st-val',
-      isY ? 'st-bold-row' : '',
-      cell.kind === 'crossed' ? 'st-crossed' : '',
-      interactive ? 'st-tappable' : '',
-    ]
-      .filter(Boolean)
-      .join(' ')
-
     return (
-      <button
+      <DataCell
         key={`${column}-${row}`}
-        type="button"
-        className={classes}
-        disabled={!interactive}
-        onClick={() => onCellTap?.(column, row)}
-      >
-        {cellDisplayText(cell, row, column)}
-      </button>
+        column={column}
+        row={row}
+        cell={table[column][row]}
+        interactive={interactive}
+        isY={row === 'Y'}
+        onTap={onCellTap}
+        onLongPress={onCellLongPress}
+      />
     )
   }
 

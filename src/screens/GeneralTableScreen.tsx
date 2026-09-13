@@ -73,6 +73,21 @@ export default function GeneralTableScreen() {
     setOpen({ column, row })
   }
 
+  function handleCellLongPress(playerId: string, column: ColumnKey, row: FillableRowKey) {
+    if (!active || playerId !== active.id) return
+    const cell = active.table[column][row]
+    if (cell.kind !== 'empty') return
+    if (!isRowUnlocked(active.table, column, row)) {
+      showToast('Nu ai ajuns aici pe această coloană')
+      return
+    }
+    if (turnFilledCell) {
+      showToast('Poți completa o singură căsuță pe rundă')
+      return
+    }
+    dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column, row, cell: { kind: 'crossed' } })
+  }
+
   function commit(cell: Cell) {
     if (!open) return
     dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column: open.column, row: open.row, cell })
@@ -107,6 +122,7 @@ export default function GeneralTableScreen() {
           onSelectPlayer={handleSelectPlayer}
           interactivePlayerId={active?.id}
           onCellTap={handleCellTap}
+          onCellLongPress={handleCellLongPress}
         />
       </div>
 

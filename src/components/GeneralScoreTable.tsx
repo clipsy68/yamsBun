@@ -1,6 +1,8 @@
+import type { CSSProperties } from 'react'
 import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
 import { cellDisplayText, COLUMN_LABELS } from '../lib/format'
+import { useLongPress } from '../lib/useLongPress'
 import './GeneralScoreTable.css'
 
 export interface GeneralScoreTablePlayer {
@@ -18,6 +20,7 @@ interface GeneralScoreTableProps {
   /** When set, this player's empty/crossed data cells become tappable. */
   interactivePlayerId?: string
   onCellTap?: (playerId: string, column: ColumnKey, row: FillableRowKey) => void
+  onCellLongPress?: (playerId: string, column: ColumnKey, row: FillableRowKey) => void
 }
 
 interface GridCell {
@@ -25,7 +28,17 @@ interface GridCell {
   className: string
   span?: number
   onClick?: () => void
+  onLongPress?: () => void
   playerId?: string
+}
+
+function GstButton({ cell, style }: { cell: GridCell; style?: CSSProperties }) {
+  const longPress = useLongPress({ onTap: cell.onClick, onLongPress: cell.onLongPress })
+  return (
+    <button type="button" className={`gst-cell ${cell.className}`} style={style} data-player-id={cell.playerId} {...longPress}>
+      {cell.text}
+    </button>
+  )
 }
 
 const ROW_LABEL_LIST = [...UPPER_ROWS, 'Tot', ...LOWER_ROWS] as const
@@ -37,6 +50,7 @@ export default function GeneralScoreTable({
   onSelectPlayer,
   interactivePlayerId,
   onCellTap,
+  onCellLongPress,
 }: GeneralScoreTableProps) {
   const gridTemplateColumns = ['34px', ...players.flatMap(() => ['repeat(5, minmax(0, 44px))', '34px'])].join(' ')
 
@@ -105,6 +119,7 @@ export default function GeneralScoreTable({
             text: crossed ? '' : cellDisplayText(cell, row, col),
             className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''}`.trim(),
             onClick: tappableRow ? () => onCellTap!(p.id, col, row) : undefined,
+            onLongPress: tappableRow && onCellLongPress ? () => onCellLongPress(p.id, col, row) : undefined,
           })
         }
       }
@@ -131,18 +146,7 @@ export default function GeneralScoreTable({
             {row.map((cell, ci) => {
               const style = cell.span ? { gridColumn: `span ${cell.span}` } : undefined
               if (cell.onClick) {
-                return (
-                  <button
-                    key={ci}
-                    type="button"
-                    className={`gst-cell ${cell.className}`}
-                    style={style}
-                    onClick={cell.onClick}
-                    data-player-id={cell.playerId}
-                  >
-                    {cell.text}
-                  </button>
-                )
+                return <GstButton key={ci} cell={cell} style={style} />
               }
               return (
                 <div key={ci} className={`gst-cell ${cell.className}`} style={style} data-player-id={cell.playerId}>
