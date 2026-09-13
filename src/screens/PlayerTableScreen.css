@@ -74,12 +74,12 @@
 }
 
 .pts-slide-in {
-  animation: pts-slide-in-anim 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: pts-slide-in-anim 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes pts-slide-in-anim {
   from {
-    transform: translateX(28px);
+    transform: translateX(70px);
     opacity: 0;
   }
   to {
