@@ -7,7 +7,12 @@ interface UseLongPressOptions {
   delay?: number
 }
 
-/** Combines tap and press-and-hold into one set of pointer handlers, so only one fires per gesture. */
+/**
+ * Combines tap and press-and-hold into one set of handlers, so only one fires per gesture.
+ * Tap goes through the browser's native click synthesis (not raw pointerup) so it still gets
+ * the browser's own scroll-vs-tap disambiguation inside a scrollable ancestor — a horizontally
+ * scrollable table can otherwise swallow a tap detected purely from pointerdown/pointerup.
+ */
 export function useLongPress({ onTap, onLongPress, delay = 500 }: UseLongPressOptions) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const firedRef = useRef(false)
@@ -20,7 +25,6 @@ export function useLongPress({ onTap, onLongPress, delay = 500 }: UseLongPressOp
   }
 
   function onPointerDown() {
-    firedRef.current = false
     clear()
     timerRef.current = setTimeout(() => {
       firedRef.current = true
@@ -30,7 +34,6 @@ export function useLongPress({ onTap, onLongPress, delay = 500 }: UseLongPressOp
 
   function onPointerUp() {
     clear()
-    if (!firedRef.current) onTap?.()
   }
 
   function onPointerLeave() {
@@ -41,9 +44,17 @@ export function useLongPress({ onTap, onLongPress, delay = 500 }: UseLongPressOp
     clear()
   }
 
+  function onClick() {
+    if (firedRef.current) {
+      firedRef.current = false
+      return
+    }
+    onTap?.()
+  }
+
   function onContextMenu(e: ReactMouseEvent) {
     e.preventDefault()
   }
 
-  return { onPointerDown, onPointerUp, onPointerLeave, onPointerCancel, onContextMenu }
+  return { onPointerDown, onPointerUp, onPointerLeave, onPointerCancel, onClick, onContextMenu }
 }
