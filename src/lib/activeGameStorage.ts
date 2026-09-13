@@ -12,6 +12,7 @@ export interface PersistedActiveGame {
   showLiveTotal: boolean
   dice: DiceState
   turnFilledCell: { column: ColumnKey; row: FillableRowKey } | null
+  startedAt: number | null
 }
 
 export function saveActiveGame(state: PersistedActiveGame): void {

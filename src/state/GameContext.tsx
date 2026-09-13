@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useReducer, type ReactNode } from
 import { createEmptyTable, isTableComplete, playerGrandTotal } from '../lib/scoring'
 import { freshDice, rollDice as rollDiceState, toggleHold as toggleHoldState, type DiceState } from '../lib/dice'
 import { saveHistoryEntry, type HistoryEntry } from '../lib/storage'
+import { recordGameResult } from '../lib/players'
 import { clearActiveGame, loadActiveGame, saveActiveGame } from '../lib/activeGameStorage'
 import type { Cell, ColumnKey, FillableRowKey, GameSetup, Player } from '../lib/types'
 
@@ -13,6 +14,7 @@ export type Screen =
   | { name: 'end' }
   | { name: 'history' }
   | { name: 'historyDetail'; id: string }
+  | { name: 'leaderboard' }
   | { name: 'rules'; from: Screen }
 
 interface State {
@@ -24,6 +26,7 @@ interface State {
   dice: DiceState
   lastFinishedId: string | null
   turnFilledCell: { column: ColumnKey; row: FillableRowKey } | null
+  startedAt: number | null
 }
 
 type Action =
@@ -54,6 +57,7 @@ const initialState: State = {
   dice: freshDice(),
   lastFinishedId: null,
   turnFilledCell: null,
+  startedAt: null,
 }
 
 function finishGameIfComplete(state: State): State {
@@ -63,13 +67,18 @@ function finishGameIfComplete(state: State): State {
     .sort((a, b) => b.total - a.total)
   const entry: HistoryEntry = {
     id: `g${Date.now()}`,
-    date: new Date().toISOString(),
+    startedAt: new Date(state.startedAt ?? Date.now()).toISOString(),
+    finishedAt: new Date().toISOString(),
     players: ranked,
     winnerName: ranked[0].name,
     winnerScore: ranked[0].total,
     tables: state.players.map((p) => ({ name: p.name, table: p.table })),
   }
   saveHistoryEntry(entry)
+  recordGameResult(
+    state.players.map((p) => p.name),
+    entry.winnerName,
+  )
   return { ...state, screen: { name: 'end' }, lastFinishedId: entry.id }
 }
 
@@ -88,6 +97,7 @@ function reducer(state: State, action: Action): State {
         dice: freshDice(),
         screen: { name: 'selectFirst' },
         turnFilledCell: null,
+        startedAt: Date.now(),
       }
 
     case 'SELECT_FIRST_PLAYER':

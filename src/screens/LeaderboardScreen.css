@@ -1,4 +1,4 @@
-.hs-screen {
+.lb-screen {
   min-height: 100dvh;
   background: var(--navy);
   color: #fff;
@@ -9,13 +9,13 @@
   gap: 18px;
 }
 
-.hs-topbar {
+.lb-topbar {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.hs-back-btn {
+.lb-back-btn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -26,92 +26,71 @@
   justify-content: center;
 }
 
-.hs-title {
+.lb-title {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 20px;
 }
 
-.hs-empty {
+.lb-empty {
   color: var(--white-soft);
   font-size: 13.5px;
 }
 
-.hs-list {
+.lb-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.hs-entry {
+.lb-row {
   background: var(--navy-2);
   border: 1.5px solid var(--navy-4);
-  border-radius: 16px;
-  padding: 6px;
+  border-radius: 14px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.hs-entry-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   text-align: left;
-  padding: 10px;
-  min-width: 0;
 }
 
-.hs-date {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--white-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.hs-time-range {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--white-soft);
-}
-
-.hs-players {
-  font-size: 13.5px;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.hs-winner {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-}
-
-.hs-score {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--orange-soft);
-}
-
-.hs-who {
-  font-size: 12.5px;
-  font-weight: 700;
-}
-
-.hs-delete-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+.lb-rank {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   background: var(--navy-3);
-  border: 1.5px solid rgba(242, 121, 121, 0.5);
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange-soft);
+}
+
+.lb-name-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lb-name {
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.lb-stats {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white-soft);
+}
+
+.lb-wins {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--orange-soft);
   flex: none;
 }

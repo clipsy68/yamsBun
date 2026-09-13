@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 import GeneralScoreTable from '../components/GeneralScoreTable'
-import PdfViewer from '../components/PdfViewer'
-import { nodeToPdfBytes } from '../lib/pdf'
 import { getHistoryEntry } from '../lib/storage'
+import { formatDuration } from '../lib/format'
 import { useGame } from '../state/GameContext'
 import './GameEndScreen.css'
-import './HistoryDetailScreen.css'
 
 interface HistoryDetailScreenProps {
   id: string
@@ -14,35 +12,6 @@ interface HistoryDetailScreenProps {
 export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
   const { dispatch } = useGame()
   const entry = useMemo(() => getHistoryEntry(id), [id])
-  const captureRef = useRef<HTMLDivElement>(null)
-  const [pdfBytes, setPdfBytes] = useState<Uint8Array | null>(null)
-  const [status, setStatus] = useState<'rendering' | 'ready' | 'error'>('rendering')
-
-  useEffect(() => {
-    if (!entry) return
-    setStatus('rendering')
-    setPdfBytes(null)
-    let cancelled = false
-
-    ;(async () => {
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
-      const node = captureRef.current
-      if (!node) return
-      try {
-        const bytes = await nodeToPdfBytes(node)
-        if (!cancelled) {
-          setPdfBytes(bytes)
-          setStatus('ready')
-        }
-      } catch {
-        if (!cancelled) setStatus('error')
-      }
-    })()
-
-    return () => {
-      cancelled = true
-    }
-  }, [id, entry])
 
   if (!entry) {
     return (
@@ -58,6 +27,9 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
   }
 
   const players = entry.tables.map((t, i) => ({ id: `${i}-${t.name}`, name: t.name, table: t.table }))
+  const startTime = new Date(entry.startedAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+  const endTime = new Date(entry.finishedAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+  const duration = formatDuration(new Date(entry.finishedAt).getTime() - new Date(entry.startedAt).getTime())
 
   return (
     <div className="ge-screen">
@@ -72,38 +44,29 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
           </svg>
         </button>
         <div>
-          <div className="ge-t1">{new Date(entry.date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-          <div className="ge-t2">{entry.players.map((p) => p.name).join(', ')}</div>
+          <div className="ge-t1">{new Date(entry.finishedAt).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+          <div className="ge-t2">
+            {entry.players.map((p) => p.name).join(', ')} · {startTime}–{endTime} ({duration})
+          </div>
         </div>
       </div>
 
       <div className="ge-content">
-        {status !== 'ready' && (
-          <div className="hd-status">
-            {status === 'rendering' ? 'Se generează PDF-ul…' : 'Nu am putut genera PDF-ul acestui joc.'}
-          </div>
-        )}
-        {status === 'ready' && pdfBytes && <PdfViewer data={pdfBytes} />}
-      </div>
+        <div className="ge-page">
+          <GeneralScoreTable players={players} />
 
-      {status === 'rendering' && (
-        <div className="hd-capture-host">
-          <div className="ge-page" ref={captureRef}>
-            <GeneralScoreTable players={players} />
-
-            <div className="ge-totals-row">
-              {entry.players.map((p) => (
-                <div className={`ge-totals-card ${p.name === entry.winnerName ? 'winner' : ''}`} key={p.name}>
-                  <div className="ge-totals-name-row">
-                    <div className="ge-totals-name">{p.name}</div>
-                  </div>
-                  <div className="ge-totals-score">{p.total} p</div>
+          <div className="ge-totals-row">
+            {entry.players.map((p) => (
+              <div className={`ge-totals-card ${p.name === entry.winnerName ? 'winner' : ''}`} key={p.name}>
+                <div className="ge-totals-name-row">
+                  <div className="ge-totals-name">{p.name}</div>
                 </div>
-              ))}
-            </div>
+                <div className="ge-totals-score">{p.total} p</div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }

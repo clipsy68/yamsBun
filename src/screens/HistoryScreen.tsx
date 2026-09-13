@@ -1,11 +1,19 @@
 import { useState } from 'react'
-import { deleteHistoryEntry, listHistory } from '../lib/storage'
+import { deleteHistoryEntry, listHistory, type HistoryEntry } from '../lib/storage'
+import { formatDuration } from '../lib/format'
 import { useGame } from '../state/GameContext'
 import './HistoryScreen.css'
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
   return d.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function formatTimeRange(entry: HistoryEntry): string {
+  const start = new Date(entry.startedAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+  const end = new Date(entry.finishedAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+  const duration = formatDuration(new Date(entry.finishedAt).getTime() - new Date(entry.startedAt).getTime())
+  return `${start}–${end} (${duration})`
 }
 
 export default function HistoryScreen() {
@@ -41,7 +49,8 @@ export default function HistoryScreen() {
               className="hs-entry-main"
               onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'historyDetail', id: e.id } })}
             >
-              <div className="hs-date">{formatDate(e.date)}</div>
+              <div className="hs-date">{formatDate(e.finishedAt)}</div>
+              <div className="hs-time-range">{formatTimeRange(e)}</div>
               <div className="hs-players">{e.players.map((p) => p.name).join(', ')}</div>
               <div className="hs-winner">
                 <TrophyIcon />

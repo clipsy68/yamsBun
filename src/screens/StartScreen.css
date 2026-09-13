@@ -129,6 +129,7 @@ section {
 }
 
 .name-row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -161,6 +162,38 @@ section {
 
 .name-input::placeholder {
   color: var(--white-faint);
+}
+
+.name-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 36px;
+  right: 0;
+  background: var(--navy-2);
+  border: 1.5px solid var(--navy-4);
+  border-radius: 11px;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+}
+
+.name-suggestion {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  border-bottom: 1px solid var(--navy-4);
+}
+
+.name-suggestion:last-child {
+  border-bottom: 0;
+}
+
+.name-suggestion:active {
+  background: var(--navy-3);
 }
 
 .toggle-row {

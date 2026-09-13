@@ -15,9 +15,6 @@
     "@capacitor/cli": "^8.5.2",
     "@capacitor/core": "^8.5.2",
     "@capacitor/screen-orientation": "^8.0.1",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.1",
-    "pdfjs-dist": "^6.3.289",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

@@ -7,6 +7,7 @@ import GeneralTableScreen from './screens/GeneralTableScreen'
 import GameEndScreen from './screens/GameEndScreen'
 import HistoryScreen from './screens/HistoryScreen'
 import HistoryDetailScreen from './screens/HistoryDetailScreen'
+import LeaderboardScreen from './screens/LeaderboardScreen'
 import RulesScreen from './screens/RulesScreen'
 
 function Router() {
@@ -28,6 +29,8 @@ function Router() {
       return <HistoryScreen />
     case 'historyDetail':
       return <HistoryDetailScreen id={screen.id} />
+    case 'leaderboard':
+      return <LeaderboardScreen />
     case 'rules':
       return <RulesScreen from={screen.from} />
   }

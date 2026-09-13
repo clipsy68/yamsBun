@@ -5,11 +5,13 @@ import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
 import { emptyCell, isRowUnlocked, playerGrandTotal } from '../lib/scoring'
 import { useToast } from '../lib/useToast'
+import { useElapsedTime } from '../lib/useElapsedTime'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './GeneralTableScreen.css'
 
 export default function GeneralTableScreen() {
-  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, dispatch } = useGame()
+  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, dispatch } = useGame()
+  const elapsed = useElapsedTime(startedAt)
   const active = players[activePlayerIndex]
   const [confirmingQuit, setConfirmingQuit] = useState(false)
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
@@ -59,6 +61,7 @@ export default function GeneralTableScreen() {
           Înapoi
         </button>
         <div className="gts-title">Tabel general</div>
+        {elapsed && <div className="gts-timer">{elapsed}</div>}
         <button className="gts-quit-btn" onClick={() => setConfirmingQuit(true)}>
           Renunță la joc
         </button>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useGame } from '../state/GameContext'
+import { searchSavedPlayers, type SavedPlayer } from '../lib/players'
 import './StartScreen.css'
 
 const PLAYER_COUNTS = [2, 3, 4, 5, 6]
@@ -10,6 +11,8 @@ export default function StartScreen() {
   const [gameType, setGameType] = useState<'fizic' | 'virtual'>('fizic')
   const [names, setNames] = useState<string[]>(['', ''])
   const [showLiveTotal, setShowLiveTotal] = useState(false)
+  const [suggestIndex, setSuggestIndex] = useState<number | null>(null)
+  const [suggestions, setSuggestions] = useState<SavedPlayer[]>([])
 
   function handlePlayerCount(n: number) {
     setPlayerCount(n)
@@ -22,6 +25,21 @@ export default function StartScreen() {
 
   function handleNameChange(index: number, value: string) {
     setNames((prev) => prev.map((n, i) => (i === index ? value : n)))
+    if (value.trim().length >= 2) {
+      const usedElsewhere = new Set(
+        names.filter((_, i) => i !== index).map((n) => n.trim().toLowerCase()),
+      )
+      const matches = searchSavedPlayers(value).filter((p) => !usedElsewhere.has(p.name.toLowerCase()))
+      setSuggestions(matches)
+      setSuggestIndex(matches.length > 0 ? index : null)
+    } else {
+      setSuggestIndex(null)
+    }
+  }
+
+  function selectSuggestion(index: number, name: string) {
+    setNames((prev) => prev.map((n, i) => (i === index ? name : n)))
+    setSuggestIndex(null)
   }
 
   const canStart = names.every((n) => n.trim().length > 0)
@@ -31,6 +49,16 @@ export default function StartScreen() {
       <div className="topbar">
         <img className="brand-icon" src="/icon.png" alt="Yams Bun" />
         <div className="topbar-actions">
+          <button
+            className="info-btn"
+            onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'leaderboard' } })}
+            aria-label="Clasament jucători"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M6 4h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <path d="M9 20h6M12 13v7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
           <button
             className="info-btn"
             onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'history' } })}
@@ -99,8 +127,24 @@ export default function StartScreen() {
                 placeholder={`Nume jucător ${i + 1}`}
                 value={name}
                 onChange={(e) => handleNameChange(i, e.target.value)}
+                onFocus={() => handleNameChange(i, name)}
+                onBlur={() => setTimeout(() => setSuggestIndex((cur) => (cur === i ? null : cur)), 150)}
                 maxLength={24}
               />
+              {suggestIndex === i && suggestions.length > 0 && (
+                <div className="name-suggestions">
+                  {suggestions.map((p) => (
+                    <button
+                      type="button"
+                      key={p.name}
+                      className="name-suggestion"
+                      onClick={() => selectSuggestion(i, p.name)}
+                    >
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

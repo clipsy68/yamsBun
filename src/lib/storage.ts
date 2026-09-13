@@ -2,7 +2,8 @@ import type { PlayerTable } from './types'
 
 export interface HistoryEntry {
   id: string
-  date: string // ISO timestamp
+  startedAt: string // ISO timestamp
+  finishedAt: string // ISO timestamp
   players: { name: string; total: number }[]
   winnerName: string
   winnerScore: number
@@ -16,7 +17,7 @@ export function listHistory(): HistoryEntry[] {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw) as HistoryEntry[]
-    return parsed.sort((a, b) => b.date.localeCompare(a.date))
+    return parsed.sort((a, b) => b.finishedAt.localeCompare(a.finishedAt))
   } catch {
     return []
   }

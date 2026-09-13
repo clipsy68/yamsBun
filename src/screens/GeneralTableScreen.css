@@ -37,6 +37,14 @@
   flex: 1;
 }
 
+.gts-timer {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+}
+
 .gts-quit-btn {
   font-size: 12.5px;
   font-weight: 700;
