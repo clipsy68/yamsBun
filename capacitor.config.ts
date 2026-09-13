@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'ro.yamsbun.app',
-  appName: 'yamsBun',
+  appName: 'Yams Bun',
   webDir: 'dist',
   plugins: {
     SystemBars: {

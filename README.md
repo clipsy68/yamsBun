@@ -1,4 +1,4 @@
-# yamsBun
+# Yams Bun
 
 Carnet de scor digital pentru Yams (variantă Yahtzee), construit ca aplicație React + Vite, ambalată cu Capacitor pentru Android.
 

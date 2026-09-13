@@ -14,11 +14,10 @@
   justify-content: space-between;
 }
 
-.brand {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 22px;
-  letter-spacing: -0.01em;
+.brand-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
 }
 
 .topbar-actions {

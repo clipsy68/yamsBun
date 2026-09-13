@@ -29,7 +29,7 @@ export default function StartScreen() {
   return (
     <div className="start-screen">
       <div className="topbar">
-        <div className="brand">Yams</div>
+        <img className="brand-icon" src="/icon.png" alt="Yams Bun" />
         <div className="topbar-actions">
           <button
             className="info-btn"

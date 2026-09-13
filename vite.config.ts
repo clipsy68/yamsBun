@@ -9,8 +9,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'yamsBun',
-        short_name: 'yamsBun',
+        name: 'Yams Bun',
+        short_name: 'Yams Bun',
         description: 'Carnet de scor digital pentru Yams',
         theme_color: '#0B1B3A',
         background_color: '#0B1B3A',
