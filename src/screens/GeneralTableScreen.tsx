@@ -20,6 +20,13 @@ export default function GeneralTableScreen() {
   const [floatCenterX, setFloatCenterX] = useState<number | null>(null)
 
   useLayoutEffect(() => {
+    const wrap = tableWrapRef.current
+    if (!wrap) return
+    const y = wrap.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top: y })
+  }, [])
+
+  useLayoutEffect(() => {
     if (!turnFilledCell || !active) {
       setFloatCenterX(null)
       return
