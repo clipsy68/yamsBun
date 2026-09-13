@@ -66,6 +66,9 @@ export default function GeneralTableScreen() {
         showToast('Poți completa o singură căsuță pe rundă')
         return
       }
+    } else if (!turnFilledCell || turnFilledCell.column !== column || turnFilledCell.row !== row) {
+      showToast('Poți edita căsuța doar în runda în care ai completat-o')
+      return
     }
     setOpen({ column, row })
   }
