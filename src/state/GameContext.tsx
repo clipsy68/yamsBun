@@ -116,7 +116,8 @@ function reducer(state: State, action: Action): State {
 
     case 'NEXT_PLAYER': {
       const next = (state.activePlayerIndex + 1) % state.players.length
-      const advanced = { ...state, activePlayerIndex: next, dice: freshDice(), turnFilledCell: null }
+      const screen = state.screen.name === 'player' ? { name: 'player' as const } : state.screen
+      const advanced = { ...state, activePlayerIndex: next, dice: freshDice(), turnFilledCell: null, screen }
       return finishGameIfComplete(advanced)
     }
 
