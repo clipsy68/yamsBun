@@ -44,6 +44,10 @@ public class MainActivity extends BridgeActivity {
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WebView webView = getBridge().getWebView();
+        // The WebView's HTTP disk cache has been observed to persist across uninstalls on some
+        // devices, serving stale bundled assets under the shared https://localhost origin. All
+        // assets are already bundled locally, so caching them buys nothing; clear defensively.
+        webView.clearCache(true);
         ViewCompat.setOnApplyWindowInsetsListener(webView, (view, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
