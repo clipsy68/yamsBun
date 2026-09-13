@@ -62,7 +62,7 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
           </svg>
           Tabel general
         </button>
-        <div className="pts-topbar-info">
+        <div className="pts-topbar-info pts-slide-in" key={`info-${player.id}`}>
           <div className="pts-player-name">{player.name}</div>
           <div className="pts-round-tag">
             Jucător {players.findIndex((p) => p.id === player.id) + 1} din {players.length}
@@ -71,24 +71,26 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
         </div>
       </div>
 
-      {gameType === 'virtual' && isActive && (
-        <DiceTray
-          dice={dice}
-          onRoll={() => dispatch({ type: 'ROLL_DICE' })}
-          onToggleHold={(i) => dispatch({ type: 'TOGGLE_HOLD', index: i })}
-        />
-      )}
+      <div className="pts-content pts-slide-in" key={`content-${player.id}`}>
+        {gameType === 'virtual' && isActive && (
+          <DiceTray
+            dice={dice}
+            onRoll={() => dispatch({ type: 'ROLL_DICE' })}
+            onToggleHold={(i) => dispatch({ type: 'TOGGLE_HOLD', index: i })}
+          />
+        )}
 
-      <div className="pts-table-wrap">
-        <ScoreTable table={player.table} interactive={isActive} onCellTap={handleCellTap} />
-      </div>
-
-      {showLiveTotal && (
-        <div className="pts-total-card">
-          <div className="pts-total-name">{player.name}</div>
-          <div className="pts-total-score">{playerGrandTotal(player.table)} p</div>
+        <div className="pts-table-wrap">
+          <ScoreTable table={player.table} interactive={isActive} onCellTap={handleCellTap} />
         </div>
-      )}
+
+        {showLiveTotal && (
+          <div className="pts-total-card">
+            <div className="pts-total-name">{player.name}</div>
+            <div className="pts-total-score">{playerGrandTotal(player.table)} p</div>
+          </div>
+        )}
+      </div>
 
       <div className="pts-bottom-row">
         <button

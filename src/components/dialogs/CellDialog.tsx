@@ -30,7 +30,7 @@ type PickerKey = 'count' | 'triple' | 'pair' | 'single'
 
 export default function CellDialog({ column, row, existingCell, onConfirm, onCross, onClear, onCancel }: CellDialogProps) {
   const category = rowCategory(row)
-  const isFilled = existingCell.kind !== 'empty' && existingCell.kind !== 'crossed'
+  const canClear = existingCell.kind !== 'empty'
   const allowServit = column !== 'S'
 
   const [count, setCount] = useState<number | null>(existingCell.kind === 'upper' ? existingCell.count : null)
@@ -191,6 +191,12 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
               inputMode="numeric"
               value={sum}
               onChange={(e) => setSum(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  e.currentTarget.blur()
+                }
+              }}
               placeholder="0"
             />
           </div>
@@ -214,7 +220,7 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
               Confirmă
             </button>
           </div>
-          {isFilled && (
+          {canClear && (
             <button type="button" className="cd-btn cd-btn-clear" onClick={onClear}>
               Golește căsuța
             </button>
