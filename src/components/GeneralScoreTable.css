@@ -4,6 +4,8 @@
 
 .gst-grid {
   display: grid;
+  width: fit-content;
+  max-width: 100%;
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);

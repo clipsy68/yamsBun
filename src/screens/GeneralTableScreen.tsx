@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import GeneralScoreTable from '../components/GeneralScoreTable'
 import ConfirmDialog from '../components/dialogs/ConfirmDialog'
 import CellDialog from '../components/dialogs/CellDialog'
@@ -16,6 +16,36 @@ export default function GeneralTableScreen() {
   const [confirmingQuit, setConfirmingQuit] = useState(false)
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const { toast, showToast } = useToast()
+  const tableWrapRef = useRef<HTMLDivElement>(null)
+  const [floatCenterX, setFloatCenterX] = useState<number | null>(null)
+
+  useLayoutEffect(() => {
+    if (!turnFilledCell || !active) {
+      setFloatCenterX(null)
+      return
+    }
+    function updatePosition() {
+      const wrap = tableWrapRef.current
+      const nameCell = wrap?.querySelector(`[data-player-id="${active!.id}"].gst-name`)
+      if (!nameCell) return
+      const rect = nameCell.getBoundingClientRect()
+      const halfBtn = 100
+      const margin = 12
+      const clamped = Math.min(
+        Math.max(rect.left + rect.width / 2, halfBtn + margin),
+        window.innerWidth - halfBtn - margin,
+      )
+      setFloatCenterX(clamped)
+    }
+    updatePosition()
+    const wrap = tableWrapRef.current
+    wrap?.addEventListener('scroll', updatePosition, { passive: true })
+    window.addEventListener('resize', updatePosition)
+    return () => {
+      wrap?.removeEventListener('scroll', updatePosition)
+      window.removeEventListener('resize', updatePosition)
+    }
+  }, [turnFilledCell, active])
 
   function handleCellTap(playerId: string, column: ColumnKey, row: FillableRowKey) {
     if (!active || playerId !== active.id) return
@@ -43,14 +73,6 @@ export default function GeneralTableScreen() {
     dispatch({ type: 'NAVIGATE', screen: { name: 'player', playerId: id } })
   }
 
-  function handleNextPlayer() {
-    if (!turnFilledCell) {
-      showToast('Completează sau taie o căsuță înainte să treci mai departe')
-      return
-    }
-    dispatch({ type: 'NEXT_PLAYER' })
-  }
-
   return (
     <div className="gts-screen">
       <div className="gts-topbar">
@@ -67,7 +89,7 @@ export default function GeneralTableScreen() {
         </button>
       </div>
 
-      <div className="gts-table-wrap">
+      <div className="gts-table-wrap" ref={tableWrapRef}>
         <GeneralScoreTable
           players={players}
           highlightStyle="turn"
@@ -89,14 +111,18 @@ export default function GeneralTableScreen() {
         </div>
       )}
 
-      <div className="gts-bottom-row">
-        <button className="gts-next-btn" onClick={handleNextPlayer}>
+      {turnFilledCell && (
+        <button
+          className="gts-next-float"
+          style={floatCenterX !== null ? { left: floatCenterX } : undefined}
+          onClick={() => dispatch({ type: 'NEXT_PLAYER' })}
+        >
           Următorul jucător
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-      </div>
+      )}
 
       {open && active && (
         <CellDialog

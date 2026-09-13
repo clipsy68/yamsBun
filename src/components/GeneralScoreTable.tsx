@@ -25,6 +25,7 @@ interface GridCell {
   className: string
   span?: number
   onClick?: () => void
+  playerId?: string
 }
 
 const ROW_LABEL_LIST = [...UPPER_ROWS, 'Tot', ...LOWER_ROWS] as const
@@ -56,6 +57,7 @@ export default function GeneralScoreTable({
       className: `gst-name ${turnMode ? 'gst-name-turn' : ''} ${selectMode ? 'gst-name-select' : ''}`,
       span: 5,
       onClick: onSelectPlayer ? () => onSelectPlayer(p.id) : undefined,
+      playerId: p.id,
     })
     nameRow.push({ text: '', className: 'gst-corner' })
     for (const h of COLUMNS) {
@@ -130,13 +132,20 @@ export default function GeneralScoreTable({
               const style = cell.span ? { gridColumn: `span ${cell.span}` } : undefined
               if (cell.onClick) {
                 return (
-                  <button key={ci} type="button" className={`gst-cell ${cell.className}`} style={style} onClick={cell.onClick}>
+                  <button
+                    key={ci}
+                    type="button"
+                    className={`gst-cell ${cell.className}`}
+                    style={style}
+                    onClick={cell.onClick}
+                    data-player-id={cell.playerId}
+                  >
                     {cell.text}
                   </button>
                 )
               }
               return (
-                <div key={ci} className={`gst-cell ${cell.className}`} style={style}>
+                <div key={ci} className={`gst-cell ${cell.className}`} style={style} data-player-id={cell.playerId}>
                   {cell.text}
                 </div>
               )
