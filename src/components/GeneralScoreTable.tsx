@@ -37,7 +37,7 @@ export default function GeneralScoreTable({
   interactivePlayerId,
   onCellTap,
 }: GeneralScoreTableProps) {
-  const gridTemplateColumns = ['34px', ...players.flatMap(() => ['repeat(5, minmax(0, 1fr))', '34px'])].join(' ')
+  const gridTemplateColumns = ['34px', ...players.flatMap(() => ['repeat(5, minmax(0, 44px))', '34px'])].join(' ')
 
   function isHighlighted(id: string) {
     return highlightedId === id

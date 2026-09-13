@@ -1,7 +1,6 @@
 import { GameProvider, useGame } from './state/GameContext'
 import { useOrientationLock } from './lib/useOrientationLock'
 import StartScreen from './screens/StartScreen'
-import SelectFirstPlayerScreen from './screens/SelectFirstPlayerScreen'
 import PlayerTableScreen from './screens/PlayerTableScreen'
 import GeneralTableScreen from './screens/GeneralTableScreen'
 import GameEndScreen from './screens/GameEndScreen'
@@ -17,8 +16,6 @@ function Router() {
   switch (screen.name) {
     case 'start':
       return <StartScreen />
-    case 'selectFirst':
-      return <SelectFirstPlayerScreen />
     case 'player':
       return <PlayerTableScreen playerId={screen.playerId} />
     case 'general':

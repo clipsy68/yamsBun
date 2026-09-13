@@ -8,7 +8,6 @@ import type { Cell, ColumnKey, FillableRowKey, GameSetup, Player } from '../lib/
 
 export type Screen =
   | { name: 'start' }
-  | { name: 'selectFirst' }
   | { name: 'player'; playerId?: string }
   | { name: 'general' }
   | { name: 'end' }
@@ -32,7 +31,6 @@ interface State {
 type Action =
   | { type: 'NAVIGATE'; screen: Screen }
   | { type: 'START_GAME'; setup: GameSetup }
-  | { type: 'SELECT_FIRST_PLAYER'; index: number }
   | { type: 'SET_CELL'; playerIndex: number; column: ColumnKey; row: FillableRowKey; cell: Cell }
   | { type: 'NEXT_PLAYER' }
   | { type: 'ROLL_DICE' }
@@ -95,18 +93,9 @@ function reducer(state: State, action: Action): State {
         showLiveTotal: action.setup.showLiveTotal,
         activePlayerIndex: 0,
         dice: freshDice(),
-        screen: { name: 'selectFirst' },
+        screen: { name: 'player' },
         turnFilledCell: null,
         startedAt: Date.now(),
-      }
-
-    case 'SELECT_FIRST_PLAYER':
-      return {
-        ...state,
-        activePlayerIndex: action.index,
-        screen: { name: 'player' },
-        dice: freshDice(),
-        turnFilledCell: null,
       }
 
     case 'SET_CELL': {

@@ -9,6 +9,7 @@
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .gst-cell {
@@ -16,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
+  min-height: 44px;
   font-size: 13.5px;
   font-weight: 600;
   color: var(--ink);
