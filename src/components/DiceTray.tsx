@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react'
 import DieFace from './DieFace'
 import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
+
+const ROLL_COOLDOWN_MS = 3000
 
 interface DiceTrayProps {
   dice: DiceState
@@ -9,7 +12,37 @@ interface DiceTrayProps {
 }
 
 export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) {
-  const canRoll = dice.rollsUsed < 3
+  const [cooldownMs, setCooldownMs] = useState(0)
+
+  // After every roll but the first, disable the button for a few seconds so an accidental
+  // tap can't re-roll before the player has had a chance to pick which dice to hold.
+  useEffect(() => {
+    if (dice.rollsUsed === 0) {
+      setCooldownMs(0)
+      return
+    }
+    setCooldownMs(ROLL_COOLDOWN_MS)
+    const start = Date.now()
+    const interval = setInterval(() => {
+      const remaining = ROLL_COOLDOWN_MS - (Date.now() - start)
+      if (remaining <= 0) {
+        setCooldownMs(0)
+        clearInterval(interval)
+      } else {
+        setCooldownMs(remaining)
+      }
+    }, 100)
+    return () => clearInterval(interval)
+  }, [dice.rollsUsed])
+
+  const canRoll = dice.rollsUsed < 3 && cooldownMs <= 0
+  const rollLabel =
+    cooldownMs > 0
+      ? `Selectează zarurile de păstrat... (${Math.ceil(cooldownMs / 1000)})`
+      : dice.rollsUsed === 0
+        ? 'Aruncă zarurile'
+        : `Aruncă din nou (${dice.rollsUsed}/3)`
+
   return (
     <div className="dice-tray">
       <div className="dice-row">
@@ -34,7 +67,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
         ))}
       </div>
       <button type="button" className="roll-btn" onClick={onRoll} disabled={!canRoll}>
-        {dice.rollsUsed === 0 ? 'Aruncă zarurile' : `Aruncă din nou (${dice.rollsUsed}/3)`}
+        {rollLabel}
       </button>
     </div>
   )
