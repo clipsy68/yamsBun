@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DieFace from './DieFace'
 import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
@@ -13,6 +13,10 @@ interface DiceTrayProps {
 
 export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) {
   const [cooldownMs, setCooldownMs] = useState(0)
+  // Gates the click synchronously, independent of React's render timing — the `disabled`
+  // attribute alone doesn't stop a second click fired before the re-render commits (easy to
+  // land with a fast mouse double-click, much less so with a finger tap).
+  const lockedUntilRef = useRef(0)
 
   // After every roll but the first, disable the button for a few seconds so an accidental
   // tap can't re-roll before the player has had a chance to pick which dice to hold.
@@ -43,6 +47,13 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
         ? 'Aruncă zarurile'
         : `Aruncă din nou (${dice.rollsUsed}/3)`
 
+  function handleRollClick() {
+    const now = Date.now()
+    if (now < lockedUntilRef.current || dice.rollsUsed >= 3) return
+    lockedUntilRef.current = now + ROLL_COOLDOWN_MS
+    onRoll()
+  }
+
   return (
     <div className="dice-tray">
       <div className="dice-row">
@@ -66,7 +77,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
           </button>
         ))}
       </div>
-      <button type="button" className="roll-btn" onClick={onRoll} disabled={!canRoll}>
+      <button type="button" className="roll-btn" onClick={handleRollClick} disabled={!canRoll}>
         {rollLabel}
       </button>
     </div>
