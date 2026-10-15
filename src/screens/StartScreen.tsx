@@ -47,7 +47,7 @@ export default function StartScreen() {
   return (
     <div className="start-screen">
       <div className="topbar">
-        <img className="brand-icon" src="/icon.png" alt="Yams Bun" />
+        <img className="brand-icon" src={`${import.meta.env.BASE_URL}icon.png`} alt="Yams Bun" />
         <div className="topbar-actions">
           <button
             className="info-btn"
