@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import DieFace from '../DieFace'
 import { cellPoints } from '../../lib/scoring'
+import { countFace, detectFourKind, detectFullHouse, detectYams, diceSum, type DiceState } from '../../lib/dice'
 import { UPPER_ROWS, type Cell, type ColumnKey, type FillableRowKey } from '../../lib/types'
 import { COLUMN_LABELS } from '../../lib/format'
 import './CellDialog.css'
+
+const CHANCE_MAX = 30
+const CHANCE_MAX_SERVIT = 60
 
 type RowCategory = 'upper' | 'fixed' | 'fullHouse' | 'fourKind' | 'yams' | 'chance'
 
@@ -20,6 +24,10 @@ interface CellDialogProps {
   column: ColumnKey
   row: FillableRowKey
   existingCell: Cell
+  /** Current dice, when playing with zaruri virtuale — used to auto-fill a fresh cell from the roll. */
+  dice?: DiceState
+  /** The other chance row's (m <-> M) sum in this same column, if set — enforces mici < mari. */
+  siblingChanceSum?: number | null
   onConfirm: (cell: Cell) => void
   onCross: () => void
   onClear: () => void
@@ -28,22 +36,57 @@ interface CellDialogProps {
 
 type PickerKey = 'count' | 'triple' | 'pair' | 'single'
 
-export default function CellDialog({ column, row, existingCell, onConfirm, onCross, onClear, onCancel }: CellDialogProps) {
+export default function CellDialog({
+  column,
+  row,
+  existingCell,
+  dice,
+  siblingChanceSum,
+  onConfirm,
+  onCross,
+  onClear,
+  onCancel,
+}: CellDialogProps) {
   const category = rowCategory(row)
   const canClear = existingCell.kind !== 'empty'
   const allowServit = column !== 'S'
+  const chanceMax = column === 'S' ? CHANCE_MAX_SERVIT : CHANCE_MAX
 
-  const [count, setCount] = useState<number | null>(existingCell.kind === 'upper' ? existingCell.count : null)
+  // A fresh (still-empty) cell gets auto-filled from the current dice roll when one matches the
+  // row — e.g. tapping Careu with four 5s showing prefills face 5 directly. Editing an already-set
+  // cell never auto-overwrites it.
+  const isFresh = existingCell.kind === 'empty'
+  const autoFullHouse = isFresh && dice && category === 'fullHouse' ? detectFullHouse(dice) : null
+  const autoFourKind = isFresh && dice && category === 'fourKind' ? detectFourKind(dice) : null
+  const autoYams = isFresh && dice && category === 'yams' ? detectYams(dice) : null
+
+  const [count, setCount] = useState<number | null>(() => {
+    if (existingCell.kind === 'upper') return existingCell.count
+    if (isFresh && dice && category === 'upper') return countFace(dice, Number(row))
+    return null
+  })
   const [servit, setServit] = useState(
     (existingCell.kind === 'fixed' || existingCell.kind === 'fullHouse' || existingCell.kind === 'fourKind' || existingCell.kind === 'yams') &&
       existingCell.servit,
   )
-  const [tripleFace, setTripleFace] = useState<number | null>(existingCell.kind === 'fullHouse' ? existingCell.tripleFace : null)
-  const [pairFace, setPairFace] = useState<number | null>(existingCell.kind === 'fullHouse' ? existingCell.pairFace : null)
-  const [face, setFace] = useState<number | null>(
-    existingCell.kind === 'fourKind' ? existingCell.face : existingCell.kind === 'yams' ? existingCell.face : null,
+  const [tripleFace, setTripleFace] = useState<number | null>(
+    existingCell.kind === 'fullHouse' ? existingCell.tripleFace : (autoFullHouse?.tripleFace ?? null),
   )
-  const [sum, setSum] = useState(existingCell.kind === 'chance' ? String(existingCell.sum) : '')
+  const [pairFace, setPairFace] = useState<number | null>(
+    existingCell.kind === 'fullHouse' ? existingCell.pairFace : (autoFullHouse?.pairFace ?? null),
+  )
+  const [face, setFace] = useState<number | null>(() => {
+    if (existingCell.kind === 'fourKind' || existingCell.kind === 'yams') return existingCell.face
+    return category === 'fourKind' ? autoFourKind : category === 'yams' ? autoYams : null
+  })
+  const [sum, setSum] = useState(() => {
+    if (existingCell.kind === 'chance') return String(existingCell.sum)
+    if (isFresh && dice && category === 'chance') {
+      const base = diceSum(dice)
+      return String(Math.min(column === 'S' ? base * 2 : base, chanceMax))
+    }
+    return ''
+  })
   const [activePicker, setActivePicker] = useState<PickerKey | null>(() => {
     if (category === 'upper' && count === null) return 'count'
     if ((category === 'fourKind' || category === 'yams') && face === null) return 'single'
@@ -54,6 +97,13 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
   useEffect(() => {
     if (category === 'chance') sumInputRef.current?.focus()
   }, [category])
+
+  const siblingLabel = row === 'm' ? 'Mari' : 'Mici'
+  const chanceRuleBroken =
+    category === 'chance' &&
+    siblingChanceSum != null &&
+    sum.trim() !== '' &&
+    (row === 'm' ? Number(sum) >= siblingChanceSum : Number(sum) <= siblingChanceSum)
 
   function buildCell(): Cell | null {
     switch (category) {
@@ -76,7 +126,7 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
 
   const previewCell = buildCell()
   const score = previewCell ? cellPoints(previewCell, row, column) : 0
-  const canConfirm = previewCell !== null
+  const canConfirm = previewCell !== null && !chanceRuleBroken
 
   function handlePick(n: number) {
     switch (activePicker) {
@@ -200,8 +250,19 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
               className="cd-number-input"
               type="number"
               inputMode="numeric"
+              max={chanceMax}
+              min={0}
               value={sum}
-              onChange={(e) => setSum(e.target.value)}
+              onChange={(e) => {
+                const raw = e.target.value
+                if (raw === '') {
+                  setSum('')
+                  return
+                }
+                const n = Number(raw)
+                if (Number.isNaN(n)) return
+                setSum(String(Math.max(0, Math.min(n, chanceMax))))
+              }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault()
@@ -210,6 +271,12 @@ export default function CellDialog({ column, row, existingCell, onConfirm, onCro
               }}
               placeholder="0"
             />
+            {chanceRuleBroken && (
+              <div className="cd-warning">
+                {row === 'm' ? 'Mici' : 'Mari'} trebuie să fie {row === 'm' ? 'mai mic' : 'mai mare'} decât {siblingLabel} (
+                {siblingChanceSum} p)
+              </div>
+            )}
           </div>
         )}
 

@@ -1,28 +1,30 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import GeneralScoreTable from '../components/GeneralScoreTable'
+import DiceTray from '../components/DiceTray'
 import ConfirmDialog from '../components/dialogs/ConfirmDialog'
 import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
-import { emptyCell, isRowUnlocked, playerGrandTotal } from '../lib/scoring'
+import { emptyCell, isRowUnlocked, playerGrandTotal, siblingChanceSum } from '../lib/scoring'
 import { useToast } from '../lib/useToast'
 import { useElapsedTime } from '../lib/useElapsedTime'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './GeneralTableScreen.css'
 
 export default function GeneralTableScreen() {
-  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, dispatch } = useGame()
+  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, gameType, dice, dispatch } = useGame()
   const elapsed = useElapsedTime(startedAt)
   const active = players[activePlayerIndex]
   const [confirmingQuit, setConfirmingQuit] = useState(false)
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const { toast, showToast } = useToast()
   const tableWrapRef = useRef<HTMLDivElement>(null)
+  const diceTrayRef = useRef<HTMLDivElement>(null)
   const [floatCenterX, setFloatCenterX] = useState<number | null>(null)
 
   useLayoutEffect(() => {
-    const wrap = tableWrapRef.current
-    if (!wrap) return
-    const y = wrap.getBoundingClientRect().top + window.scrollY
+    const target = diceTrayRef.current || tableWrapRef.current
+    if (!target) return
+    const y = target.getBoundingClientRect().top + window.scrollY
     window.scrollTo({ top: y })
   }, [])
 
@@ -114,6 +116,16 @@ export default function GeneralTableScreen() {
         </button>
       </div>
 
+      {gameType === 'virtual' && active && (
+        <div className="gts-dice-wrap" ref={diceTrayRef}>
+          <DiceTray
+            dice={dice}
+            onRoll={() => dispatch({ type: 'ROLL_DICE' })}
+            onToggleHold={(i) => dispatch({ type: 'TOGGLE_HOLD', index: i })}
+          />
+        </div>
+      )}
+
       <div className="gts-table-wrap" ref={tableWrapRef}>
         <GeneralScoreTable
           players={players}
@@ -155,6 +167,8 @@ export default function GeneralTableScreen() {
           column={open.column}
           row={open.row}
           existingCell={active.table[open.column][open.row]}
+          dice={gameType === 'virtual' ? dice : undefined}
+          siblingChanceSum={siblingChanceSum(active.table, open.column, open.row)}
           onConfirm={(cell) => commit(cell)}
           onCross={() => commit({ kind: 'crossed' })}
           onClear={() => commit(emptyCell())}

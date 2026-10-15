@@ -4,6 +4,7 @@ import {
   isRowUnlocked,
   lowerColumnTotal,
   playerGrandTotal,
+  siblingChanceSum,
   upperColumnStatus,
 } from '../scoring'
 import type { Cell } from '../types'
@@ -127,6 +128,24 @@ describe('cellPoints — chance (m/M)', () => {
     table.U.m = { kind: 'chance', sum: 14 }
     table.U.M = { kind: 'chance', sum: 21 }
     expect(lowerColumnTotal(table, 'U')).toBe(35)
+  })
+})
+
+describe('siblingChanceSum', () => {
+  it('returns null for non-chance rows and when the sibling is unset', () => {
+    const table = createEmptyTable()
+    expect(siblingChanceSum(table, 'L', 'F')).toBeNull()
+    expect(siblingChanceSum(table, 'L', 'm')).toBeNull()
+  })
+
+  it("returns the other chance row's sum within the same column", () => {
+    const table = createEmptyTable()
+    table.L.M = { kind: 'chance', sum: 21 }
+    expect(siblingChanceSum(table, 'L', 'm')).toBe(21)
+    table.D.m = { kind: 'chance', sum: 14 }
+    expect(siblingChanceSum(table, 'D', 'M')).toBe(14)
+    // a different column's values don't leak in
+    expect(siblingChanceSum(table, 'D', 'm')).toBeNull()
   })
 })
 

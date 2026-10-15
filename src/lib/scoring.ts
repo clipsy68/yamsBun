@@ -150,6 +150,13 @@ export function playerGrandTotal(table: PlayerTable): number {
   return total
 }
 
+/** The sum entered for the other chance row (m <-> M) in the same column, if any — used to enforce mici < mari. */
+export function siblingChanceSum(table: PlayerTable, column: ColumnKey, row: FillableRowKey): number | null {
+  if (row !== 'm' && row !== 'M') return null
+  const sibling = table[column][row === 'm' ? 'M' : 'm']
+  return sibling.kind === 'chance' ? sibling.sum : null
+}
+
 export function isTableComplete(table: PlayerTable): boolean {
   return COLUMNS.every((column) => ALL_ROWS.every((row) => table[column][row].kind !== 'empty'))
 }

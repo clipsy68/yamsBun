@@ -29,3 +29,42 @@ export function toggleHold(state: DiceState, index: number): DiceState {
 export function countFace(state: DiceState, face: number): number {
   return state.faces.filter((f) => f === face).length
 }
+
+/** Sum of all 5 dice — used to prefill the m/M (chance) sum. */
+export function diceSum(state: DiceState): number {
+  return state.faces.reduce((a, b) => a + b, 0)
+}
+
+function faceCounts(state: DiceState): Map<number, number> {
+  const counts = new Map<number, number>()
+  for (const f of state.faces) counts.set(f, (counts.get(f) ?? 0) + 1)
+  return counts
+}
+
+/** Detects a full house (exactly 3 of one face + 2 of another) in the current dice, if present. */
+export function detectFullHouse(state: DiceState): { tripleFace: number; pairFace: number } | null {
+  const counts = faceCounts(state)
+  let tripleFace: number | null = null
+  let pairFace: number | null = null
+  for (const [face, count] of counts) {
+    if (count === 3) tripleFace = face
+    if (count === 2) pairFace = face
+  }
+  return tripleFace !== null && pairFace !== null ? { tripleFace, pairFace } : null
+}
+
+/** Detects a face with at least 4 of a kind in the current dice, if present. */
+export function detectFourKind(state: DiceState): number | null {
+  for (const [face, count] of faceCounts(state)) {
+    if (count >= 4) return face
+  }
+  return null
+}
+
+/** Detects a face with all 5 dice matching (Yams) in the current dice, if present. */
+export function detectYams(state: DiceState): number | null {
+  for (const [face, count] of faceCounts(state)) {
+    if (count === 5) return face
+  }
+  return null
+}

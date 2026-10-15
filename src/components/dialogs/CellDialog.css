@@ -223,6 +223,12 @@
   color: var(--navy);
 }
 
+.cd-warning {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #c23b3b;
+}
+
 .cd-score-line {
   display: flex;
   align-items: center;

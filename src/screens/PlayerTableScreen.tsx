@@ -3,7 +3,7 @@ import ScoreTable from '../components/ScoreTable'
 import DiceTray from '../components/DiceTray'
 import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
-import { emptyCell, isRowUnlocked, playerGrandTotal } from '../lib/scoring'
+import { emptyCell, isRowUnlocked, playerGrandTotal, siblingChanceSum } from '../lib/scoring'
 import { useToast } from '../lib/useToast'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './PlayerTableScreen.css'
@@ -137,6 +137,8 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
           column={open.column}
           row={open.row}
           existingCell={player.table[open.column][open.row]}
+          dice={gameType === 'virtual' ? dice : undefined}
+          siblingChanceSum={siblingChanceSum(player.table, open.column, open.row)}
           onConfirm={(cell) => commit(cell)}
           onCross={() => commit({ kind: 'crossed' })}
           onClear={() => commit(emptyCell())}
