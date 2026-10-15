@@ -120,6 +120,25 @@
   transition: left 0.15s ease-out;
 }
 
+/* Wide viewports (laptop/desktop browsers): the mobile layout (edge-to-edge topbar, a next-player
+   button fixed to the physical viewport bottom) reads as broken on a much larger, taller window —
+   the button ends up far below the table and everything else is stretched thin and off-center.
+   Collapse into a centered, content-width "card" instead, with the button back in normal flow. */
+@media (min-width: 820px) {
+  html:not(.native-app) .gts-screen {
+    max-width: 720px;
+    margin: 0 auto;
+    justify-content: center;
+  }
+
+  html:not(.native-app) .gts-next-float {
+    position: static;
+    align-self: center;
+    transform: none;
+    margin-top: 4px;
+  }
+}
+
 .gts-toast {
   position: fixed;
   left: 50%;

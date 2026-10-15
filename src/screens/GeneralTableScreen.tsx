@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
 import GeneralScoreTable from '../components/GeneralScoreTable'
 import DiceTray from '../components/DiceTray'
 import ConfirmDialog from '../components/dialogs/ConfirmDialog'
@@ -9,6 +10,11 @@ import { useToast } from '../lib/useToast'
 import { useElapsedTime } from '../lib/useElapsedTime'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './GeneralTableScreen.css'
+
+// Keep in sync with the `@media (min-width: ...)` breakpoint in GeneralTableScreen.css and
+// GeneralScoreTable.css — past it the "next player" button sits in normal flow (CSS handles
+// position/centering) instead of floating at a JS-computed x over the active player's column.
+const DESKTOP_BREAKPOINT = '(min-width: 820px)'
 
 export default function GeneralTableScreen() {
   const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, gameType, dice, dispatch } = useGame()
@@ -34,6 +40,10 @@ export default function GeneralTableScreen() {
       return
     }
     function updatePosition() {
+      if (!Capacitor.isNativePlatform() && window.matchMedia(DESKTOP_BREAKPOINT).matches) {
+        setFloatCenterX(null)
+        return
+      }
       const wrap = tableWrapRef.current
       const nameCell = wrap?.querySelector(`[data-player-id="${active!.id}"].gst-name`)
       if (!nameCell) return

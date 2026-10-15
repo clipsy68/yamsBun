@@ -52,7 +52,10 @@ export default function GeneralScoreTable({
   onCellTap,
   onCellLongPress,
 }: GeneralScoreTableProps) {
-  const gridTemplateColumns = ['34px', ...players.flatMap(() => ['repeat(5, minmax(0, 44px))', '34px'])].join(' ')
+  const gridTemplateColumns = [
+    '34px',
+    ...players.flatMap(() => ['repeat(5, minmax(0, var(--gst-cell-max, 44px)))', '34px']),
+  ].join(' ')
 
   function isHighlighted(id: string) {
     return highlightedId === id

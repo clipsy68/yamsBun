@@ -1,5 +1,6 @@
 .gst-wrap {
   width: 100%;
+  --gst-cell-max: 44px;
 }
 
 .gst-grid {
@@ -28,6 +29,19 @@
   border: 0;
   font-family: inherit;
   text-align: center;
+}
+
+/* Wide viewports (laptop/desktop browsers): let cells grow past the mobile-tuned cap instead
+   of staying pinned to a tiny fixed size in a sea of empty space. */
+@media (min-width: 820px) {
+  html:not(.native-app) .gst-wrap {
+    --gst-cell-max: 64px;
+  }
+
+  html:not(.native-app) .gst-cell {
+    min-height: 54px;
+    font-size: 15px;
+  }
 }
 
 .gst-corner {
