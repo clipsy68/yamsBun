@@ -121,8 +121,14 @@ export default function GeneralTableScreen() {
         </button>
         <div className="gts-title">Tabel general</div>
         {elapsed && <div className="gts-timer">{elapsed}</div>}
+        <button
+          className="gts-rules-btn"
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'rules', from: { name: 'general' } } })}
+        >
+          Reguli
+        </button>
         <button className="gts-quit-btn" onClick={() => setConfirmingQuit(true)}>
-          Renunță la joc
+          Renunță
         </button>
       </div>
 

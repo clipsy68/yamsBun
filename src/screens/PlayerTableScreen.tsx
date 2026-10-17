@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ScoreTable from '../components/ScoreTable'
 import DiceTray from '../components/DiceTray'
 import CellDialog from '../components/dialogs/CellDialog'
+import ConfirmDialog from '../components/dialogs/ConfirmDialog'
 import { useGame } from '../state/GameContext'
 import { emptyCell, isRowUnlocked, playerGrandTotal, siblingChanceSum } from '../lib/scoring'
 import { useToast } from '../lib/useToast'
@@ -15,6 +16,7 @@ interface PlayerTableScreenProps {
 export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) {
   const { players, activePlayerIndex, gameType, dice, turnFilledCell, showLiveTotal, dispatch } = useGame()
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
+  const [confirmingQuit, setConfirmingQuit] = useState(false)
   const { toast, showToast } = useToast()
 
   const activePlayer = players[activePlayerIndex]
@@ -80,12 +82,17 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
           </svg>
           Tabel general
         </button>
-        <div className="pts-topbar-info pts-slide-in" key={`info-${player.id}`}>
-          <div className="pts-player-name">{player.name}</div>
-          <div className="pts-round-tag">
-            Jucător {players.findIndex((p) => p.id === player.id) + 1} din {players.length}
+        <div className="pts-topbar-right">
+          <div className="pts-topbar-info pts-slide-in" key={`info-${player.id}`}>
+            <div className="pts-player-name">{player.name}</div>
+            <div className="pts-round-tag">
+              Jucător {players.findIndex((p) => p.id === player.id) + 1} din {players.length}
+            </div>
+            {!isActive && <div className="pts-view-only">Doar vizualizare</div>}
           </div>
-          {!isActive && <div className="pts-view-only">Doar vizualizare</div>}
+          <button className="pts-quit-btn" onClick={() => setConfirmingQuit(true)}>
+            Renunță
+          </button>
         </div>
       </div>
 
@@ -147,6 +154,16 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
       )}
 
       {toast && <div className="pts-toast">{toast}</div>}
+
+      {confirmingQuit && (
+        <ConfirmDialog
+          title="Renunți la joc?"
+          message="Tot progresul din runda curentă se pierde și nu se salvează nimic în istoric."
+          confirmLabel="Renunță la joc"
+          onConfirm={() => dispatch({ type: 'QUIT_GAME' })}
+          onCancel={() => setConfirmingQuit(false)}
+        />
+      )}
     </div>
   )
 }
