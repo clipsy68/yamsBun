@@ -26,6 +26,7 @@
   align-items: center;
   justify-content: center;
   min-height: 44px;
+  min-width: 0;
   font-size: 13.5px;
   font-weight: 600;
   color: var(--ink);
@@ -34,6 +35,9 @@
   border: 0;
   font-family: inherit;
   text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* Wide viewports (laptop/desktop browsers): let cells grow past the mobile-tuned cap instead
