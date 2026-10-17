@@ -42,6 +42,8 @@
   flex-direction: column;
   gap: 22px;
   max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .rs-content section {

@@ -5,8 +5,13 @@
 
 .gst-grid {
   display: grid;
+  /* fit-content alone (no max-width:100%) lets grid tracks compress gracefully down toward their
+     minmax(28px, ...) floor (see GeneralScoreTable.tsx) when space is merely tight, same as before
+     — but once even that floor can't fit everyone, the grid overflows its wrapper rather than being
+     force-capped below the floor, so an ancestor with overflow-x:auto can scroll it instead of
+     cells shrinking toward unreadable. max-width:100% defeated exactly that: it hard-capped the box
+     even below min-content, forcing tracks under their stated floor to comply. */
   width: fit-content;
-  max-width: 100%;
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);

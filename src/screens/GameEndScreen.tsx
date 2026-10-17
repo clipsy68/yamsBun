@@ -22,7 +22,9 @@ export default function GameEndScreen() {
 
       <div className="ge-content">
         <div className="ge-page">
-          <GeneralScoreTable players={players} highlightedId={undefined} />
+          <div className="ge-table-wrap">
+            <GeneralScoreTable players={players} highlightedId={undefined} />
+          </div>
 
           <div className="ge-totals-row">
             {ranked.map((p) => (

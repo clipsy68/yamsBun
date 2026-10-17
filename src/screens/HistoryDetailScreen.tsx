@@ -53,7 +53,9 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
 
       <div className="ge-content">
         <div className="ge-page">
-          <GeneralScoreTable players={players} />
+          <div className="ge-table-wrap">
+            <GeneralScoreTable players={players} />
+          </div>
 
           <div className="ge-totals-row">
             {entry.players.map((p) => (

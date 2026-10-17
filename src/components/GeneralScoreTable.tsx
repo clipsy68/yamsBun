@@ -52,9 +52,13 @@ export default function GeneralScoreTable({
   onCellTap,
   onCellLongPress,
 }: GeneralScoreTableProps) {
+  // minmax floor keeps cells legible once there isn't room for everyone at --gst-cell-max — below
+  // that point the grid overflows its max-width (see .gst-grid) instead of shrinking cells toward
+  // unreadable, so an ancestor with overflow-x can scroll it (GameEndScreen/HistoryDetailScreen's
+  // .ge-table-wrap, GeneralTableScreen's .gts-table-wrap).
   const gridTemplateColumns = [
     '34px',
-    ...players.flatMap(() => ['repeat(5, minmax(0, var(--gst-cell-max, 44px)))', '34px']),
+    ...players.flatMap(() => ['repeat(5, minmax(28px, var(--gst-cell-max, 44px)))', '34px']),
   ].join(' ')
 
   function isHighlighted(id: string) {

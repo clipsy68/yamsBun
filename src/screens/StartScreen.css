@@ -8,6 +8,16 @@
   gap: 26px;
 }
 
+/* Wide viewports (laptop/desktop browsers): the mobile-tuned single column reads as oversized and
+   sparse stretched edge-to-edge — center it at a reading width instead, same pattern as the general
+   table screen's breakpoint (see GeneralTableScreen.css), excluded from the native app. */
+@media (min-width: 820px) {
+  html:not(.native-app) .start-screen {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
 .topbar {
   display: flex;
   align-items: center;

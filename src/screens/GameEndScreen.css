@@ -62,6 +62,13 @@
   gap: 18px;
 }
 
+/* GeneralScoreTable has no built-in horizontal scroll of its own (GeneralTableScreen provides its
+   own wrapper for that) — without one here, many players on a narrow phone just silently shrink
+   the cells toward unreadable instead of scrolling. */
+.ge-table-wrap {
+  overflow-x: auto;
+}
+
 .ge-totals-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

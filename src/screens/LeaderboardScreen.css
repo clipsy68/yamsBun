@@ -9,6 +9,16 @@
   gap: 18px;
 }
 
+/* Wide viewports (laptop/desktop browsers): center the single-column list at a reading width
+   instead of stretching it edge-to-edge — same pattern as the general table screen's breakpoint
+   (see GeneralTableScreen.css), excluded from the native app. */
+@media (min-width: 820px) {
+  html:not(.native-app) .lb-screen {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
 .lb-topbar {
   display: flex;
   align-items: center;
@@ -79,6 +89,9 @@
 .lb-name {
   font-size: 14.5px;
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lb-stats {
