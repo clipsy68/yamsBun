@@ -5,15 +5,78 @@ import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
 
 const ROLL_COOLDOWN_MS = 2000
-const FLICKER_DURATION_MS = 700
-const FLICKER_TICK_MS = 65
+const ROLL_ANIM_MS = 1000
 
-function randomFaceExcluding(exclude: number): number {
-  let f: number
-  do {
-    f = 1 + Math.floor(Math.random() * 6)
-  } while (f === exclude)
-  return f
+// Each physical cube face always shows the same pip value (front=1, back=6, right=2, left=5,
+// top=3, bottom=4) — only the cube's rotation changes between rolls. Rotating to REST_ROTATION[v]
+// brings the face printed with value v square to the viewer; verified empirically against this
+// exact face assignment before shipping (rotateX(0) rotateY(0) -> front=1, rotateY(180) -> 6, etc).
+const CUBE_FACES: { cls: string; value: number }[] = [
+  { cls: 'f-front', value: 1 },
+  { cls: 'f-back', value: 6 },
+  { cls: 'f-right', value: 2 },
+  { cls: 'f-left', value: 5 },
+  { cls: 'f-top', value: 3 },
+  { cls: 'f-bottom', value: 4 },
+]
+
+const REST_ROTATION: Record<number, { x: number; y: number }> = {
+  1: { x: 0, y: 0 },
+  2: { x: 0, y: -90 },
+  3: { x: -90, y: 0 },
+  4: { x: 90, y: 0 },
+  5: { x: 0, y: 90 },
+  6: { x: 0, y: 180 },
+}
+
+function randomSign(): 1 | -1 {
+  return Math.random() < 0.5 ? 1 : -1
+}
+
+// --- Procedural dice-clatter sound (Web Audio, synthesized — no audio asset to ship/license) ---
+let audioCtx: AudioContext | null = null
+
+function getAudioCtx(): AudioContext | null {
+  if (typeof window === 'undefined') return null
+  const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  if (!Ctor) return null
+  if (!audioCtx) audioCtx = new Ctor()
+  if (audioCtx.state === 'suspended') void audioCtx.resume()
+  return audioCtx
+}
+
+function playClack(ctx: AudioContext, time: number, freq: number, q: number, decay: number, gain: number) {
+  const dur = decay * 3 + 0.02
+  const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * dur)), ctx.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+  const noise = ctx.createBufferSource()
+  noise.buffer = buffer
+  const filter = ctx.createBiquadFilter()
+  filter.type = 'bandpass'
+  filter.frequency.value = freq
+  filter.Q.value = q
+  const g = ctx.createGain()
+  g.gain.setValueAtTime(0.0001, time)
+  g.gain.exponentialRampToValueAtTime(Math.max(gain, 0.001), time + 0.002)
+  g.gain.exponentialRampToValueAtTime(0.0001, time + decay)
+  noise.connect(filter).connect(g).connect(ctx.destination)
+  noise.start(time)
+  noise.stop(time + dur)
+}
+
+/** A dense cluster of small clacks that thins out and fades — like a handful of dice tumbling
+ * together and settling on a table. */
+function playDiceRollSound() {
+  const ctx = getAudioCtx()
+  if (!ctx) return
+  const now = ctx.currentTime + 0.01
+  let t = 0
+  for (let i = 0; i < 13; i++) {
+    const progress = i / 13
+    t += 0.02 + progress * 0.09
+    playClack(ctx, now + t, 700 + Math.random() * 900, 1 + Math.random() * 1.5, 0.015 + Math.random() * 0.02, 0.4 * (1 - progress) + 0.06)
+  }
 }
 
 interface DiceTrayProps {
@@ -30,64 +93,54 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
   // land with a fast mouse double-click, much less so with a finger tap).
   const lockedUntilRef = useRef(0)
 
-  // Roll animation: while "rolling", each unheld die flickers through random faces at a steady
-  // pace with a shared tilt wobble that decays to flat — not a 3D flip, so nothing ever rotates
-  // out of view. displayFaces is what's actually rendered; dice.faces (the real result) only
-  // becomes visible once the flicker settles.
-  const [displayFaces, setDisplayFaces] = useState(dice.faces)
-  const [wobbleDeg, setWobbleDeg] = useState(0)
+  // Roll animation: real 3D cubes rotated via CSS transitions set directly on the DOM (imperative,
+  // not React state) so the browser interpolates the spin itself — no rAF polling needed. Each
+  // roll targets the exact resting rotation for the real result, plus a few random extra full
+  // turns purely for visual spin; the transition always lands exactly on the correct face.
+  const cubeRefs = useRef<(HTMLDivElement | null)[]>([])
+  const hopRefs = useRef<(HTMLDivElement | null)[]>([])
   const prevRollsUsedRef = useRef(dice.rollsUsed)
-  const rafRef = useRef<number | null>(null)
-  // Always-current refs so the running rAF loop reacts to a hold toggled mid-flicker (freezing
-  // that die from the next tick on) instead of restarting — the effect below intentionally only
-  // keys on rollsUsed, not on dice.held/dice.faces, to avoid aborting an in-flight animation.
-  const heldRef = useRef(dice.held)
-  const facesRef = useRef(dice.faces)
-  heldRef.current = dice.held
-  facesRef.current = dice.faces
 
   useEffect(() => {
     const prevRollsUsed = prevRollsUsedRef.current
     prevRollsUsedRef.current = dice.rollsUsed
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Fresh turn, or a re-render that isn't an actual new roll — snap to the real faces, no flicker.
+    // Fresh turn, mount, or a re-render that isn't an actual new roll — snap every cube straight
+    // to the real face, no transition.
     if (dice.rollsUsed === 0 || dice.rollsUsed <= prevRollsUsed) {
-      setDisplayFaces(dice.faces)
-      setWobbleDeg(0)
-      rafRef.current = null
-      return
-    }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setDisplayFaces(dice.faces)
-      setWobbleDeg(0)
-      rafRef.current = null
+      dice.faces.forEach((face, i) => {
+        const cube = cubeRefs.current[i]
+        if (!cube) return
+        const rest = REST_ROTATION[face]
+        cube.style.transition = 'none'
+        cube.style.transform = `rotateX(${rest.x}deg) rotateY(${rest.y}deg)`
+      })
       return
     }
 
-    const start = performance.now()
-    let lastTick = 0
-    const frame = (now: number) => {
-      const elapsed = now - start
-      if (elapsed - lastTick >= FLICKER_TICK_MS && elapsed < FLICKER_DURATION_MS) {
-        lastTick = elapsed
-        const amp = 10 * (1 - elapsed / FLICKER_DURATION_MS)
-        setWobbleDeg(Math.sin(elapsed / 55) * amp)
-        setDisplayFaces((prev) => prev.map((f, i) => (heldRef.current[i] ? facesRef.current[i] : randomFaceExcluding(f))))
+    dice.faces.forEach((face, i) => {
+      if (dice.held[i]) return // frozen — leave its current rotation untouched
+      const cube = cubeRefs.current[i]
+      const hop = hopRefs.current[i]
+      if (!cube) return
+      const rest = REST_ROTATION[face]
+      if (reduceMotion) {
+        cube.style.transition = 'none'
+        cube.style.transform = `rotateX(${rest.x}deg) rotateY(${rest.y}deg)`
+        return
       }
-      if (elapsed < FLICKER_DURATION_MS) {
-        rafRef.current = requestAnimationFrame(frame)
-      } else {
-        setDisplayFaces(facesRef.current)
-        setWobbleDeg(0)
-        rafRef.current = null
+      const targetX = rest.x + 360 * randomSign()
+      const targetY = rest.y + 360 * 3 * randomSign()
+      cube.style.transition = `transform ${ROLL_ANIM_MS}ms cubic-bezier(.22,1,.36,1)`
+      void cube.offsetWidth
+      cube.style.transform = `rotateX(${targetX}deg) rotateY(${targetY}deg)`
+      if (hop) {
+        hop.classList.remove('rolling')
+        void hop.offsetWidth
+        hop.classList.add('rolling')
       }
-    }
-    rafRef.current = requestAnimationFrame(frame)
-
-    return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
-    }
+    })
   }, [dice.rollsUsed])
 
   // After every roll but the first, disable the button for a few seconds so an accidental
@@ -128,13 +181,16 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
     const now = Date.now()
     if (now < lockedUntilRef.current || dice.rollsUsed >= 3) return
     lockedUntilRef.current = now + ROLL_COOLDOWN_MS
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && (dice.rollsUsed === 0 || dice.held.some((h) => !h))) {
+      playDiceRollSound()
+    }
     onRoll()
   }
 
   return (
     <div className="dice-tray">
       <div className="dice-row">
-        {displayFaces.map((face, i) => (
+        {dice.faces.map((_, i) => (
           <button
             key={i}
             type="button"
@@ -142,8 +198,14 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
             onClick={() => onToggleHold(i)}
             disabled={dice.rollsUsed === 0}
           >
-            <span className="die-face" style={dice.held[i] ? undefined : { transform: `rotate(${wobbleDeg}deg)` }}>
-              <DieFace face={face} size={40} pipColor="var(--navy)" />
+            <span className="die3d-hop" ref={(el) => { hopRefs.current[i] = el }}>
+              <span className="die3d-cube" ref={(el) => { cubeRefs.current[i] = el }}>
+                {CUBE_FACES.map(({ cls, value }) => (
+                  <span key={cls} className={`die3d-face ${cls}`}>
+                    <DieFace face={value} size={40} pipColor="var(--navy)" />
+                  </span>
+                ))}
+              </span>
             </span>
             {dice.held[i] && (
               <span className="hold-badge">

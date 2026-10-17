@@ -22,6 +22,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 340px;
 }
 
 .die-wrap.held {
@@ -29,11 +30,78 @@
   border-width: 2.5px;
 }
 
-/* The roll "animation" is JS-driven (DiceTray.tsx flickers displayFaces through random values
-   and recomputes this wobble each tick) rather than a CSS @keyframes — there's nothing to declare
-   here beyond the layout; the inline `transform: rotate(...)` is set directly on this element. */
-.die-face {
+/* A real 3D cube: six faces, each always printed with the same pip value (front=1, back=6,
+   right=2, left=5, top=3, bottom=4) — rolling only ever changes the cube's rotation (set
+   imperatively from DiceTray.tsx via a CSS transition), never which face shows which value. */
+.die3d-hop {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.die3d-cube {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+}
+
+.die3d-face {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  border-radius: 10px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+
+.f-front {
+  transform: translateZ(27px);
+}
+.f-back {
+  transform: rotateY(180deg) translateZ(27px);
+}
+.f-right {
+  transform: rotateY(90deg) translateZ(27px);
+}
+.f-left {
+  transform: rotateY(-90deg) translateZ(27px);
+}
+.f-top {
+  transform: rotateX(90deg) translateZ(27px);
+}
+.f-bottom {
+  transform: rotateX(-90deg) translateZ(27px);
+}
+
+/* A small sideways shift-and-return, synced to the cube's 1s roll transition — reads like the
+   die is rolling across a table rather than spinning in place. */
+@keyframes die-roll-shift {
+  0% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(8px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.die3d-hop.rolling {
+  animation: die-roll-shift 1000ms cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .die3d-cube,
+  .die3d-hop {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 .hold-badge {
