@@ -61,16 +61,23 @@ export default function CellDialog({
   const allowServit = column !== 'S'
   const chanceMax = column === 'S' ? CHANCE_MAX_SERVIT : CHANCE_MAX
 
-  // Playing with zaruri virtuale: "servit" (first-throw) status is only honest when the dice were
-  // rolled exactly once this turn — a second or third roll means it can no longer be claimed, either
-  // as the whole coloana Servit (column S) or as the +10 checkbox on q/Q/F/K/Y in other columns.
-  const servitLocked = !!dice && dice.rollsUsed > 1
-  const columnSBlocked = column === 'S' && servitLocked
-
   // A fresh (still-empty) cell gets auto-filled from the current dice roll when one matches the
   // row — e.g. tapping Careu with four 5s showing prefills face 5 directly. Editing an already-set
   // cell never auto-overwrites it.
   const isFresh = existingCell.kind === 'empty'
+
+  // Playing with zaruri virtuale: "servit" (first-throw) status is only honest when the dice were
+  // rolled exactly once this turn — a second or third roll means it can no longer be claimed on a
+  // FRESH cell, either as the whole coloana Servit (column S) or as the +10 checkbox elsewhere.
+  // Gated on isFresh: an already-confirmed cell's servit status was decided (and validated) at the
+  // moment it was first saved, and re-rolling afterward (nothing stops that) must not retroactively
+  // re-judge it — the checkbox is instead frozen (see servitDisabled) rather than re-evaluated live.
+  const servitLocked = !!dice && isFresh && dice.rollsUsed > 1
+  const columnSBlocked = column === 'S' && servitLocked
+  // Editing an already-confirmed cell never lets the servit bonus be toggled at all — only a fresh
+  // fill reacts to the current roll count.
+  const servitDisabled = servitLocked || (!!dice && !isFresh)
+
   const autoFullHouse = isFresh && dice && category === 'fullHouse' ? detectFullHouse(dice) : null
   const autoFourKind = isFresh && dice && category === 'fourKind' ? detectFourKind(dice) : null
   const autoYams = isFresh && dice && category === 'yams' ? detectYams(dice) : null
@@ -109,11 +116,19 @@ export default function CellDialog({
   })
   const sumInputRef = useRef<HTMLInputElement>(null)
 
-  // Playing with zaruri virtuale: m/M is always exactly the current roll's sum (doubled on S) —
-  // no free-form entry, so there's nothing to type and no keyboard to open. Only the zaruri fizice
-  // game (no `dice`) still needs the editable number input, since there the dice aren't tracked.
+  // Playing with zaruri virtuale: m/M is always exactly the roll's sum (doubled on S) — no free-form
+  // entry, so there's nothing to type and no keyboard to open. A fresh cell reads the CURRENT roll;
+  // an already-confirmed cell keeps showing its stored sum even if the dice were rolled again since
+  // (rolling again doesn't change what was already saved — it must not silently recompute it either).
+  // Only zaruri fizice (no `dice`) still needs the editable number input, since there's no roll to read.
   const diceChanceValue =
-    dice && category === 'chance' ? Math.min(column === 'S' ? diceSum(dice) * 2 : diceSum(dice), chanceMax) : null
+    dice && category === 'chance'
+      ? isFresh
+        ? Math.min(column === 'S' ? diceSum(dice) * 2 : diceSum(dice), chanceMax)
+        : existingCell.kind === 'chance'
+          ? existingCell.sum
+          : 0
+      : null
 
   useEffect(() => {
     if (category === 'chance' && diceChanceValue === null) sumInputRef.current?.focus()
@@ -147,10 +162,13 @@ export default function CellDialog({
     }
   }
 
-  // Playing with zaruri virtuale: q/Q/F/K/Y can only be confirmed when the actual current roll
+  // Playing with zaruri virtuale: q/Q/F/K/Y can only be confirmed FRESH when the actual current roll
   // satisfies that combination — otherwise the dialog previously let a player cross-check nothing
   // and just confirm any pattern by hand (e.g. picking a Full House face pair that isn't on the
   // table). Chance (m/M) and upper rows have no dice-dependent requirement, so they're left alone.
+  // Gated on isFresh: an already-confirmed cell's combination was already validated against the roll
+  // that produced it — re-checking it against whatever the dice show NOW (they can keep being rolled
+  // after a cell is filled) would falsely flag a valid save as invalid the moment the roll changes.
   const DICE_CRITERIA_LABEL: Record<Exclude<RowCategory, 'upper' | 'chance'>, string> = {
     fixed: row === 'q' ? 'Chintă mică' : 'Chintă mare',
     fullHouse: 'Full',
@@ -158,7 +176,7 @@ export default function CellDialog({
     yams: 'Yams',
   }
   const diceCriteriaMet =
-    !dice || category === 'upper' || category === 'chance'
+    !dice || category === 'upper' || category === 'chance' || !isFresh
       ? true
       : category === 'fixed'
         ? row === 'q'
@@ -273,7 +291,7 @@ export default function CellDialog({
         {category === 'fourKind' && <DiceSlots n={4} value={face} onTap={() => setActivePicker('single')} />}
         {category === 'yams' && <DiceSlots n={5} value={face} onTap={() => setActivePicker('single')} />}
 
-        {dice && !diceCriteriaMet && category !== 'upper' && category !== 'chance' && (
+        {dice && isFresh && !diceCriteriaMet && category !== 'upper' && category !== 'chance' && (
           <div className="cd-warning">
             Nu puteți completa această căsuță deoarece nu îndepliniți criteriile pentru {DICE_CRITERIA_LABEL[category]}
           </div>
@@ -286,13 +304,13 @@ export default function CellDialog({
         )}
 
         {(category === 'fixed' || category === 'fullHouse' || category === 'fourKind' || category === 'yams') && allowServit && (
-          <label className={`cd-servit-row ${servitLocked ? 'cd-servit-row-disabled' : ''}`}>
+          <label className={`cd-servit-row ${servitDisabled ? 'cd-servit-row-disabled' : ''}`}>
             <button
               type="button"
-              className={`cd-servit-check ${servit && !servitLocked ? 'checked' : ''}`}
-              onClick={() => !servitLocked && setServit((v) => !v)}
-              aria-pressed={servit && !servitLocked}
-              disabled={servitLocked}
+              className={`cd-servit-check ${servit ? 'checked' : ''}`}
+              onClick={() => !servitDisabled && setServit((v) => !v)}
+              aria-pressed={servit}
+              disabled={servitDisabled}
             />
             <div className="cd-servit-text">
               Servit{' '}
