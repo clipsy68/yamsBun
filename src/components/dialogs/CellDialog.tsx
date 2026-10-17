@@ -113,7 +113,15 @@ export default function CellDialog({
   })
   const [activePicker, setActivePicker] = useState<PickerKey | null>(() => {
     if (category === 'upper' && count === null) return 'count'
-    if ((category === 'fourKind' || category === 'yams') && face === null) return 'single'
+    if ((category === 'fourKind' || category === 'yams') && face === null) {
+      // Zaruri virtuale: if the current roll genuinely has no Careu/Yams, auto-detection already
+      // came back empty — there's nothing to ask, the cell can't be completed either way (see
+      // diceCriteriaMet below), so don't force the player through a face picker just to land on
+      // that same "doesn't meet the criteria" result. Zaruri fizice (no dice) still needs to ask,
+      // since that's the only way the app finds out which face the group actually was.
+      if (dice && isFresh) return null
+      return 'single'
+    }
     return null
   })
   const sumInputRef = useRef<HTMLInputElement>(null)
