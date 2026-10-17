@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next'
 import GeneralScoreTable from '../components/GeneralScoreTable'
 import { useGame } from '../state/GameContext'
 import { playerGrandTotal } from '../lib/scoring'
 import './GameEndScreen.css'
 
 export default function GameEndScreen() {
+  const { t } = useTranslation()
   const { players, dispatch } = useGame()
   const ranked = [...players].sort((a, b) => playerGrandTotal(b.table) - playerGrandTotal(a.table))
   const topScore = playerGrandTotal(ranked[0].table)
@@ -17,7 +19,7 @@ export default function GameEndScreen() {
           <TrophyIcon color="var(--green)" />
         </div>
         <div>
-          <div className="ge-t1">Joc încheiat{isTie ? ' — egalitate!' : ''}</div>
+          <div className="ge-t1">{isTie ? t('gameEnd.titleTie') : t('gameEnd.title')}</div>
           <div className="ge-t2">{players.map((p) => p.name).join(', ')}</div>
         </div>
       </div>
@@ -35,7 +37,7 @@ export default function GameEndScreen() {
                   {winners.includes(p) && <TrophyIcon color="var(--green)" size={14} />}
                   <div className="ge-totals-name">{p.name}</div>
                 </div>
-                <div className="ge-totals-score">{playerGrandTotal(p.table)} p</div>
+                <div className="ge-totals-score">{t('common.scoreSuffix', { score: playerGrandTotal(p.table) })}</div>
               </div>
             ))}
           </div>
@@ -43,10 +45,10 @@ export default function GameEndScreen() {
 
         <div className="ge-actions">
           <button className="ge-btn-new" onClick={() => dispatch({ type: 'NEW_GAME' })}>
-            Joc nou
+            {t('gameEnd.newGame')}
           </button>
           <button className="ge-btn-history" onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'history' } })}>
-            Vezi istoricul
+            {t('gameEnd.viewHistory')}
           </button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type Cell, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
 import { cellDisplayText, COLUMN_LABELS, ROW_LABELS } from '../lib/format'
@@ -47,6 +48,7 @@ function DataCell({ column, row, cell, interactive, isY, onTap, onLongPress }: D
 }
 
 export default function ScoreTable({ table, interactive = false, onCellTap, onCellLongPress, mirrorLabel = true }: ScoreTableProps) {
+  const { t } = useTranslation()
   function renderLabelCell(text: string, key: string, extraClass = '') {
     return (
       <div className={`st-cell st-label ${extraClass}`} key={key}>
@@ -112,9 +114,9 @@ export default function ScoreTable({ table, interactive = false, onCellTap, onCe
         ))}
 
         <div style={{ display: 'contents' }}>
-          {renderLabelCell('Tot', 'l-tot', 'st-bold-row')}
+          {renderLabelCell(t('common.total'), 'l-tot', 'st-bold-row')}
           {COLUMNS.map((c) => renderTotCell(c, `tot-${c}`))}
-          {mirrorLabel && renderLabelCell('Tot', 'lr-tot', 'st-bold-row')}
+          {mirrorLabel && renderLabelCell(t('common.total'), 'lr-tot', 'st-bold-row')}
         </div>
 
         {LOWER_ROWS.map((row) => (

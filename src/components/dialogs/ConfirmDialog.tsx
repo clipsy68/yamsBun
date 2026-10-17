@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import './ConfirmDialog.css'
 
 interface ConfirmDialogProps {
@@ -13,10 +14,11 @@ export default function ConfirmDialog({
   title,
   message,
   confirmLabel,
-  cancelLabel = 'Anulează',
+  cancelLabel,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation()
   return (
     <div className="cfd-overlay" onClick={onCancel}>
       <div className="cfd-modal" onClick={(e) => e.stopPropagation()}>
@@ -27,7 +29,7 @@ export default function ConfirmDialog({
             {confirmLabel}
           </button>
           <button type="button" className="cfd-btn cfd-btn-cancel" onClick={onCancel}>
-            {cancelLabel}
+            {cancelLabel ?? t('common.cancel')}
           </button>
         </div>
       </div>

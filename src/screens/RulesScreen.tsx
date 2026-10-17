@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from 'react-i18next'
 import { useGame, type Screen } from '../state/GameContext'
 import './RulesScreen.css'
 
@@ -6,6 +7,7 @@ interface RulesScreenProps {
 }
 
 export default function RulesScreen({ from }: RulesScreenProps) {
+  const { t } = useTranslation()
   const { dispatch } = useGame()
 
   return (
@@ -16,106 +18,99 @@ export default function RulesScreen({ from }: RulesScreenProps) {
             <path d="M15 6l-6 6 6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div className="rs-title">Regulile jocului</div>
+        <div className="rs-title">{t('rules.title')}</div>
       </div>
 
       <div className="rs-content">
         <section>
-          <div className="rs-sec-title">Obiectiv</div>
-          <p>
-            Fiecare jucător are un tabel cu 5 coloane. Scopul e să completezi toate căsuțele fiecărei coloane,
-            respectând regula ei de ordine, pentru cel mai mare scor total.
-          </p>
+          <div className="rs-sec-title">{t('rules.objectiveTitle')}</div>
+          <p>{t('rules.objectiveBody')}</p>
         </section>
 
         <section>
-          <div className="rs-sec-title">Cele 5 coloane</div>
+          <div className="rs-sec-title">{t('rules.columnsTitle')}</div>
           <div className="rs-col-grid">
             <div className="rs-col-chip">
               <div className="rs-sym">L</div>
-              <div className="rs-desc">liberă, orice ordine</div>
+              <div className="rs-desc">{t('rules.colFreeDesc')}</div>
             </div>
             <div className="rs-col-chip">
               <div className="rs-sym">↓</div>
-              <div className="rs-desc">de sus în jos, în ordine</div>
+              <div className="rs-desc">{t('rules.colDownDesc')}</div>
             </div>
             <div className="rs-col-chip">
               <div className="rs-sym">↑</div>
-              <div className="rs-desc">de jos în sus, în ordine</div>
+              <div className="rs-desc">{t('rules.colUpDesc')}</div>
             </div>
             <div className="rs-col-chip">
               <div className="rs-sym">↓↑</div>
-              <div className="rs-desc">din mijloc spre capete</div>
+              <div className="rs-desc">{t('rules.colMiddleDesc')}</div>
             </div>
             <div className="rs-col-chip">
               <div className="rs-sym">S</div>
-              <div className="rs-desc">servit — dublează scorul</div>
+              <div className="rs-desc">{t('rules.colServedDesc')}</div>
             </div>
           </div>
         </section>
 
         <section>
-          <div className="rs-sec-title">Secțiunea 1–6</div>
+          <div className="rs-sec-title">{t('rules.upperSectionTitle')}</div>
           <p>
-            Scor = nr. zaruri cu fața respectivă × valoarea feței. Dacă suma celor 6 rânduri ajunge la{' '}
-            <b>63</b> (3 din fiecare), primești <b>bonus de 50</b>. Pe coloana S, totul (sumă + bonus) se
-            dublează la final.
+            <Trans i18nKey="rules.upperSectionBody" components={{ bold: <b /> }} />
           </p>
           <div className="rs-card">
             <p>
-              <b>Bancă live:</b> înainte ca o coloană să fie completă, căsuța „Tot” arată diferența față de
-              ritmul normal (3 zaruri/rând) — verde dacă ești peste, roșu dacă ești sub. Totalul real apare
-              doar când coloana e gata.
+              <b>{t('rules.bankLabel')}</b> {t('rules.bankBody')}
             </p>
           </div>
         </section>
 
         <section>
-          <div className="rs-sec-title">Secțiunea inferioară</div>
+          <div className="rs-sec-title">{t('rules.lowerSectionTitle')}</div>
           <table className="rs-formula">
             <tbody>
               <tr>
-                <th>Cat.</th>
-                <th>Formulă</th>
+                <th>{t('rules.colHeaderCat')}</th>
+                <th>{t('rules.colHeaderFormula')}</th>
               </tr>
               <tr>
                 <td className="rs-cat">q</td>
-                <td>Chintă mică (1-2-3-4-5) — 35 puncte fix</td>
+                <td>{t('rules.catSmallStraight')}</td>
               </tr>
               <tr>
                 <td className="rs-cat">Q</td>
-                <td>Chintă mare (2-3-4-5-6) — 45 puncte fix</td>
+                <td>{t('rules.catLargeStraight')}</td>
               </tr>
               <tr>
                 <td className="rs-cat">F</td>
-                <td>Full House — suma celor 5 zaruri + 30</td>
+                <td>{t('rules.catFullHouse')}</td>
               </tr>
               <tr>
                 <td className="rs-cat">K</td>
-                <td>Careu — suma celor 4 zaruri din careu + 40</td>
+                <td>{t('rules.catFourKind')}</td>
               </tr>
               <tr>
                 <td className="rs-cat">Y</td>
-                <td>Yams — suma celor 5 zaruri + 100</td>
+                <td>{t('rules.catYams')}</td>
               </tr>
               <tr>
                 <td className="rs-cat">m</td>
-                <td>Mici — suma zarurilor, mai mică decât M</td>
+                <td>{t('rules.catLow')}</td>
               </tr>
               <tr>
                 <td className="rs-cat">M</td>
-                <td>Mari — suma zarurilor, mai mare decât m</td>
+                <td>{t('rules.catHigh')}</td>
               </tr>
             </tbody>
           </table>
         </section>
 
         <section>
-          <div className="rs-sec-title">Servit și bonusuri</div>
-          <p>„Servit” înseamnă formația a ieșit din prima aruncare, fără nicio rearuncare.</p>
+          <div className="rs-sec-title">{t('rules.servedTitle')}</div>
+          <p>{t('rules.servedBody')}</p>
           <div className="rs-badge-row">
-            <div className="rs-badge">Pe coloana S: scor × 2</div>
-            <div className="rs-badge">În afara S: q/Q/F/K/Y + 10</div>
+            <div className="rs-badge">{t('rules.servedBadgeColumnS')}</div>
+            <div className="rs-badge">{t('rules.servedBadgeOutsideS')}</div>
           </div>
         </section>
       </div>

@@ -1,0 +1,151 @@
+{
+  "common": {
+    "back": "Înapoi",
+    "cancel": "Anulează",
+    "total": "Tot",
+    "scoreSuffix": "{{score}} p",
+    "hoursShort": "h",
+    "minutesShort": "min"
+  },
+  "start": {
+    "leaderboardAria": "Clasament jucători",
+    "historyAria": "Istoric jocuri",
+    "rulesAria": "Regulile jocului",
+    "languageAria": "Schimbă limba",
+    "playerCountLabel": "Număr jucători",
+    "gameTypeLabel": "Tip joc",
+    "physicalDiceTitle": "Zaruri fizice",
+    "physicalDiceSub": "Aruncă zaruri reale și introdu manual rezultatul",
+    "virtualDiceTitle": "Zaruri virtuale",
+    "virtualDiceSub": "Aplicația aruncă zarurile, cu animație",
+    "playerNamesLabel": "Nume jucători",
+    "playerNamesHint": "Completează în ordinea așezării jucătorilor",
+    "playerNamePlaceholder": "Nume jucător {{n}}",
+    "liveTotalTitle": "Afișează scorul total general în timp real",
+    "liveTotalSub": "Opțional — ținut ascuns până la final e mai captivant, dar poți porni afișarea live oricând.",
+    "startButton": "Start joc"
+  },
+  "rules": {
+    "title": "Regulile jocului",
+    "objectiveTitle": "Obiectiv",
+    "objectiveBody": "Fiecare jucător are un tabel cu 5 coloane. Scopul e să completezi toate căsuțele fiecărei coloane, respectând regula ei de ordine, pentru cel mai mare scor total.",
+    "columnsTitle": "Cele 5 coloane",
+    "colFreeDesc": "liberă, orice ordine",
+    "colDownDesc": "de sus în jos, în ordine",
+    "colUpDesc": "de jos în sus, în ordine",
+    "colMiddleDesc": "din mijloc spre capete",
+    "colServedDesc": "servit — dublează scorul",
+    "upperSectionTitle": "Secțiunea 1–6",
+    "upperSectionBody": "Scor = nr. zaruri cu fața respectivă × valoarea feței. Dacă suma celor 6 rânduri ajunge la <bold>63</bold> (3 din fiecare), primești <bold>bonus de 50</bold>. Pe coloana S, totul (sumă + bonus) se dublează la final.",
+    "bankLabel": "Bancă live:",
+    "bankBody": "înainte ca o coloană să fie completă, căsuța „Tot” arată diferența față de ritmul normal (3 zaruri/rând) — verde dacă ești peste, roșu dacă ești sub. Totalul real apare doar când coloana e gata.",
+    "lowerSectionTitle": "Secțiunea inferioară",
+    "colHeaderCat": "Cat.",
+    "colHeaderFormula": "Formulă",
+    "catSmallStraight": "Chintă mică (1-2-3-4-5) — 35 puncte fix",
+    "catLargeStraight": "Chintă mare (2-3-4-5-6) — 45 puncte fix",
+    "catFullHouse": "Full House — suma celor 5 zaruri + 30",
+    "catFourKind": "Careu — suma celor 4 zaruri din careu + 40",
+    "catYams": "Yams — suma celor 5 zaruri + 100",
+    "catLow": "Mici — suma zarurilor, mai mică decât Mari",
+    "catHigh": "Mari — suma zarurilor, mai mare decât Mici",
+    "servedTitle": "Servit și bonusuri",
+    "servedBody": "„Servit” înseamnă formația a ieșit din prima aruncare, fără nicio rearuncare.",
+    "servedBadgeColumnS": "Pe coloana S: scor × 2",
+    "servedBadgeOutsideS": "În afara S: q/Q/F/K/Y + 10"
+  },
+  "history": {
+    "title": "Istoric jocuri",
+    "empty": "Niciun joc încheiat încă.",
+    "deleteAria": "Șterge"
+  },
+  "historyDetail": {
+    "notFound": "Jocul nu a fost găsit.",
+    "backToHistory": "Înapoi la istoric",
+    "backAria": "Înapoi"
+  },
+  "leaderboard": {
+    "title": "Clasament jucători",
+    "empty": "Niciun jucător salvat încă — jucați un joc pentru a începe clasamentul.",
+    "gamesPlayed_one": "{{count}} joc jucat",
+    "gamesPlayed_other": "{{count}} jocuri jucate",
+    "gamesWon_one": "{{count}} câștigat",
+    "gamesWon_other": "{{count}} câștigate",
+    "winsBadge": "{{count}}p"
+  },
+  "gameEnd": {
+    "title": "Joc încheiat",
+    "titleTie": "Joc încheiat — egalitate!",
+    "newGame": "Joc nou",
+    "viewHistory": "Vezi istoricul"
+  },
+  "game": {
+    "toastLockedColumn": "Nu ai ajuns aici pe această coloană",
+    "toastOneCellPerTurn": "Poți completa o singură căsuță pe rundă",
+    "toastEditOnlyThisTurn": "Poți edita căsuța doar în runda în care ai completat-o",
+    "quitConfirmTitle": "Renunți la joc?",
+    "quitConfirmMessage": "Tot progresul din runda curentă se pierde și nu se salvează nimic în istoric.",
+    "quitConfirmButton": "Renunță la joc"
+  },
+  "generalTable": {
+    "title": "Tabel general",
+    "back": "Înapoi",
+    "rules": "Reguli",
+    "quit": "Renunță",
+    "nextPlayer": "Următorul jucător"
+  },
+  "playerTable": {
+    "backToGeneral": "Tabel general",
+    "viewOnly": "Doar vizualizare",
+    "playerOf": "Jucător {{n}} din {{total}}",
+    "viewRules": "Vezi regulile",
+    "nextPlayer": "Următorul jucător",
+    "quit": "Renunță",
+    "toastFillOrCross": "Completează sau taie o căsuță înainte să treci mai departe"
+  },
+  "cellDialog": {
+    "title": "Completează căsuța „{{row}}”",
+    "columnLabel": "Coloana {{column}}",
+    "selectCountTitle": "Alege numărul de zaruri",
+    "selectFaceTitle": "Alege fața zarului",
+    "groupSubTriple": "pentru grupul de 3 · Full House",
+    "groupSubPair": "pentru grupul de 2 · Full House",
+    "groupSubFourKind": "pentru grupul de 4 · Careu",
+    "groupSubYams": "pentru grupul de 5 · Yams",
+    "groupSubDefault": "căsuța „{{row}}” · coloana {{column}}",
+    "select": "alege",
+    "criteriaWarning": "Nu puteți completa această căsuță deoarece nu îndepliniți criteriile pentru {{category}}",
+    "categorySmallStraight": "Chintă mică",
+    "categoryLargeStraight": "Chintă mare",
+    "categoryFullHouse": "Full",
+    "categoryFourKind": "Careu",
+    "categoryYams": "Yams",
+    "columnSBlockedWarning": "Nu puteți completa coloana Servit deoarece ați aruncat zarurile de mai multe ori",
+    "servedLabel": "Servit",
+    "servedHintActive": "(+10 puncte, prima aruncare)",
+    "servedHintLocked": "(doar la prima aruncare)",
+    "chanceSumLabel": "Suma celor 5 zaruri",
+    "chanceRuleBroken": "{{thisLabel}} trebuie să fie {{comparison}} decât {{otherLabel}} ({{score}} p)",
+    "lowLabel": "Mici",
+    "highLabel": "Mari",
+    "smallerComparison": "mai mic",
+    "largerComparison": "mai mare",
+    "cross": "Taie",
+    "confirmButton": "Confirmă",
+    "clearCell": "Golește căsuța",
+    "cancel": "Anulează"
+  },
+  "diceTray": {
+    "cooldownLabel": "Selectează zarurile de păstrat... ({{seconds}})",
+    "rollFirst": "Aruncă zarurile",
+    "rollAgain": "Aruncă din nou ({{used}}/3)"
+  },
+  "passwordGate": {
+    "passwordPlaceholder": "Parolă",
+    "wrongPassword": "Parolă greșită",
+    "enter": "Intră"
+  },
+  "languagePicker": {
+    "title": "Alege limba"
+  }
+}

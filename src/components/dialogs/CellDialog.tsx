@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DieFace from '../DieFace'
 import { cellPoints } from '../../lib/scoring'
 import {
@@ -56,6 +57,7 @@ export default function CellDialog({
   onClear,
   onCancel,
 }: CellDialogProps) {
+  const { t } = useTranslation()
   const category = rowCategory(row)
   const canClear = existingCell.kind !== 'empty'
   const allowServit = column !== 'S'
@@ -134,7 +136,7 @@ export default function CellDialog({
     if (category === 'chance' && diceChanceValue === null) sumInputRef.current?.focus()
   }, [category, diceChanceValue])
 
-  const siblingLabel = row === 'm' ? 'Mari' : 'Mici'
+  const siblingLabel = row === 'm' ? t('cellDialog.highLabel') : t('cellDialog.lowLabel')
   const chanceValue = diceChanceValue !== null ? diceChanceValue : sum.trim() !== '' ? Number(sum) : null
   const chanceRuleBroken =
     category === 'chance' &&
@@ -170,10 +172,10 @@ export default function CellDialog({
   // that produced it — re-checking it against whatever the dice show NOW (they can keep being rolled
   // after a cell is filled) would falsely flag a valid save as invalid the moment the roll changes.
   const DICE_CRITERIA_LABEL: Record<Exclude<RowCategory, 'upper' | 'chance'>, string> = {
-    fixed: row === 'q' ? 'Chintă mică' : 'Chintă mare',
-    fullHouse: 'Full',
-    fourKind: 'Careu',
-    yams: 'Yams',
+    fixed: row === 'q' ? t('cellDialog.categorySmallStraight') : t('cellDialog.categoryLargeStraight'),
+    fullHouse: t('cellDialog.categoryFullHouse'),
+    fourKind: t('cellDialog.categoryFourKind'),
+    yams: t('cellDialog.categoryYams'),
   }
   const diceCriteriaMet =
     !dice || category === 'upper' || category === 'chance' || !isFresh
@@ -223,19 +225,19 @@ export default function CellDialog({
     const options = isCount ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6]
     const groupSub =
       activePicker === 'triple'
-        ? 'pentru grupul de 3 · Full House'
+        ? t('cellDialog.groupSubTriple')
         : activePicker === 'pair'
-          ? 'pentru grupul de 2 · Full House'
+          ? t('cellDialog.groupSubPair')
           : activePicker === 'single' && category === 'fourKind'
-            ? 'pentru grupul de 4 · Careu'
+            ? t('cellDialog.groupSubFourKind')
             : activePicker === 'single' && category === 'yams'
-              ? 'pentru grupul de 5 · Yams'
-              : `căsuța „${row}” · coloana ${COLUMN_LABELS[column]}`
+              ? t('cellDialog.groupSubYams')
+              : t('cellDialog.groupSubDefault', { row, column: COLUMN_LABELS[column] })
 
     return (
       <div className="cd-overlay" onClick={handleOverlayClick}>
         <div className="cd-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="cd-picker-title">{isCount ? 'Alege numărul de zaruri' : 'Alege fața zarului'}</div>
+          <div className="cd-picker-title">{isCount ? t('cellDialog.selectCountTitle') : t('cellDialog.selectFaceTitle')}</div>
           <div className="cd-picker-sub">{groupSub}</div>
           <div className={isCount ? 'cd-picker-grid cd-picker-grid-5' : 'cd-picker-grid cd-picker-grid-6'}>
             {options.map((n) => (
@@ -255,15 +257,15 @@ export default function CellDialog({
         <div className="cd-head">
           <div className="cd-die-icon">{row}</div>
           <div>
-            <div className="cd-title">Completează căsuța „{row}”</div>
-            <div className="cd-sub">Coloana {COLUMN_LABELS[column]}</div>
+            <div className="cd-title">{t('cellDialog.title', { row })}</div>
+            <div className="cd-sub">{t('cellDialog.columnLabel', { column: COLUMN_LABELS[column] })}</div>
           </div>
         </div>
 
         {category === 'upper' && (
           <div className="cd-count-row">
             <button type="button" className={`cd-dice-slot cd-count-slot ${count !== null ? 'filled' : ''}`} onClick={() => setActivePicker('count')}>
-              {count !== null ? count : 'select'}
+              {count !== null ? count : t('cellDialog.select')}
             </button>
             <div className="cd-times">×</div>
             <div className="cd-face-static">
@@ -293,15 +295,11 @@ export default function CellDialog({
 
         {dice && isFresh && !diceCriteriaMet && category !== 'upper' && category !== 'chance' && (
           <div className="cd-warning">
-            Nu puteți completa această căsuță deoarece nu îndepliniți criteriile pentru {DICE_CRITERIA_LABEL[category]}
+            {t('cellDialog.criteriaWarning', { category: DICE_CRITERIA_LABEL[category] })}
           </div>
         )}
 
-        {columnSBlocked && (
-          <div className="cd-warning">
-            Nu puteți completa coloana Servit deoarece ați aruncat zarurile de mai multe ori
-          </div>
-        )}
+        {columnSBlocked && <div className="cd-warning">{t('cellDialog.columnSBlockedWarning')}</div>}
 
         {(category === 'fixed' || category === 'fullHouse' || category === 'fourKind' || category === 'yams') && allowServit && (
           <label className={`cd-servit-row ${servitDisabled ? 'cd-servit-row-disabled' : ''}`}>
@@ -313,15 +311,15 @@ export default function CellDialog({
               disabled={servitDisabled}
             />
             <div className="cd-servit-text">
-              Servit{' '}
-              <span>{servitLocked ? '(doar la prima aruncare)' : '(+10 puncte, prima aruncare)'}</span>
+              {t('cellDialog.servedLabel')}{' '}
+              <span>{servitLocked ? t('cellDialog.servedHintLocked') : t('cellDialog.servedHintActive')}</span>
             </div>
           </label>
         )}
 
         {category === 'chance' && (
           <div className="cd-field">
-            <div className="cd-label">Suma celor 5 zaruri</div>
+            <div className="cd-label">{t('cellDialog.chanceSumLabel')}</div>
             {diceChanceValue !== null ? (
               <div className="cd-number-input cd-number-static">{diceChanceValue}</div>
             ) : (
@@ -355,8 +353,12 @@ export default function CellDialog({
             )}
             {chanceRuleBroken && (
               <div className="cd-warning">
-                {row === 'm' ? 'Mici' : 'Mari'} trebuie să fie {row === 'm' ? 'mai mic' : 'mai mare'} decât {siblingLabel} (
-                {siblingChanceSum} p)
+                {t('cellDialog.chanceRuleBroken', {
+                  thisLabel: row === 'm' ? t('cellDialog.lowLabel') : t('cellDialog.highLabel'),
+                  comparison: row === 'm' ? t('cellDialog.smallerComparison') : t('cellDialog.largerComparison'),
+                  otherLabel: siblingLabel,
+                  score: siblingChanceSum,
+                })}
               </div>
             )}
           </div>
@@ -369,7 +371,7 @@ export default function CellDialog({
         <div className="cd-actions">
           <div className="cd-btn-row">
             <button type="button" className="cd-btn cd-btn-taie" onClick={onCross}>
-              Taie
+              {t('cellDialog.cross')}
             </button>
             <button
               type="button"
@@ -377,16 +379,16 @@ export default function CellDialog({
               disabled={!canConfirm}
               onClick={() => onConfirm(previewCell!)}
             >
-              Confirmă
+              {t('cellDialog.confirmButton')}
             </button>
           </div>
           {canClear && (
             <button type="button" className="cd-btn cd-btn-clear" onClick={onClear}>
-              Golește căsuța
+              {t('cellDialog.clearCell')}
             </button>
           )}
           <button type="button" className="cd-btn cd-btn-cancel" onClick={onCancel}>
-            Anulează
+            {t('cellDialog.cancel')}
           </button>
         </div>
       </div>
@@ -395,11 +397,12 @@ export default function CellDialog({
 }
 
 function DiceSlots({ n, value, onTap }: { n: number; value: number | null; onTap: () => void }) {
+  const { t } = useTranslation()
   return (
     <div className="cd-dice-group">
       {Array.from({ length: n }).map((_, i) => (
         <button type="button" key={i} className={`cd-dice-slot ${value !== null ? 'filled' : ''}`} onClick={onTap}>
-          {value !== null ? <DieFace face={value} size={24} pipColor="var(--navy)" /> : 'select'}
+          {value !== null ? <DieFace face={value} size={24} pipColor="var(--navy)" /> : t('cellDialog.select')}
         </button>
       ))}
     </div>

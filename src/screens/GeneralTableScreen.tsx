@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
+import { useTranslation } from 'react-i18next'
 import GeneralScoreTable from '../components/GeneralScoreTable'
 import DiceTray from '../components/DiceTray'
 import ConfirmDialog from '../components/dialogs/ConfirmDialog'
@@ -17,6 +18,7 @@ import './GeneralTableScreen.css'
 const DESKTOP_BREAKPOINT = '(min-width: 820px)'
 
 export default function GeneralTableScreen() {
+  const { t } = useTranslation()
   const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, gameType, dice, dispatch } = useGame()
   const elapsed = useElapsedTime(startedAt)
   const active = players[activePlayerIndex]
@@ -71,15 +73,15 @@ export default function GeneralTableScreen() {
     const cell = active.table[column][row]
     if (cell.kind === 'empty') {
       if (!isRowUnlocked(active.table, column, row)) {
-        showToast('Nu ai ajuns aici pe această coloană')
+        showToast(t('game.toastLockedColumn'))
         return
       }
       if (turnFilledCell) {
-        showToast('Poți completa o singură căsuță pe rundă')
+        showToast(t('game.toastOneCellPerTurn'))
         return
       }
     } else if (!turnFilledCell || turnFilledCell.column !== column || turnFilledCell.row !== row) {
-      showToast('Poți edita căsuța doar în runda în care ai completat-o')
+      showToast(t('game.toastEditOnlyThisTurn'))
       return
     }
     setOpen({ column, row })
@@ -90,11 +92,11 @@ export default function GeneralTableScreen() {
     const cell = active.table[column][row]
     if (cell.kind !== 'empty') return
     if (!isRowUnlocked(active.table, column, row)) {
-      showToast('Nu ai ajuns aici pe această coloană')
+      showToast(t('game.toastLockedColumn'))
       return
     }
     if (turnFilledCell) {
-      showToast('Poți completa o singură căsuță pe rundă')
+      showToast(t('game.toastOneCellPerTurn'))
       return
     }
     dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column, row, cell: { kind: 'crossed' } })
@@ -117,18 +119,18 @@ export default function GeneralTableScreen() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Înapoi
+          {t('generalTable.back')}
         </button>
-        <div className="gts-title">Tabel general</div>
+        <div className="gts-title">{t('generalTable.title')}</div>
         {elapsed && <div className="gts-timer">{elapsed}</div>}
         <button
           className="gts-rules-btn"
           onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'rules', from: { name: 'general' } } })}
         >
-          Reguli
+          {t('generalTable.rules')}
         </button>
         <button className="gts-quit-btn" onClick={() => setConfirmingQuit(true)}>
-          Renunță
+          {t('generalTable.quit')}
         </button>
       </div>
 
@@ -159,7 +161,7 @@ export default function GeneralTableScreen() {
           {players.map((p) => (
             <div className={`gts-totals-card ${p.id === active?.id ? 'active' : ''}`} key={p.id}>
               <div className="gts-totals-name">{p.name}</div>
-              <div className="gts-totals-score">{playerGrandTotal(p.table)} p</div>
+              <div className="gts-totals-score">{t('common.scoreSuffix', { score: playerGrandTotal(p.table) })}</div>
             </div>
           ))}
         </div>
@@ -171,7 +173,7 @@ export default function GeneralTableScreen() {
           style={floatCenterX !== null ? { left: floatCenterX } : undefined}
           onClick={() => dispatch({ type: 'NEXT_PLAYER' })}
         >
-          Următorul jucător
+          {t('generalTable.nextPlayer')}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -196,9 +198,9 @@ export default function GeneralTableScreen() {
 
       {confirmingQuit && (
         <ConfirmDialog
-          title="Renunți la joc?"
-          message="Tot progresul din runda curentă se pierde și nu se salvează nimic în istoric."
-          confirmLabel="Renunță la joc"
+          title={t('game.quitConfirmTitle')}
+          message={t('game.quitConfirmMessage')}
+          confirmLabel={t('game.quitConfirmButton')}
           onConfirm={() => dispatch({ type: 'QUIT_GAME' })}
           onCancel={() => setConfirmingQuit(false)}
         />

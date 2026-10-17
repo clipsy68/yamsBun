@@ -1,3 +1,4 @@
+import i18n from '../i18n'
 import { cellPoints } from './scoring'
 import type { Cell, ColumnKey, FillableRowKey } from './types'
 
@@ -35,8 +36,10 @@ export function formatDuration(ms: number): string {
   const totalMinutes = Math.max(0, Math.round(ms / 60000))
   const hours = Math.floor(totalMinutes / 60)
   const minutes = totalMinutes % 60
-  if (hours === 0) return `${minutes} min`
-  return `${hours}h ${minutes}min`
+  const h = i18n.t('common.hoursShort')
+  const min = i18n.t('common.minutesShort')
+  if (hours === 0) return `${minutes} ${min}`
+  return `${hours}${h} ${minutes}${min}`
 }
 
 /** Formats elapsed milliseconds as a live "MM:SS" (or "H:MM:SS" past an hour) ticking counter. */

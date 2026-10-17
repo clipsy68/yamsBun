@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DieFace from './DieFace'
 import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
@@ -12,6 +13,7 @@ interface DiceTrayProps {
 }
 
 export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) {
+  const { t } = useTranslation()
   const [cooldownMs, setCooldownMs] = useState(0)
   // Gates the click synchronously, independent of React's render timing — the `disabled`
   // attribute alone doesn't stop a second click fired before the re-render commits (easy to
@@ -47,10 +49,10 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
   const canRoll = dice.rollsUsed < 3 && cooldownMs <= 0
   const rollLabel =
     cooldownMs > 0
-      ? `Selectează zarurile de păstrat... (${Math.ceil(cooldownMs / 1000)})`
+      ? t('diceTray.cooldownLabel', { seconds: Math.ceil(cooldownMs / 1000) })
       : dice.rollsUsed === 0
-        ? 'Aruncă zarurile'
-        : `Aruncă din nou (${dice.rollsUsed}/3)`
+        ? t('diceTray.rollFirst')
+        : t('diceTray.rollAgain', { used: dice.rollsUsed })
 
   function handleRollClick() {
     const now = Date.now()

@@ -1,4 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import './PasswordGate.css'
 
 const PASSWORD = 'yamsBun0'
@@ -13,6 +14,7 @@ function isUnlocked(): boolean {
 }
 
 export default function PasswordGate({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
   const [unlocked, setUnlocked] = useState(isUnlocked)
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
@@ -49,11 +51,11 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
               setValue(e.target.value)
               setError(false)
             }}
-            placeholder="Parolă"
+            placeholder={t('passwordGate.passwordPlaceholder')}
           />
-          {error && <div className="pwg-error">Parolă greșită</div>}
+          {error && <div className="pwg-error">{t('passwordGate.wrongPassword')}</div>}
           <button type="submit" className="pwg-submit">
-            Intră
+            {t('passwordGate.enter')}
           </button>
         </form>
       </div>

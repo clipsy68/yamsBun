@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { useTranslation } from 'react-i18next'
 import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
 import { cellDisplayText, COLUMN_LABELS } from '../lib/format'
@@ -41,7 +42,10 @@ function GstButton({ cell, style }: { cell: GridCell; style?: CSSProperties }) {
   )
 }
 
-const ROW_LABEL_LIST = [...UPPER_ROWS, 'Tot', ...LOWER_ROWS] as const
+// Internal sentinel for the computed "Tot" row — never shown directly, see labelCell() below for
+// the translated display text.
+const TOT_ROW = 'Tot'
+const ROW_LABEL_LIST = [...UPPER_ROWS, TOT_ROW, ...LOWER_ROWS] as const
 
 export default function GeneralScoreTable({
   players,
@@ -52,6 +56,7 @@ export default function GeneralScoreTable({
   onCellTap,
   onCellLongPress,
 }: GeneralScoreTableProps) {
+  const { t } = useTranslation()
   // minmax floor keeps cells legible once there isn't room for everyone at --gst-cell-max — below
   // that point the grid overflows its max-width (see .gst-grid) instead of shrinking cells toward
   // unreadable, so an ancestor with overflow-x can scroll it (GameEndScreen/HistoryDetailScreen's
@@ -92,10 +97,10 @@ export default function GeneralScoreTable({
   }
 
   const dataRows: GridCell[][] = ROW_LABEL_LIST.map((label) => {
-    const isTot = label === 'Tot'
+    const isTot = label === TOT_ROW
     const isY = label === 'Y'
     const rowClass = `${isTot ? 'gst-tot gst-bold-row' : ''} ${isY ? 'gst-bold-row' : ''}`.trim()
-    const labelCell = (): GridCell => ({ text: label, className: `gst-label ${rowClass}`.trim() })
+    const labelCell = (): GridCell => ({ text: isTot ? t('common.total') : label, className: `gst-label ${rowClass}`.trim() })
     const cells: GridCell[] = [labelCell()]
     for (const p of players) {
       if (isTot) {

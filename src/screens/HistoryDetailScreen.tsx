@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import GeneralScoreTable from '../components/GeneralScoreTable'
 import { getHistoryEntry } from '../lib/storage'
 import { formatDuration } from '../lib/format'
@@ -10,6 +11,7 @@ interface HistoryDetailScreenProps {
 }
 
 export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
+  const { t, i18n } = useTranslation()
   const { dispatch } = useGame()
   const entry = useMemo(() => getHistoryEntry(id), [id])
 
@@ -17,18 +19,19 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
     return (
       <div className="ge-screen">
         <div className="ge-content">
-          <div>Jocul nu a fost găsit.</div>
+          <div>{t('historyDetail.notFound')}</div>
           <button className="ge-btn-history" onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'history' } })}>
-            Înapoi la istoric
+            {t('historyDetail.backToHistory')}
           </button>
         </div>
       </div>
     )
   }
 
-  const players = entry.tables.map((t, i) => ({ id: `${i}-${t.name}`, name: t.name, table: t.table }))
-  const startTime = new Date(entry.startedAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
-  const endTime = new Date(entry.finishedAt).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+  const locale = i18n.resolvedLanguage ?? 'en'
+  const players = entry.tables.map((pt, i) => ({ id: `${i}-${pt.name}`, name: pt.name, table: pt.table }))
+  const startTime = new Date(entry.startedAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+  const endTime = new Date(entry.finishedAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
   const duration = formatDuration(new Date(entry.finishedAt).getTime() - new Date(entry.startedAt).getTime())
 
   return (
@@ -37,14 +40,14 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
         <button
           className="ge-trophy"
           onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'history' } })}
-          aria-label="Înapoi"
+          aria-label={t('historyDetail.backAria')}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M15 6l-6 6 6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
         <div>
-          <div className="ge-t1">{new Date(entry.finishedAt).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+          <div className="ge-t1">{new Date(entry.finishedAt).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}</div>
           <div className="ge-t2">
             {entry.players.map((p) => p.name).join(', ')} · {startTime}–{endTime} ({duration})
           </div>
@@ -63,7 +66,7 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
                 <div className="ge-totals-name-row">
                   <div className="ge-totals-name">{p.name}</div>
                 </div>
-                <div className="ge-totals-score">{p.total} p</div>
+                <div className="ge-totals-score">{t('common.scoreSuffix', { score: p.total })}</div>
               </div>
             ))}
           </div>

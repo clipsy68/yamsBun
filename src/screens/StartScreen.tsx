@@ -1,11 +1,14 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGame } from '../state/GameContext'
 import { searchSavedPlayers, type SavedPlayer } from '../lib/players'
+import LanguageDialog from '../components/dialogs/LanguageDialog'
 import './StartScreen.css'
 
 const PLAYER_COUNTS = [2, 3, 4, 5, 6]
 
 export default function StartScreen() {
+  const { t } = useTranslation()
   const { dispatch } = useGame()
   const [playerCount, setPlayerCount] = useState(2)
   const [gameType, setGameType] = useState<'fizic' | 'virtual'>('fizic')
@@ -13,6 +16,7 @@ export default function StartScreen() {
   const [showLiveTotal, setShowLiveTotal] = useState(false)
   const [suggestIndex, setSuggestIndex] = useState<number | null>(null)
   const [suggestions, setSuggestions] = useState<SavedPlayer[]>([])
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false)
 
   function handlePlayerCount(n: number) {
     setPlayerCount(n)
@@ -50,9 +54,20 @@ export default function StartScreen() {
         <img className="brand-icon" src={`${import.meta.env.BASE_URL}icon.png`} alt="Yams Bun" />
         <div className="topbar-actions">
           <button
+            type="button"
+            className="info-btn"
+            onClick={() => setShowLanguagePicker(true)}
+            aria-label={t('start.languageAria')}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+              <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" stroke="currentColor" strokeWidth="2" />
+            </svg>
+          </button>
+          <button
             className="info-btn"
             onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'leaderboard' } })}
-            aria-label="Clasament jucători"
+            aria-label={t('start.leaderboardAria')}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M6 4h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -62,7 +77,7 @@ export default function StartScreen() {
           <button
             className="info-btn"
             onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'history' } })}
-            aria-label="Istoric jocuri"
+            aria-label={t('start.historyAria')}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M3 12a9 9 0 1 0 3-6.7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -73,7 +88,7 @@ export default function StartScreen() {
           <button
             className="info-btn"
             onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'rules', from: { name: 'start' } } })}
-            aria-label="Regulile jocului"
+            aria-label={t('start.rulesAria')}
           >
             i
           </button>
@@ -81,7 +96,7 @@ export default function StartScreen() {
       </div>
 
       <section>
-        <div className="label">Număr jucători</div>
+        <div className="label">{t('start.playerCountLabel')}</div>
         <div className="chip-row">
           {PLAYER_COUNTS.map((n) => (
             <button
@@ -96,35 +111,35 @@ export default function StartScreen() {
       </section>
 
       <section>
-        <div className="label">Tip joc</div>
+        <div className="label">{t('start.gameTypeLabel')}</div>
         <div className="type-row">
           <button
             className={`type-card ${gameType === 'fizic' ? 'selected' : 'idle'}`}
             onClick={() => setGameType('fizic')}
           >
-            <div className="type-title">Zaruri fizice</div>
-            <div className="type-sub">Aruncă zaruri reale și introdu manual rezultatul</div>
+            <div className="type-title">{t('start.physicalDiceTitle')}</div>
+            <div className="type-sub">{t('start.physicalDiceSub')}</div>
           </button>
           <button
             className={`type-card ${gameType === 'virtual' ? 'selected' : 'idle'}`}
             onClick={() => setGameType('virtual')}
           >
-            <div className="type-title">Zaruri virtuale</div>
-            <div className="type-sub">Aplicația aruncă zarurile, cu animație</div>
+            <div className="type-title">{t('start.virtualDiceTitle')}</div>
+            <div className="type-sub">{t('start.virtualDiceSub')}</div>
           </button>
         </div>
       </section>
 
       <section>
-        <div className="label">Nume jucători</div>
-        <div className="hint">Completează în ordinea așezării jucătorilor</div>
+        <div className="label">{t('start.playerNamesLabel')}</div>
+        <div className="hint">{t('start.playerNamesHint')}</div>
         <div className="name-list">
           {names.map((name, i) => (
             <div className="name-row" key={i}>
               <div className="name-badge">{i + 1}</div>
               <input
                 className="name-input"
-                placeholder={`Nume jucător ${i + 1}`}
+                placeholder={t('start.playerNamePlaceholder', { n: i + 1 })}
                 value={name}
                 onChange={(e) => handleNameChange(i, e.target.value)}
                 onFocus={() => handleNameChange(i, name)}
@@ -159,10 +174,8 @@ export default function StartScreen() {
             aria-pressed={showLiveTotal}
           />
           <div className="toggle-text">
-            <div className="toggle-title">Afișează scorul total general în timp real</div>
-            <div className="toggle-sub">
-              Opțional — ținut ascuns până la final e mai captivant, dar poți porni afișarea live oricând.
-            </div>
+            <div className="toggle-title">{t('start.liveTotalTitle')}</div>
+            <div className="toggle-sub">{t('start.liveTotalSub')}</div>
           </div>
         </label>
       </section>
@@ -173,8 +186,10 @@ export default function StartScreen() {
         disabled={!canStart}
         onClick={() => dispatch({ type: 'START_GAME', setup: { playerCount, gameType, names, showLiveTotal } })}
       >
-        Start joc
+        {t('start.startButton')}
       </button>
+
+      {showLanguagePicker && <LanguageDialog onClose={() => setShowLanguagePicker(false)} />}
     </div>
   )
 }

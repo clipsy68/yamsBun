@@ -1,0 +1,151 @@
+{
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "total": "Total",
+    "scoreSuffix": "{{score}} pts",
+    "hoursShort": "h",
+    "minutesShort": "min"
+  },
+  "start": {
+    "leaderboardAria": "Player leaderboard",
+    "historyAria": "Game history",
+    "rulesAria": "Game rules",
+    "languageAria": "Change language",
+    "playerCountLabel": "Number of players",
+    "gameTypeLabel": "Game type",
+    "physicalDiceTitle": "Physical dice",
+    "physicalDiceSub": "Roll real dice and enter the result manually",
+    "virtualDiceTitle": "Virtual dice",
+    "virtualDiceSub": "The app rolls the dice, with animation",
+    "playerNamesLabel": "Player names",
+    "playerNamesHint": "Fill in, in seating order",
+    "playerNamePlaceholder": "Player {{n}} name",
+    "liveTotalTitle": "Show overall live score",
+    "liveTotalSub": "Optional — kept hidden until the end is more exciting, but you can turn on live display anytime.",
+    "startButton": "Start game"
+  },
+  "rules": {
+    "title": "Game rules",
+    "objectiveTitle": "Objective",
+    "objectiveBody": "Each player has a table with 5 columns. The goal is to fill every cell in each column, following its fill-order rule, for the highest total score.",
+    "columnsTitle": "The 5 columns",
+    "colFreeDesc": "free, any order",
+    "colDownDesc": "top to bottom, in order",
+    "colUpDesc": "bottom to top, in order",
+    "colMiddleDesc": "middle outward",
+    "colServedDesc": "served — doubles the score",
+    "upperSectionTitle": "Section 1–6",
+    "upperSectionBody": "Score = number of dice showing that face × the face value. If the sum of all 6 rows reaches <bold>63</bold> (3 of each), you get a <bold>bonus of 50</bold>. On column S, the whole total (sum + bonus) is doubled at the end.",
+    "bankLabel": "Live bank:",
+    "bankBody": "before a column is complete, the \"Total\" cell shows the difference from the normal pace (3 dice/row) — green if you're ahead, red if you're behind. The real total only appears once the column is done.",
+    "lowerSectionTitle": "Lower section",
+    "colHeaderCat": "Cat.",
+    "colHeaderFormula": "Formula",
+    "catSmallStraight": "Small Straight (1-2-3-4-5) — 35 fixed points",
+    "catLargeStraight": "Large Straight (2-3-4-5-6) — 45 fixed points",
+    "catFullHouse": "Full House — sum of the 5 dice + 30",
+    "catFourKind": "Four of a Kind — sum of the 4 matching dice + 40",
+    "catYams": "Yams — sum of the 5 dice + 100",
+    "catLow": "Low — sum of the dice, must be smaller than High",
+    "catHigh": "High — sum of the dice, must be larger than Low",
+    "servedTitle": "Served & bonuses",
+    "servedBody": "\"Served\" means the combination came out on the first roll, with no reroll at all.",
+    "servedBadgeColumnS": "On column S: score × 2",
+    "servedBadgeOutsideS": "Outside S: q/Q/F/K/Y + 10"
+  },
+  "history": {
+    "title": "Game history",
+    "empty": "No finished games yet.",
+    "deleteAria": "Delete"
+  },
+  "historyDetail": {
+    "notFound": "Game not found.",
+    "backToHistory": "Back to history",
+    "backAria": "Back"
+  },
+  "leaderboard": {
+    "title": "Player leaderboard",
+    "empty": "No saved players yet — play a game to start the leaderboard.",
+    "gamesPlayed_one": "{{count}} game played",
+    "gamesPlayed_other": "{{count}} games played",
+    "gamesWon_one": "{{count}} won",
+    "gamesWon_other": "{{count}} won",
+    "winsBadge": "{{count}}p"
+  },
+  "gameEnd": {
+    "title": "Game over",
+    "titleTie": "Game over — tie!",
+    "newGame": "New game",
+    "viewHistory": "View history"
+  },
+  "game": {
+    "toastLockedColumn": "You haven't reached this column yet",
+    "toastOneCellPerTurn": "You can fill only one cell per turn",
+    "toastEditOnlyThisTurn": "You can only edit a cell during the turn you filled it",
+    "quitConfirmTitle": "Quit the game?",
+    "quitConfirmMessage": "All progress from the current round is lost and nothing is saved to history.",
+    "quitConfirmButton": "Quit game"
+  },
+  "generalTable": {
+    "title": "General table",
+    "back": "Back",
+    "rules": "Rules",
+    "quit": "Quit",
+    "nextPlayer": "Next player"
+  },
+  "playerTable": {
+    "backToGeneral": "General table",
+    "viewOnly": "View only",
+    "playerOf": "Player {{n}} of {{total}}",
+    "viewRules": "View rules",
+    "nextPlayer": "Next player",
+    "quit": "Quit",
+    "toastFillOrCross": "Fill or cross out a cell before moving on"
+  },
+  "cellDialog": {
+    "title": "Fill in cell \"{{row}}\"",
+    "columnLabel": "Column {{column}}",
+    "selectCountTitle": "Choose the number of dice",
+    "selectFaceTitle": "Choose the die face",
+    "groupSubTriple": "for the group of 3 · Full House",
+    "groupSubPair": "for the group of 2 · Full House",
+    "groupSubFourKind": "for the group of 4 · Four of a Kind",
+    "groupSubYams": "for the group of 5 · Yams",
+    "groupSubDefault": "cell \"{{row}}\" · column {{column}}",
+    "select": "select",
+    "criteriaWarning": "You can't fill this cell because you don't meet the criteria for {{category}}",
+    "categorySmallStraight": "Small Straight",
+    "categoryLargeStraight": "Large Straight",
+    "categoryFullHouse": "Full House",
+    "categoryFourKind": "Four of a Kind",
+    "categoryYams": "Yams",
+    "columnSBlockedWarning": "You can't fill the Served column because you rolled the dice more than once",
+    "servedLabel": "Served",
+    "servedHintActive": "(+10 points, first roll)",
+    "servedHintLocked": "(first roll only)",
+    "chanceSumLabel": "Sum of the 5 dice",
+    "chanceRuleBroken": "{{thisLabel}} must be {{comparison}} than {{otherLabel}} ({{score}} p)",
+    "lowLabel": "Low",
+    "highLabel": "High",
+    "smallerComparison": "smaller",
+    "largerComparison": "larger",
+    "cross": "Cross out",
+    "confirmButton": "Confirm",
+    "clearCell": "Clear cell",
+    "cancel": "Cancel"
+  },
+  "diceTray": {
+    "cooldownLabel": "Choose which dice to keep... ({{seconds}})",
+    "rollFirst": "Roll the dice",
+    "rollAgain": "Roll again ({{used}}/3)"
+  },
+  "passwordGate": {
+    "passwordPlaceholder": "Password",
+    "wrongPassword": "Wrong password",
+    "enter": "Enter"
+  },
+  "languagePicker": {
+    "title": "Choose language"
+  }
+}

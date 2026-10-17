@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import ScoreTable from '../components/ScoreTable'
 import DiceTray from '../components/DiceTray'
 import CellDialog from '../components/dialogs/CellDialog'
@@ -14,6 +15,7 @@ interface PlayerTableScreenProps {
 }
 
 export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) {
+  const { t } = useTranslation()
   const { players, activePlayerIndex, gameType, dice, turnFilledCell, showLiveTotal, dispatch } = useGame()
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const [confirmingQuit, setConfirmingQuit] = useState(false)
@@ -30,15 +32,15 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
     const cell = player.table[column][row]
     if (cell.kind === 'empty') {
       if (!isRowUnlocked(player.table, column, row)) {
-        showToast('Nu ai ajuns aici pe această coloană')
+        showToast(t('game.toastLockedColumn'))
         return
       }
       if (turnFilledCell) {
-        showToast('Poți completa o singură căsuță pe rundă')
+        showToast(t('game.toastOneCellPerTurn'))
         return
       }
     } else if (!turnFilledCell || turnFilledCell.column !== column || turnFilledCell.row !== row) {
-      showToast('Poți edita căsuța doar în runda în care ai completat-o')
+      showToast(t('game.toastEditOnlyThisTurn'))
       return
     }
     setOpen({ column, row })
@@ -49,11 +51,11 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
     const cell = player.table[column][row]
     if (cell.kind !== 'empty') return
     if (!isRowUnlocked(player.table, column, row)) {
-      showToast('Nu ai ajuns aici pe această coloană')
+      showToast(t('game.toastLockedColumn'))
       return
     }
     if (turnFilledCell) {
-      showToast('Poți completa o singură căsuță pe rundă')
+      showToast(t('game.toastOneCellPerTurn'))
       return
     }
     dispatch({ type: 'SET_CELL', playerIndex: activePlayerIndex, column, row, cell: { kind: 'crossed' } })
@@ -67,7 +69,7 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
 
   function handleNextPlayer() {
     if (!turnFilledCell) {
-      showToast('Completează sau taie o căsuță înainte să treci mai departe')
+      showToast(t('playerTable.toastFillOrCross'))
       return
     }
     dispatch({ type: 'NEXT_PLAYER' })
@@ -80,18 +82,18 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Tabel general
+          {t('playerTable.backToGeneral')}
         </button>
         <div className="pts-topbar-right">
           <div className="pts-topbar-info pts-slide-in" key={`info-${player.id}`}>
             <div className="pts-player-name">{player.name}</div>
             <div className="pts-round-tag">
-              Jucător {players.findIndex((p) => p.id === player.id) + 1} din {players.length}
+              {t('playerTable.playerOf', { n: players.findIndex((p) => p.id === player.id) + 1, total: players.length })}
             </div>
-            {!isActive && <div className="pts-view-only">Doar vizualizare</div>}
+            {!isActive && <div className="pts-view-only">{t('playerTable.viewOnly')}</div>}
           </div>
           <button className="pts-quit-btn" onClick={() => setConfirmingQuit(true)}>
-            Renunță
+            {t('playerTable.quit')}
           </button>
         </div>
       </div>
@@ -117,7 +119,7 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
         {showLiveTotal && (
           <div className="pts-total-card">
             <div className="pts-total-name">{player.name}</div>
-            <div className="pts-total-score">{playerGrandTotal(player.table)} p</div>
+            <div className="pts-total-score">{t('common.scoreSuffix', { score: playerGrandTotal(player.table) })}</div>
           </div>
         )}
       </div>
@@ -127,11 +129,11 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
           className="pts-link-btn"
           onClick={() => dispatch({ type: 'NAVIGATE', screen: { name: 'rules', from: { name: 'player' } } })}
         >
-          Vezi regulile
+          {t('playerTable.viewRules')}
         </button>
         {isActive && (
           <button className="pts-next-btn" onClick={handleNextPlayer}>
-            Următorul jucător
+            {t('playerTable.nextPlayer')}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -157,9 +159,9 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
 
       {confirmingQuit && (
         <ConfirmDialog
-          title="Renunți la joc?"
-          message="Tot progresul din runda curentă se pierde și nu se salvează nimic în istoric."
-          confirmLabel="Renunță la joc"
+          title={t('game.quitConfirmTitle')}
+          message={t('game.quitConfirmMessage')}
+          confirmLabel={t('game.quitConfirmButton')}
           onConfirm={() => dispatch({ type: 'QUIT_GAME' })}
           onCancel={() => setConfirmingQuit(false)}
         />

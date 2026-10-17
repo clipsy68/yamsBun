@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { listSavedPlayers } from '../lib/players'
 import { useGame } from '../state/GameContext'
 import './LeaderboardScreen.css'
 
 export default function LeaderboardScreen() {
+  const { t } = useTranslation()
   const { dispatch } = useGame()
   const [players] = useState(() =>
     listSavedPlayers().sort((a, b) => b.gamesWon - a.gamesWon || b.gamesPlayed - a.gamesPlayed),
@@ -18,10 +20,10 @@ export default function LeaderboardScreen() {
             <path d="M15 6l-6 6 6 6" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div className="lb-title">Clasament jucători</div>
+        <div className="lb-title">{t('leaderboard.title')}</div>
       </div>
 
-      {players.length === 0 && <div className="lb-empty">Niciun jucător salvat încă — jucați un joc pentru a începe clasamentul.</div>}
+      {players.length === 0 && <div className="lb-empty">{t('leaderboard.empty')}</div>}
 
       <div className="lb-list">
         {players.map((p, i) => (
@@ -36,12 +38,11 @@ export default function LeaderboardScreen() {
               <div className="lb-name">{p.name}</div>
               {expanded === p.name && (
                 <div className="lb-stats">
-                  {p.gamesPlayed} {p.gamesPlayed === 1 ? 'joc jucat' : 'jocuri jucate'} · {p.gamesWon}{' '}
-                  {p.gamesWon === 1 ? 'câștigat' : 'câștigate'}
+                  {t('leaderboard.gamesPlayed', { count: p.gamesPlayed })} · {t('leaderboard.gamesWon', { count: p.gamesWon })}
                 </div>
               )}
             </div>
-            <div className="lb-wins">{p.gamesWon}p</div>
+            <div className="lb-wins">{t('leaderboard.winsBadge', { count: p.gamesWon })}</div>
           </button>
         ))}
       </div>
