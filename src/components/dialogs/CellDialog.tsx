@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import DieFace from '../DieFace'
 import { cellPoints } from '../../lib/scoring'
-import { countFace, detectFourKind, detectFullHouse, detectYams, diceSum, type DiceState } from '../../lib/dice'
+import {
+  countFace,
+  detectFourKind,
+  detectFullHouse,
+  detectLargeStraight,
+  detectSmallStraight,
+  detectYams,
+  diceSum,
+  type DiceState,
+} from '../../lib/dice'
 import { UPPER_ROWS, type Cell, type ColumnKey, type FillableRowKey } from '../../lib/types'
 import { COLUMN_LABELS } from '../../lib/format'
 import './CellDialog.css'
@@ -124,9 +133,32 @@ export default function CellDialog({
     }
   }
 
+  // Playing with zaruri virtuale: q/Q/F/K/Y can only be confirmed when the actual current roll
+  // satisfies that combination — otherwise the dialog previously let a player cross-check nothing
+  // and just confirm any pattern by hand (e.g. picking a Full House face pair that isn't on the
+  // table). Chance (m/M) and upper rows have no dice-dependent requirement, so they're left alone.
+  const DICE_CRITERIA_LABEL: Record<Exclude<RowCategory, 'upper' | 'chance'>, string> = {
+    fixed: row === 'q' ? 'Chintă mică' : 'Chintă mare',
+    fullHouse: 'Full',
+    fourKind: 'Careu',
+    yams: 'Yams',
+  }
+  const diceCriteriaMet =
+    !dice || category === 'upper' || category === 'chance'
+      ? true
+      : category === 'fixed'
+        ? row === 'q'
+          ? detectSmallStraight(dice)
+          : detectLargeStraight(dice)
+        : category === 'fullHouse'
+          ? detectFullHouse(dice) !== null
+          : category === 'fourKind'
+            ? detectFourKind(dice) !== null
+            : detectYams(dice) !== null
+
   const previewCell = buildCell()
   const score = previewCell ? cellPoints(previewCell, row, column) : 0
-  const canConfirm = previewCell !== null && !chanceRuleBroken
+  const canConfirm = previewCell !== null && !chanceRuleBroken && diceCriteriaMet
 
   function handlePick(n: number) {
     switch (activePicker) {
@@ -226,6 +258,12 @@ export default function CellDialog({
         )}
         {category === 'fourKind' && <DiceSlots n={4} value={face} onTap={() => setActivePicker('single')} />}
         {category === 'yams' && <DiceSlots n={5} value={face} onTap={() => setActivePicker('single')} />}
+
+        {dice && !diceCriteriaMet && category !== 'upper' && category !== 'chance' && (
+          <div className="cd-warning">
+            Nu puteți completa această căsuță deoarece nu îndepliniți criteriile pentru {DICE_CRITERIA_LABEL[category]}
+          </div>
+        )}
 
         {(category === 'fixed' || category === 'fullHouse' || category === 'fourKind' || category === 'yams') && allowServit && (
           <label className="cd-servit-row">

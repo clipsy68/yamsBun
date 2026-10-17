@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { countFace, detectFourKind, detectFullHouse, detectYams, diceSum, freshDice, type DiceState } from '../dice'
+import {
+  countFace,
+  detectFourKind,
+  detectFullHouse,
+  detectLargeStraight,
+  detectSmallStraight,
+  detectYams,
+  diceSum,
+  freshDice,
+  type DiceState,
+} from '../dice'
 
 function withFaces(faces: number[]): DiceState {
   return { ...freshDice(), faces, rollsUsed: 1 }
@@ -47,5 +57,27 @@ describe('detectYams', () => {
 
   it('returns null otherwise', () => {
     expect(detectYams(withFaces([2, 2, 2, 2, 3]))).toBeNull()
+  })
+})
+
+describe('detectSmallStraight', () => {
+  it('detects 1-2-3-4-5 in any order', () => {
+    expect(detectSmallStraight(withFaces([3, 1, 5, 2, 4]))).toBe(true)
+  })
+
+  it('returns false otherwise', () => {
+    expect(detectSmallStraight(withFaces([2, 3, 4, 5, 6]))).toBe(false)
+    expect(detectSmallStraight(withFaces([1, 1, 3, 4, 5]))).toBe(false)
+  })
+})
+
+describe('detectLargeStraight', () => {
+  it('detects 2-3-4-5-6 in any order', () => {
+    expect(detectLargeStraight(withFaces([6, 4, 2, 5, 3]))).toBe(true)
+  })
+
+  it('returns false otherwise', () => {
+    expect(detectLargeStraight(withFaces([1, 2, 3, 4, 5]))).toBe(false)
+    expect(detectLargeStraight(withFaces([2, 2, 4, 5, 6]))).toBe(false)
   })
 })

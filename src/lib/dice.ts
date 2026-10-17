@@ -68,3 +68,15 @@ export function detectYams(state: DiceState): number | null {
   }
   return null
 }
+
+/** True when the 5 dice are exactly the faces 1-2-3-4-5 (chintă mică). */
+export function detectSmallStraight(state: DiceState): boolean {
+  const faces = new Set(state.faces)
+  return [1, 2, 3, 4, 5].every((f) => faces.has(f))
+}
+
+/** True when the 5 dice are exactly the faces 2-3-4-5-6 (chintă mare). */
+export function detectLargeStraight(state: DiceState): boolean {
+  const faces = new Set(state.faces)
+  return [2, 3, 4, 5, 6].every((f) => faces.has(f))
+}
