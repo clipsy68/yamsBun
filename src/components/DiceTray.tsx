@@ -5,6 +5,16 @@ import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
 
 const ROLL_COOLDOWN_MS = 2000
+const FLICKER_DURATION_MS = 700
+const FLICKER_TICK_MS = 65
+
+function randomFaceExcluding(exclude: number): number {
+  let f: number
+  do {
+    f = 1 + Math.floor(Math.random() * 6)
+  } while (f === exclude)
+  return f
+}
 
 interface DiceTrayProps {
   dice: DiceState
@@ -19,6 +29,66 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
   // attribute alone doesn't stop a second click fired before the re-render commits (easy to
   // land with a fast mouse double-click, much less so with a finger tap).
   const lockedUntilRef = useRef(0)
+
+  // Roll animation: while "rolling", each unheld die flickers through random faces at a steady
+  // pace with a shared tilt wobble that decays to flat — not a 3D flip, so nothing ever rotates
+  // out of view. displayFaces is what's actually rendered; dice.faces (the real result) only
+  // becomes visible once the flicker settles.
+  const [displayFaces, setDisplayFaces] = useState(dice.faces)
+  const [wobbleDeg, setWobbleDeg] = useState(0)
+  const prevRollsUsedRef = useRef(dice.rollsUsed)
+  const rafRef = useRef<number | null>(null)
+  // Always-current refs so the running rAF loop reacts to a hold toggled mid-flicker (freezing
+  // that die from the next tick on) instead of restarting — the effect below intentionally only
+  // keys on rollsUsed, not on dice.held/dice.faces, to avoid aborting an in-flight animation.
+  const heldRef = useRef(dice.held)
+  const facesRef = useRef(dice.faces)
+  heldRef.current = dice.held
+  facesRef.current = dice.faces
+
+  useEffect(() => {
+    const prevRollsUsed = prevRollsUsedRef.current
+    prevRollsUsedRef.current = dice.rollsUsed
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+
+    // Fresh turn, or a re-render that isn't an actual new roll — snap to the real faces, no flicker.
+    if (dice.rollsUsed === 0 || dice.rollsUsed <= prevRollsUsed) {
+      setDisplayFaces(dice.faces)
+      setWobbleDeg(0)
+      rafRef.current = null
+      return
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplayFaces(dice.faces)
+      setWobbleDeg(0)
+      rafRef.current = null
+      return
+    }
+
+    const start = performance.now()
+    let lastTick = 0
+    const frame = (now: number) => {
+      const elapsed = now - start
+      if (elapsed - lastTick >= FLICKER_TICK_MS && elapsed < FLICKER_DURATION_MS) {
+        lastTick = elapsed
+        const amp = 10 * (1 - elapsed / FLICKER_DURATION_MS)
+        setWobbleDeg(Math.sin(elapsed / 55) * amp)
+        setDisplayFaces((prev) => prev.map((f, i) => (heldRef.current[i] ? facesRef.current[i] : randomFaceExcluding(f))))
+      }
+      if (elapsed < FLICKER_DURATION_MS) {
+        rafRef.current = requestAnimationFrame(frame)
+      } else {
+        setDisplayFaces(facesRef.current)
+        setWobbleDeg(0)
+        rafRef.current = null
+      }
+    }
+    rafRef.current = requestAnimationFrame(frame)
+
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [dice.rollsUsed])
 
   // After every roll but the first, disable the button for a few seconds so an accidental
   // tap can't re-roll before the player has had a chance to pick which dice to hold.
@@ -64,7 +134,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
   return (
     <div className="dice-tray">
       <div className="dice-row">
-        {dice.faces.map((face, i) => (
+        {displayFaces.map((face, i) => (
           <button
             key={i}
             type="button"
@@ -72,9 +142,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
             onClick={() => onToggleHold(i)}
             disabled={dice.rollsUsed === 0}
           >
-            {/* Keyed on rollsUsed only while unheld, so only a die that actually got a new face
-                this roll remounts and replays the settle animation — a held die's key stays put. */}
-            <span className="die-face" key={dice.held[i] ? 'held' : dice.rollsUsed}>
+            <span className="die-face" style={dice.held[i] ? undefined : { transform: `rotate(${wobbleDeg}deg)` }}>
               <DieFace face={face} size={40} pipColor="var(--navy)" />
             </span>
             {dice.held[i] && (

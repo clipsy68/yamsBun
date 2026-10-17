@@ -22,7 +22,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 300px;
 }
 
 .die-wrap.held {
@@ -30,38 +29,11 @@
   border-width: 2.5px;
 }
 
+/* The roll "animation" is JS-driven (DiceTray.tsx flickers displayFaces through random values
+   and recomputes this wobble each tick) rather than a CSS @keyframes — there's nothing to declare
+   here beyond the layout; the inline `transform: rotate(...)` is set directly on this element. */
 .die-face {
   display: flex;
-  backface-visibility: hidden;
-  animation: die-roll-tumble 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* A short tumble through two axes rather than a flat pop — the face briefly edges out of view as
-   it spins (backface-visibility: hidden on a flat layer reads as a believable glint/flip, the same
-   trick a CSS coin-flip uses) and decelerates into place exactly flat, landing back on rotateX(0)
-   rotateY(0) since every keyframe is a multiple of 360deg on both axes. */
-@keyframes die-roll-tumble {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg) scale(1);
-  }
-  18% {
-    transform: rotateX(160deg) rotateY(70deg) scale(0.9);
-  }
-  36% {
-    transform: rotateX(330deg) rotateY(150deg) scale(0.85);
-  }
-  54% {
-    transform: rotateX(480deg) rotateY(230deg) scale(0.9);
-  }
-  72% {
-    transform: rotateX(600deg) rotateY(300deg) scale(1.03);
-  }
-  88% {
-    transform: rotateX(690deg) rotateY(345deg) scale(0.98);
-  }
-  100% {
-    transform: rotateX(720deg) rotateY(360deg) scale(1);
-  }
 }
 
 .hold-badge {
