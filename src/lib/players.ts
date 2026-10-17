@@ -20,8 +20,14 @@ export function listSavedPlayers(): SavedPlayer[] {
   }
 }
 
+// Must never throw: called synchronously from the game reducer when a game finishes, with no
+// error boundary anywhere to catch a crash there (e.g. on quota exceeded or private browsing).
 function saveAll(players: SavedPlayer[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(players))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(players))
+  } catch {
+    // ignore storage failures — stats just won't update for this game
+  }
 }
 
 /** Matches saved players whose name contains the query (case-insensitive), sorted by most games played. */
