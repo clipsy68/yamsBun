@@ -41,14 +41,22 @@ afterEach(() => {
 
 describe('recordGameResult', () => {
   it('increments gamesPlayed for everyone and gamesWon only for the winner', () => {
-    recordGameResult(['Ana', 'Bogdan'], 'Ana')
+    recordGameResult(['Ana', 'Bogdan'], ['Ana'])
     const all = listSavedPlayers()
     expect(all.find((p) => p.name === 'Ana')).toEqual({ name: 'Ana', gamesPlayed: 1, gamesWon: 1 })
     expect(all.find((p) => p.name === 'Bogdan')).toEqual({ name: 'Bogdan', gamesPlayed: 1, gamesWon: 0 })
   })
 
+  it('credits gamesWon to every tied winner', () => {
+    recordGameResult(['Ana', 'Bogdan', 'Cristina'], ['Ana', 'Bogdan'])
+    const all = listSavedPlayers()
+    expect(all.find((p) => p.name === 'Ana')?.gamesWon).toBe(1)
+    expect(all.find((p) => p.name === 'Bogdan')?.gamesWon).toBe(1)
+    expect(all.find((p) => p.name === 'Cristina')?.gamesWon).toBe(0)
+  })
+
   it('never throws when storage writes fail (e.g. quota exceeded)', () => {
     fakeStorage.failing = true
-    expect(() => recordGameResult(['Ana', 'Bogdan'], 'Ana')).not.toThrow()
+    expect(() => recordGameResult(['Ana', 'Bogdan'], ['Ana'])).not.toThrow()
   })
 })

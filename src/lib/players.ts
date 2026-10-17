@@ -39,10 +39,11 @@ export function searchSavedPlayers(query: string): SavedPlayer[] {
     .sort((a, b) => b.gamesPlayed - a.gamesPlayed)
 }
 
-/** Records the result of a finished game: increments gamesPlayed for every player and gamesWon for the winner. */
-export function recordGameResult(playerNames: string[], winnerName: string): void {
+/** Records the result of a finished game: increments gamesPlayed for every player and gamesWon for
+ * each winner — more than one name means a tie at the top score, and every tied player gets credit. */
+export function recordGameResult(playerNames: string[], winnerNames: string[]): void {
   const all = listSavedPlayers()
-  const winnerKey = normalize(winnerName)
+  const winnerKeys = new Set(winnerNames.map(normalize))
 
   for (const name of playerNames) {
     const trimmed = name.trim()
@@ -51,9 +52,9 @@ export function recordGameResult(playerNames: string[], winnerName: string): voi
     const existing = all.find((p) => normalize(p.name) === key)
     if (existing) {
       existing.gamesPlayed += 1
-      if (key === winnerKey) existing.gamesWon += 1
+      if (winnerKeys.has(key)) existing.gamesWon += 1
     } else {
-      all.push({ name: trimmed, gamesPlayed: 1, gamesWon: key === winnerKey ? 1 : 0 })
+      all.push({ name: trimmed, gamesPlayed: 1, gamesWon: winnerKeys.has(key) ? 1 : 0 })
     }
   }
 

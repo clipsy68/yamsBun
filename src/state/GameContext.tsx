@@ -63,19 +63,23 @@ function finishGameIfComplete(state: State): State {
   const ranked = state.players
     .map((p) => ({ name: p.name, total: playerGrandTotal(p.table) }))
     .sort((a, b) => b.total - a.total)
+  const topScore = ranked[0].total
+  // More than one name here means a tie at the top score — every tied player counts as a winner,
+  // rather than arbitrarily crediting whoever happens to sort first.
+  const winnerNames = ranked.filter((p) => p.total === topScore).map((p) => p.name)
   const entry: HistoryEntry = {
     id: `g${Date.now()}`,
     startedAt: new Date(state.startedAt ?? Date.now()).toISOString(),
     finishedAt: new Date().toISOString(),
     players: ranked,
-    winnerName: ranked[0].name,
-    winnerScore: ranked[0].total,
+    winnerNames,
+    winnerScore: topScore,
     tables: state.players.map((p) => ({ name: p.name, table: p.table })),
   }
   saveHistoryEntry(entry)
   recordGameResult(
     state.players.map((p) => p.name),
-    entry.winnerName,
+    entry.winnerNames,
   )
   return { ...state, screen: { name: 'end' }, lastFinishedId: entry.id }
 }

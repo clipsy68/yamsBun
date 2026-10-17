@@ -6,7 +6,9 @@ import './GameEndScreen.css'
 export default function GameEndScreen() {
   const { players, dispatch } = useGame()
   const ranked = [...players].sort((a, b) => playerGrandTotal(b.table) - playerGrandTotal(a.table))
-  const winner = ranked[0]
+  const topScore = playerGrandTotal(ranked[0].table)
+  const winners = ranked.filter((p) => playerGrandTotal(p.table) === topScore)
+  const isTie = winners.length > 1
 
   return (
     <div className="ge-screen">
@@ -15,7 +17,7 @@ export default function GameEndScreen() {
           <TrophyIcon color="var(--green)" />
         </div>
         <div>
-          <div className="ge-t1">Joc încheiat</div>
+          <div className="ge-t1">Joc încheiat{isTie ? ' — egalitate!' : ''}</div>
           <div className="ge-t2">{players.map((p) => p.name).join(', ')}</div>
         </div>
       </div>
@@ -28,9 +30,9 @@ export default function GameEndScreen() {
 
           <div className="ge-totals-row">
             {ranked.map((p) => (
-              <div className={`ge-totals-card ${p === winner ? 'winner' : ''}`} key={p.id}>
+              <div className={`ge-totals-card ${winners.includes(p) ? 'winner' : ''}`} key={p.id}>
                 <div className="ge-totals-name-row">
-                  {p === winner && <TrophyIcon color="var(--green)" size={14} />}
+                  {winners.includes(p) && <TrophyIcon color="var(--green)" size={14} />}
                   <div className="ge-totals-name">{p.name}</div>
                 </div>
                 <div className="ge-totals-score">{playerGrandTotal(p.table)} p</div>

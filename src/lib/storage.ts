@@ -5,7 +5,7 @@ export interface HistoryEntry {
   startedAt: string // ISO timestamp
   finishedAt: string // ISO timestamp
   players: { name: string; total: number }[]
-  winnerName: string
+  winnerNames: string[] // more than one name means a tie at the top score
   winnerScore: number
   tables: { name: string; table: PlayerTable }[]
 }
@@ -19,8 +19,12 @@ export function listHistory(): HistoryEntry[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
-    const parsed = JSON.parse(raw) as HistoryEntry[]
-    return parsed.sort((a, b) => b.finishedAt.localeCompare(a.finishedAt))
+    // Older entries (saved before ties were tracked) have a singular `winnerName` string instead
+    // of `winnerNames` — normalize them on read rather than rewriting storage.
+    const parsed = JSON.parse(raw) as (HistoryEntry & { winnerName?: string })[]
+    return parsed
+      .map((e) => ({ ...e, winnerNames: e.winnerNames ?? (e.winnerName ? [e.winnerName] : []) }))
+      .sort((a, b) => b.finishedAt.localeCompare(a.finishedAt))
   } catch {
     return []
   }

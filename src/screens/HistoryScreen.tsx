@@ -54,7 +54,7 @@ export default function HistoryScreen() {
               <div className="hs-players">{e.players.map((p) => p.name).join(', ')}</div>
               <div className="hs-winner">
                 <TrophyIcon />
-                <div className="hs-who">{e.winnerName}</div>
+                <div className="hs-who">{e.winnerNames.join(', ')}</div>
                 <div className="hs-score">{e.winnerScore}p</div>
               </div>
             </button>

@@ -59,7 +59,7 @@ export default function HistoryDetailScreen({ id }: HistoryDetailScreenProps) {
 
           <div className="ge-totals-row">
             {entry.players.map((p) => (
-              <div className={`ge-totals-card ${p.name === entry.winnerName ? 'winner' : ''}`} key={p.name}>
+              <div className={`ge-totals-card ${entry.winnerNames.includes(p.name) ? 'winner' : ''}`} key={p.name}>
                 <div className="ge-totals-name-row">
                   <div className="ge-totals-name">{p.name}</div>
                 </div>

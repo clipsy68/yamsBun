@@ -46,7 +46,7 @@ function makeEntry(id: string): HistoryEntry {
     startedAt: new Date().toISOString(),
     finishedAt: new Date().toISOString(),
     players: [{ name: 'Ana', total: 100 }],
-    winnerName: 'Ana',
+    winnerNames: ['Ana'],
     winnerScore: 100,
     tables: [{ name: 'Ana', table: createEmptyTable() }],
   }
@@ -70,6 +70,22 @@ describe('saveHistoryEntry', () => {
     expect(all.length).toBe(200)
     expect(all.map((e) => e.id)).toContain('e204') // newest kept
     expect(all.map((e) => e.id)).not.toContain('e0') // oldest dropped
+  })
+})
+
+describe('listHistory backward compatibility', () => {
+  it('normalizes an older entry saved with a singular winnerName into winnerNames', () => {
+    const old = { ...makeEntry('legacy'), winnerNames: undefined, winnerName: 'Ana' } as unknown as HistoryEntry
+    fakeStorage.setItem('yamsbun.history.v1', JSON.stringify([old]))
+    expect(listHistory()).toEqual([{ ...old, winnerNames: ['Ana'] }])
+  })
+})
+
+describe('saveHistoryEntry with a tie', () => {
+  it('stores multiple winner names', () => {
+    const tied = { ...makeEntry('tie1'), winnerNames: ['Ana', 'Bogdan'] }
+    saveHistoryEntry(tied)
+    expect(listHistory()[0].winnerNames).toEqual(['Ana', 'Bogdan'])
   })
 })
 
