@@ -103,16 +103,23 @@ export default function CellDialog({
   })
   const sumInputRef = useRef<HTMLInputElement>(null)
 
+  // Playing with zaruri virtuale: m/M is always exactly the current roll's sum (doubled on S) —
+  // no free-form entry, so there's nothing to type and no keyboard to open. Only the zaruri fizice
+  // game (no `dice`) still needs the editable number input, since there the dice aren't tracked.
+  const diceChanceValue =
+    dice && category === 'chance' ? Math.min(column === 'S' ? diceSum(dice) * 2 : diceSum(dice), chanceMax) : null
+
   useEffect(() => {
-    if (category === 'chance') sumInputRef.current?.focus()
-  }, [category])
+    if (category === 'chance' && diceChanceValue === null) sumInputRef.current?.focus()
+  }, [category, diceChanceValue])
 
   const siblingLabel = row === 'm' ? 'Mari' : 'Mici'
+  const chanceValue = diceChanceValue !== null ? diceChanceValue : sum.trim() !== '' ? Number(sum) : null
   const chanceRuleBroken =
     category === 'chance' &&
     siblingChanceSum != null &&
-    sum.trim() !== '' &&
-    (row === 'm' ? Number(sum) >= siblingChanceSum : Number(sum) <= siblingChanceSum)
+    chanceValue !== null &&
+    (row === 'm' ? chanceValue >= siblingChanceSum : chanceValue <= siblingChanceSum)
 
   function buildCell(): Cell | null {
     switch (category) {
@@ -129,6 +136,7 @@ export default function CellDialog({
       case 'yams':
         return face === null ? null : { kind: 'yams', face, servit: allowServit && servit }
       case 'chance':
+        if (diceChanceValue !== null) return { kind: 'chance', sum: diceChanceValue }
         return sum.trim() === '' ? null : { kind: 'chance', sum: Number(sum) || 0 }
     }
   }
@@ -282,33 +290,37 @@ export default function CellDialog({
         {category === 'chance' && (
           <div className="cd-field">
             <div className="cd-label">Suma celor 5 zaruri</div>
-            <input
-              ref={sumInputRef}
-              autoFocus
-              className="cd-number-input"
-              type="number"
-              inputMode="numeric"
-              max={chanceMax}
-              min={0}
-              value={sum}
-              onChange={(e) => {
-                const raw = e.target.value
-                if (raw === '') {
-                  setSum('')
-                  return
-                }
-                const n = Number(raw)
-                if (Number.isNaN(n)) return
-                setSum(String(Math.max(0, Math.min(n, chanceMax))))
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  e.currentTarget.blur()
-                }
-              }}
-              placeholder="0"
-            />
+            {diceChanceValue !== null ? (
+              <div className="cd-number-input cd-number-static">{diceChanceValue}</div>
+            ) : (
+              <input
+                ref={sumInputRef}
+                autoFocus
+                className="cd-number-input"
+                type="number"
+                inputMode="numeric"
+                max={chanceMax}
+                min={0}
+                value={sum}
+                onChange={(e) => {
+                  const raw = e.target.value
+                  if (raw === '') {
+                    setSum('')
+                    return
+                  }
+                  const n = Number(raw)
+                  if (Number.isNaN(n)) return
+                  setSum(String(Math.max(0, Math.min(n, chanceMax))))
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    e.currentTarget.blur()
+                  }
+                }}
+                placeholder="0"
+              />
+            )}
             {chanceRuleBroken && (
               <div className="cd-warning">
                 {row === 'm' ? 'Mici' : 'Mari'} trebuie să fie {row === 'm' ? 'mai mic' : 'mai mare'} decât {siblingLabel} (

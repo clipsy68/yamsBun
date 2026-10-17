@@ -223,6 +223,12 @@
   color: var(--navy);
 }
 
+/* zaruri virtuale: m/M is just the current roll's sum, shown read-only — no input, no keyboard. */
+.cd-number-static {
+  display: flex;
+  align-items: center;
+}
+
 .cd-warning {
   font-size: 11.5px;
   font-weight: 700;
