@@ -3,7 +3,7 @@ import DieFace from './DieFace'
 import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
 
-const ROLL_COOLDOWN_MS = 3000
+const ROLL_COOLDOWN_MS = 2000
 
 interface DiceTrayProps {
   dice: DiceState
@@ -23,6 +23,11 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
   useEffect(() => {
     if (dice.rollsUsed === 0) {
       setCooldownMs(0)
+      // A fresh turn's dice reset rollsUsed to 0, but this component instance (and its ref) can
+      // outlive the turn that set it — without this, a quick pass to the next player within 3s of
+      // the previous player's last roll silently eats their first tap: the button looks enabled
+      // (cooldownMs is reset above) but handleRollClick's own gate still sees the stale deadline.
+      lockedUntilRef.current = 0
       return
     }
     setCooldownMs(ROLL_COOLDOWN_MS)
@@ -65,7 +70,11 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
             onClick={() => onToggleHold(i)}
             disabled={dice.rollsUsed === 0}
           >
-            <DieFace face={face} size={40} pipColor="var(--navy)" />
+            {/* Keyed on rollsUsed only while unheld, so only a die that actually got a new face
+                this roll remounts and replays the settle animation — a held die's key stays put. */}
+            <span className="die-face" key={dice.held[i] ? 'held' : dice.rollsUsed}>
+              <DieFace face={face} size={40} pipColor="var(--navy)" />
+            </span>
             {dice.held[i] && (
               <span className="hold-badge">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
