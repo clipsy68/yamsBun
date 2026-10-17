@@ -186,6 +186,11 @@
   cursor: pointer;
 }
 
+.cd-servit-row-disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
 .cd-servit-check {
   width: 20px;
   height: 20px;

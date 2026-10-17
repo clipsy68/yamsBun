@@ -61,6 +61,12 @@ export default function CellDialog({
   const allowServit = column !== 'S'
   const chanceMax = column === 'S' ? CHANCE_MAX_SERVIT : CHANCE_MAX
 
+  // Playing with zaruri virtuale: "servit" (first-throw) status is only honest when the dice were
+  // rolled exactly once this turn — a second or third roll means it can no longer be claimed, either
+  // as the whole coloana Servit (column S) or as the +10 checkbox on q/Q/F/K/Y in other columns.
+  const servitLocked = !!dice && dice.rollsUsed > 1
+  const columnSBlocked = column === 'S' && servitLocked
+
   // A fresh (still-empty) cell gets auto-filled from the current dice roll when one matches the
   // row — e.g. tapping Careu with four 5s showing prefills face 5 directly. Editing an already-set
   // cell never auto-overwrites it.
@@ -126,15 +132,15 @@ export default function CellDialog({
       case 'upper':
         return count === null ? null : { kind: 'upper', count }
       case 'fixed':
-        return { kind: 'fixed', servit: allowServit && servit }
+        return { kind: 'fixed', servit: allowServit && !servitLocked && servit }
       case 'fullHouse':
         return tripleFace === null || pairFace === null
           ? null
-          : { kind: 'fullHouse', tripleFace, pairFace, servit: allowServit && servit }
+          : { kind: 'fullHouse', tripleFace, pairFace, servit: allowServit && !servitLocked && servit }
       case 'fourKind':
-        return face === null ? null : { kind: 'fourKind', face, servit: allowServit && servit }
+        return face === null ? null : { kind: 'fourKind', face, servit: allowServit && !servitLocked && servit }
       case 'yams':
-        return face === null ? null : { kind: 'yams', face, servit: allowServit && servit }
+        return face === null ? null : { kind: 'yams', face, servit: allowServit && !servitLocked && servit }
       case 'chance':
         if (diceChanceValue !== null) return { kind: 'chance', sum: diceChanceValue }
         return sum.trim() === '' ? null : { kind: 'chance', sum: Number(sum) || 0 }
@@ -166,7 +172,7 @@ export default function CellDialog({
 
   const previewCell = buildCell()
   const score = previewCell ? cellPoints(previewCell, row, column) : 0
-  const canConfirm = previewCell !== null && !chanceRuleBroken && diceCriteriaMet
+  const canConfirm = previewCell !== null && !chanceRuleBroken && diceCriteriaMet && !columnSBlocked
 
   function handlePick(n: number) {
     switch (activePicker) {
@@ -273,16 +279,24 @@ export default function CellDialog({
           </div>
         )}
 
+        {columnSBlocked && (
+          <div className="cd-warning">
+            Nu puteți completa coloana Servit deoarece ați aruncat zarurile de mai multe ori
+          </div>
+        )}
+
         {(category === 'fixed' || category === 'fullHouse' || category === 'fourKind' || category === 'yams') && allowServit && (
-          <label className="cd-servit-row">
+          <label className={`cd-servit-row ${servitLocked ? 'cd-servit-row-disabled' : ''}`}>
             <button
               type="button"
-              className={`cd-servit-check ${servit ? 'checked' : ''}`}
-              onClick={() => setServit((v) => !v)}
-              aria-pressed={servit}
+              className={`cd-servit-check ${servit && !servitLocked ? 'checked' : ''}`}
+              onClick={() => !servitLocked && setServit((v) => !v)}
+              aria-pressed={servit && !servitLocked}
+              disabled={servitLocked}
             />
             <div className="cd-servit-text">
-              Servit <span>(+10 puncte, prima aruncare)</span>
+              Servit{' '}
+              <span>{servitLocked ? '(doar la prima aruncare)' : '(+10 puncte, prima aruncare)'}</span>
             </div>
           </label>
         )}
