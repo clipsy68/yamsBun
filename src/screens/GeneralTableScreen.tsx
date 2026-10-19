@@ -140,6 +140,7 @@ export default function GeneralTableScreen() {
             dice={dice}
             onRoll={() => dispatch({ type: 'ROLL_DICE' })}
             onToggleHold={(i) => dispatch({ type: 'TOGGLE_HOLD', index: i })}
+            locked={!!turnFilledCell}
           />
         </div>
       )}

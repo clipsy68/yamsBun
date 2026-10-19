@@ -83,9 +83,14 @@ interface DiceTrayProps {
   dice: DiceState
   onRoll: () => void
   onToggleHold: (index: number) => void
+  // True once the active player has already filled (or crossed) a cell this turn — rolling and
+  // holding are both pointless past that point (the turn's result is locked in), but without this
+  // the button stayed enabled whenever dice.rollsUsed was still under 3, which is exactly what
+  // happens on a "servit" fill (confirmed after just the first roll).
+  locked?: boolean
 }
 
-export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) {
+export default function DiceTray({ dice, onRoll, onToggleHold, locked = false }: DiceTrayProps) {
   const { t } = useTranslation()
   const [cooldownMs, setCooldownMs] = useState(0)
   // Gates the click synchronously, independent of React's render timing — the `disabled`
@@ -169,7 +174,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
     return () => clearInterval(interval)
   }, [dice.rollsUsed])
 
-  const canRoll = dice.rollsUsed < 3 && cooldownMs <= 0
+  const canRoll = !locked && dice.rollsUsed < 3 && cooldownMs <= 0
   const rollLabel =
     cooldownMs > 0
       ? t('diceTray.cooldownLabel', { seconds: Math.ceil(cooldownMs / 1000) })
@@ -179,7 +184,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
 
   function handleRollClick() {
     const now = Date.now()
-    if (now < lockedUntilRef.current || dice.rollsUsed >= 3) return
+    if (locked || now < lockedUntilRef.current || dice.rollsUsed >= 3) return
     lockedUntilRef.current = now + ROLL_COOLDOWN_MS
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && (dice.rollsUsed === 0 || dice.held.some((h) => !h))) {
       playDiceRollSound()
@@ -196,7 +201,7 @@ export default function DiceTray({ dice, onRoll, onToggleHold }: DiceTrayProps) 
             type="button"
             className={`die-wrap ${dice.held[i] ? 'held' : ''}`}
             onClick={() => onToggleHold(i)}
-            disabled={dice.rollsUsed === 0}
+            disabled={locked || dice.rollsUsed === 0}
           >
             <span className="die3d-hop" ref={(el) => { hopRefs.current[i] = el }}>
               <span className="die3d-cube" ref={(el) => { cubeRefs.current[i] = el }}>

@@ -104,6 +104,7 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
             dice={dice}
             onRoll={() => dispatch({ type: 'ROLL_DICE' })}
             onToggleHold={(i) => dispatch({ type: 'TOGGLE_HOLD', index: i })}
+            locked={!!turnFilledCell}
           />
         )}
 
