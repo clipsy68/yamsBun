@@ -35,6 +35,15 @@ interface GridCell {
   onClick?: () => void
   onLongPress?: () => void
   playerId?: string
+  showCross?: boolean
+}
+
+function CrossSuggestSvg() {
+  return (
+    <svg className="gst-suggest-cross-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="6" y1="94" x2="94" y2="6" />
+    </svg>
+  )
 }
 
 function GstButton({ cell, style }: { cell: GridCell; style?: CSSProperties }) {
@@ -42,6 +51,7 @@ function GstButton({ cell, style }: { cell: GridCell; style?: CSSProperties }) {
   return (
     <button type="button" className={`gst-cell ${cell.className}`} style={style} data-player-id={cell.playerId} {...longPress}>
       {cell.text}
+      {cell.showCross && <CrossSuggestSvg />}
     </button>
   )
 }
@@ -138,13 +148,15 @@ export default function GeneralScoreTable({
           const cell = p.table[col][row]
           const crossed = cell.kind === 'crossed'
           const suggestion = cell.kind === 'empty' && showSuggestions ? suggestionFor(col, row) : undefined
+          const showCross = suggestion === 'cross'
           cells.push({
             text: crossed ? '' : cellDisplayText(cell, row, col),
             className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''} ${
-              suggestion === 'fill' ? 'gst-suggest-fill' : suggestion === 'cross' ? 'gst-suggest-cross' : ''
+              suggestion === 'fill' ? 'gst-suggest-fill' : showCross ? 'gst-suggest-cross' : ''
             }`.trim(),
             onClick: tappableRow ? () => onCellTap!(p.id, col, row) : undefined,
             onLongPress: tappableRow && onCellLongPress ? () => onCellLongPress(p.id, col, row) : undefined,
+            showCross,
           })
         }
       }
@@ -176,6 +188,7 @@ export default function GeneralScoreTable({
               return (
                 <div key={ci} className={`gst-cell ${cell.className}`} style={style} data-player-id={cell.playerId}>
                   {cell.text}
+                  {cell.showCross && <CrossSuggestSvg />}
                 </div>
               )
             })}

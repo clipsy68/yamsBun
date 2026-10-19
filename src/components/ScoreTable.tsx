@@ -35,6 +35,7 @@ function DataCell({ column, row, cell, interactive, isY, suggestion, onTap, onLo
     onTap: () => onTap?.(column, row),
     onLongPress: () => onLongPress?.(column, row),
   })
+  const showCross = cell.kind === 'empty' && suggestion === 'cross'
   const classes = [
     'st-cell',
     'st-val',
@@ -42,7 +43,7 @@ function DataCell({ column, row, cell, interactive, isY, suggestion, onTap, onLo
     cell.kind === 'crossed' ? 'st-crossed' : '',
     interactive ? 'st-tappable' : '',
     cell.kind === 'empty' && suggestion === 'fill' ? 'st-suggest-fill' : '',
-    cell.kind === 'empty' && suggestion === 'cross' ? 'st-suggest-cross' : '',
+    showCross ? 'st-suggest-cross' : '',
   ]
     .filter(Boolean)
     .join(' ')
@@ -50,6 +51,11 @@ function DataCell({ column, row, cell, interactive, isY, suggestion, onTap, onLo
   return (
     <button type="button" className={classes} disabled={!interactive} {...longPress}>
       {cellDisplayText(cell, row, column)}
+      {showCross && (
+        <svg className="st-suggest-cross-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="6" y1="94" x2="94" y2="6" />
+        </svg>
+      )}
     </button>
   )
 }
