@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Name von Spieler {{n}}",
     "liveTotalTitle": "Gesamtpunktzahl live anzeigen",
     "liveTotalSub": "Optional — bleibt bis zum Schluss verborgen, damit es spannender bleibt, aber du kannst die Live-Anzeige jederzeit einschalten.",
+    "learningModeTitle": "Lernmodus",
+    "learningModeSub": "Hebt Felder hervor, die der aktuelle Wurf ausfüllen könnte, mit einem blassgrünen Pulsieren — und schlägt eines zum Streichen vor, wenn nichts passt.",
+    "learningModeSubDisabled": "Nur mit virtuellen Würfeln verfügbar, damit die App den tatsächlichen Wurf lesen kann.",
     "startButton": "Spiel starten"
   },
   "rules": {

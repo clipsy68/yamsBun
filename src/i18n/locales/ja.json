@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "プレイヤー{{n}}の名前",
     "liveTotalTitle": "合計スコアをリアルタイムで表示",
     "liveTotalSub": "任意 — 最後まで隠しておくとより盛り上がりますが、いつでもリアルタイム表示をオンにできます。",
+    "learningModeTitle": "ラーニングモード",
+    "learningModeSub": "今の出目で埋められるマスを淡い緑のパルスで強調表示し、何も当てはまらないときは1マスを消すことを提案します。",
+    "learningModeSubDisabled": "バーチャルサイコロのときだけ使えます。実際の出目をアプリが読み取れるようにするためです。",
     "startButton": "ゲーム開始"
   },
   "rules": {

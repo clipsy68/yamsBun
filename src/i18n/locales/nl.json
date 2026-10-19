@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Naam van speler {{n}}",
     "liveTotalTitle": "Totale live score tonen",
     "liveTotalSub": "Optioneel — blijft verborgen tot het einde, voor extra spanning, maar je kunt de live weergave altijd inschakelen.",
+    "learningModeTitle": "Leermodus",
+    "learningModeSub": "Markeert welke vakjes de huidige worp kan invullen, met een lichtgroene puls — en stelt er een voor om door te strepen als niets past.",
+    "learningModeSubDisabled": "Alleen beschikbaar met virtuele dobbelstenen, zodat de app de echte worp kan uitlezen.",
     "startButton": "Spel starten"
   },
   "rules": {

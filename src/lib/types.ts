@@ -40,6 +40,7 @@ export interface GameSetup {
   gameType: 'fizic' | 'virtual'
   names: string[]
   showLiveTotal: boolean
+  learningMode: boolean
 }
 
 export interface GameState {

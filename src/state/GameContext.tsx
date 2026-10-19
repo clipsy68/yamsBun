@@ -22,6 +22,7 @@ interface State {
   activePlayerIndex: number
   gameType: 'fizic' | 'virtual'
   showLiveTotal: boolean
+  learningMode: boolean
   dice: DiceState
   lastFinishedId: string | null
   turnFilledCell: { column: ColumnKey; row: FillableRowKey } | null
@@ -52,6 +53,7 @@ const initialState: State = {
   activePlayerIndex: 0,
   gameType: 'virtual',
   showLiveTotal: false,
+  learningMode: false,
   dice: freshDice(),
   lastFinishedId: null,
   turnFilledCell: null,
@@ -95,6 +97,7 @@ function reducer(state: State, action: Action): State {
         players: makePlayers(action.setup),
         gameType: action.setup.gameType,
         showLiveTotal: action.setup.showLiveTotal,
+        learningMode: action.setup.learningMode,
         activePlayerIndex: 0,
         dice: freshDice(),
         screen: { name: 'player' },

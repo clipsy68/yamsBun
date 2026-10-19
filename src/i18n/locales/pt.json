@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Nome do jogador {{n}}",
     "liveTotalTitle": "Mostrar pontuação total em tempo real",
     "liveTotalSub": "Opcional: fica oculta até o fim para dar mais emoção, mas você pode ativar a exibição em tempo real quando quiser.",
+    "learningModeTitle": "Modo de aprendizagem",
+    "learningModeSub": "Destaca as células que a jogada atual pode preencher, com um pulso verde claro — e sugere uma para riscar quando nada se encaixa.",
+    "learningModeSubDisabled": "Disponível apenas com dados virtuais, para que o app possa ler a jogada real.",
     "startButton": "Iniciar jogo"
   },
   "rules": {

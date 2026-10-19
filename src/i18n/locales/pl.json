@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Imię gracza {{n}}",
     "liveTotalTitle": "Pokaż łączny wynik na żywo",
     "liveTotalSub": "Opcjonalnie — domyślnie skryty, żeby zakończenie było bardziej emocjonujące, ale podgląd na żywo możesz włączyć w każdej chwili.",
+    "learningModeTitle": "Tryb nauki",
+    "learningModeSub": "Podświetla komórki, które bieżący rzut może wypełnić, bladozielonym pulsowaniem — a gdy nic nie pasuje, proponuje jedną do skreślenia.",
+    "learningModeSubDisabled": "Dostępny tylko przy kostkach wirtualnych, żeby aplikacja mogła odczytać rzeczywisty rzut.",
     "startButton": "Zacznij grę"
   },
   "rules": {

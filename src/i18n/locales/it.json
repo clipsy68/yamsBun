@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Nome del giocatore {{n}}",
     "liveTotalTitle": "Mostra il punteggio totale in tempo reale",
     "liveTotalSub": "Facoltativo: resta nascosto fino alla fine per più suspense, ma puoi attivare la visualizzazione in tempo reale quando vuoi.",
+    "learningModeTitle": "Modalità apprendimento",
+    "learningModeSub": "Evidenzia le caselle che il tiro attuale può riempire, con un impulso verde chiaro — e ne suggerisce una da barrare quando nulla corrisponde.",
+    "learningModeSubDisabled": "Disponibile solo con i dadi virtuali, così l'app può leggere il tiro reale.",
     "startButton": "Inizia partita"
   },
   "rules": {

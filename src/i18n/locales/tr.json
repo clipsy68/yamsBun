@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "{{n}}. oyuncunun adı",
     "liveTotalTitle": "Genel canlı skoru göster",
     "liveTotalSub": "İsteğe bağlı — sonu daha heyecanlı kılmak için varsayılan olarak gizli tutulur, ama canlı görünümü istediğin zaman açabilirsin.",
+    "learningModeTitle": "Öğrenme modu",
+    "learningModeSub": "Mevcut atışın doldurabileceği hücreleri soluk yeşil bir titreşimle vurgular — hiçbir şey uymadığında birini çizmeyi önerir.",
+    "learningModeSubDisabled": "Sadece sanal zarlarla kullanılabilir, çünkü uygulamanın gerçek atışı okuyabilmesi gerekir.",
     "startButton": "Oyunu başlat"
   },
   "rules": {

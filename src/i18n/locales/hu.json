@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "{{n}}. játékos neve",
     "liveTotalTitle": "Élő összpontszám megjelenítése",
     "liveTotalSub": "Opcionális — alapértelmezésben rejtve marad, hogy izgalmasabb legyen a vége, de bármikor bekapcsolhatod az élő megjelenítést.",
+    "learningModeTitle": "Tanulási mód",
+    "learningModeSub": "Halványzöld pulzálással kiemeli azokat a mezőket, amelyeket a jelenlegi dobás kitölthet — és javasol egyet áthúzásra, ha semmi sem illik.",
+    "learningModeSubDisabled": "Csak virtuális kockákkal érhető el, hogy az app leolvashassa a valódi dobást.",
     "startButton": "Játék indítása"
   },
   "rules": {

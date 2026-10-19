@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/dialogs/ConfirmDialog'
 import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
 import { emptyCell, isRowUnlocked, playerGrandTotal, siblingChanceSum } from '../lib/scoring'
+import { suggestedCells } from '../lib/learningMode'
 import { useToast } from '../lib/useToast'
 import { useElapsedTime } from '../lib/useElapsedTime'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
@@ -19,9 +20,12 @@ const DESKTOP_BREAKPOINT = '(min-width: 820px)'
 
 export default function GeneralTableScreen() {
   const { t } = useTranslation()
-  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, gameType, dice, dispatch } = useGame()
+  const { players, activePlayerIndex, showLiveTotal, turnFilledCell, startedAt, gameType, dice, learningMode, dispatch } =
+    useGame()
   const elapsed = useElapsedTime(startedAt)
   const active = players[activePlayerIndex]
+  const suggestions =
+    learningMode && gameType === 'virtual' && active && dice.rollsUsed > 0 ? suggestedCells(dice, active.table) : []
   const [confirmingQuit, setConfirmingQuit] = useState(false)
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const { toast, showToast } = useToast()
@@ -154,6 +158,8 @@ export default function GeneralTableScreen() {
           interactivePlayerId={active?.id}
           onCellTap={handleCellTap}
           onCellLongPress={handleCellLongPress}
+          suggestions={suggestions}
+          suggestionsPlayerId={active?.id}
         />
       </div>
 

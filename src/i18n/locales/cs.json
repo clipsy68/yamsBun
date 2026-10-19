@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Jméno hráče {{n}}",
     "liveTotalTitle": "Zobrazit celkové skóre v reálném čase",
     "liveTotalSub": "Nepovinné — raději skryté, aby byl konec zajímavější, ale živé zobrazení můžete kdykoli zapnout.",
+    "learningModeTitle": "Režim učení",
+    "learningModeSub": "Zvýrazní políčka, která může aktuální hod vyplnit, bledě zeleným pulzováním — a navrhne jedno k přeškrtnutí, když se nic nehodí.",
+    "learningModeSubDisabled": "Dostupné pouze s virtuálními kostkami, aby aplikace mohla číst skutečný hod.",
     "startButton": "Začít hru"
   },
   "rules": {

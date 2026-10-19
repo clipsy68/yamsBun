@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Nombre del jugador {{n}}",
     "liveTotalTitle": "Mostrar puntuación total en vivo",
     "liveTotalSub": "Opcional: se mantiene oculta hasta el final para más emoción, pero puedes activar la visualización en vivo cuando quieras.",
+    "learningModeTitle": "Modo de aprendizaje",
+    "learningModeSub": "Resalta las casillas que la tirada actual puede completar, con un pulso verde pálido, y sugiere una para tachar cuando nada encaja.",
+    "learningModeSubDisabled": "Solo disponible con dados virtuales, para que la app pueda leer la tirada real.",
     "startButton": "Empezar partida"
   },
   "rules": {

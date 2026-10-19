@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Namn på spelare {{n}}",
     "liveTotalTitle": "Visa totalpoäng live",
     "liveTotalSub": "Valfritt — hålls dold till slutet för extra spänning, men du kan slå på live-visningen när du vill.",
+    "learningModeTitle": "Inlärningsläge",
+    "learningModeSub": "Markerar vilka rutor det aktuella kastet kan fylla i, med en blekgrön puls — och föreslår en att stryka över när inget passar.",
+    "learningModeSubDisabled": "Finns bara med virtuella tärningar, så att appen kan läsa det faktiska kastet.",
     "startButton": "Starta spelet"
   },
   "rules": {

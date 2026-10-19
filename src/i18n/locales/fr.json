@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Nom du joueur {{n}}",
     "liveTotalTitle": "Afficher le score total en direct",
     "liveTotalSub": "Facultatif : reste caché jusqu'à la fin pour plus de suspense, mais vous pouvez activer l'affichage en direct à tout moment.",
+    "learningModeTitle": "Mode apprentissage",
+    "learningModeSub": "Met en surbrillance les cases que le lancer actuel peut remplir, avec un pouls vert pâle — et en suggère une à barrer quand rien ne correspond.",
+    "learningModeSubDisabled": "Disponible uniquement avec les dés virtuels, pour que l'appli puisse lire le lancer réel.",
     "startButton": "Démarrer la partie"
   },
   "rules": {

@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
+import type { CellSuggestion } from '../lib/learningMode'
 import { cellDisplayText, COLUMN_LABELS } from '../lib/format'
 import { useLongPress } from '../lib/useLongPress'
 import './GeneralScoreTable.css'
@@ -22,6 +23,9 @@ interface GeneralScoreTableProps {
   interactivePlayerId?: string
   onCellTap?: (playerId: string, column: ColumnKey, row: FillableRowKey) => void
   onCellLongPress?: (playerId: string, column: ColumnKey, row: FillableRowKey) => void
+  /** Learning-mode hints, scoped to a single player (see src/lib/learningMode.ts). */
+  suggestions?: CellSuggestion[]
+  suggestionsPlayerId?: string
 }
 
 interface GridCell {
@@ -55,8 +59,13 @@ export default function GeneralScoreTable({
   interactivePlayerId,
   onCellTap,
   onCellLongPress,
+  suggestions = [],
+  suggestionsPlayerId,
 }: GeneralScoreTableProps) {
   const { t } = useTranslation()
+  function suggestionFor(column: ColumnKey, row: FillableRowKey) {
+    return suggestions.find((s) => s.column === column && s.row === row)?.kind
+  }
   // minmax floor keeps cells legible once there isn't room for everyone at --gst-cell-max — below
   // that point the grid overflows its max-width (see .gst-grid) instead of shrinking cells toward
   // unreadable, so an ancestor with overflow-x can scroll it (GameEndScreen/HistoryDetailScreen's
@@ -124,12 +133,16 @@ export default function GeneralScoreTable({
       } else {
         const row = label as (typeof UPPER_ROWS)[number] | (typeof LOWER_ROWS)[number]
         const tappableRow = p.id === interactivePlayerId && !!onCellTap
+        const showSuggestions = p.id === suggestionsPlayerId
         for (const col of COLUMNS) {
           const cell = p.table[col][row]
           const crossed = cell.kind === 'crossed'
+          const suggestion = cell.kind === 'empty' && showSuggestions ? suggestionFor(col, row) : undefined
           cells.push({
             text: crossed ? '' : cellDisplayText(cell, row, col),
-            className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''}`.trim(),
+            className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''} ${
+              suggestion === 'fill' ? 'gst-suggest-fill' : suggestion === 'cross' ? 'gst-suggest-cross' : ''
+            }`.trim(),
             onClick: tappableRow ? () => onCellTap!(p.id, col, row) : undefined,
             onLongPress: tappableRow && onCellLongPress ? () => onCellLongPress(p.id, col, row) : undefined,
           })

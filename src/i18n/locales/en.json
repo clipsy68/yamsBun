@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Player {{n}} name",
     "liveTotalTitle": "Show overall live score",
     "liveTotalSub": "Optional — kept hidden until the end is more exciting, but you can turn on live display anytime.",
+    "learningModeTitle": "Learning mode",
+    "learningModeSub": "Highlights which cells your current roll can fill, with a pale green pulse — and suggests one to cross out when nothing fits.",
+    "learningModeSubDisabled": "Only available with Virtual dice, so the app can read the actual roll.",
     "startButton": "Start game"
   },
   "rules": {

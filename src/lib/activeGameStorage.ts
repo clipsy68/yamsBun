@@ -10,6 +10,7 @@ export interface PersistedActiveGame {
   activePlayerIndex: number
   gameType: 'fizic' | 'virtual'
   showLiveTotal: boolean
+  learningMode: boolean
   dice: DiceState
   turnFilledCell: { column: ColumnKey; row: FillableRowKey } | null
   startedAt: number | null

@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "플레이어 {{n}} 이름",
     "liveTotalTitle": "전체 실시간 점수 표시",
     "liveTotalSub": "선택 사항이에요 — 끝까지 숨겨두면 더 긴장감이 있지만, 언제든 실시간 표시를 켤 수 있어요.",
+    "learningModeTitle": "학습 모드",
+    "learningModeSub": "지금 굴린 주사위로 채울 수 있는 칸을 옅은 초록색 펄스로 표시하고, 아무것도 맞지 않을 때는 하나를 지우도록 제안해요.",
+    "learningModeSubDisabled": "가상 주사위에서만 사용할 수 있어요. 앱이 실제 굴림을 읽어야 하거든요.",
     "startButton": "게임 시작"
   },
   "rules": {

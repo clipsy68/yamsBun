@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "玩家 {{n}} 的姓名",
     "liveTotalTitle": "显示实时总分",
     "liveTotalSub": "可选 — 默认隐藏,让结局更精彩,但你可以随时打开实时显示。",
+    "learningModeTitle": "学习模式",
+    "learningModeSub": "用淡绿色脉冲高亮当前骰子可以填写的格子 —— 如果都不匹配,会建议划掉一个格子。",
+    "learningModeSubDisabled": "仅在虚拟骰子模式下可用,这样应用才能读取真实的骰子结果。",
     "startButton": "开始游戏"
   },
   "rules": {

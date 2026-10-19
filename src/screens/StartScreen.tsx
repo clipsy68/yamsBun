@@ -14,6 +14,7 @@ export default function StartScreen() {
   const [gameType, setGameType] = useState<'fizic' | 'virtual'>('fizic')
   const [names, setNames] = useState<string[]>(['', ''])
   const [showLiveTotal, setShowLiveTotal] = useState(false)
+  const [learningMode, setLearningMode] = useState(false)
   const [suggestIndex, setSuggestIndex] = useState<number | null>(null)
   const [suggestions, setSuggestions] = useState<SavedPlayer[]>([])
   const [showLanguagePicker, setShowLanguagePicker] = useState(false)
@@ -131,7 +132,13 @@ export default function StartScreen() {
         <div className="type-row">
           <button
             className={`type-card ${gameType === 'fizic' ? 'selected' : 'idle'}`}
-            onClick={() => setGameType('fizic')}
+            onClick={() => {
+              setGameType('fizic')
+              // Learning mode reads the live dice to suggest cells — meaningless without zaruri
+              // virtuale, so switching away silently drops a stale "on" state rather than leaving
+              // a checked toggle that would do nothing once the game starts.
+              setLearningMode(false)
+            }}
           >
             <div className="type-title">{t('start.physicalDiceTitle')}</div>
             <div className="type-sub">{t('start.physicalDiceSub')}</div>
@@ -195,13 +202,28 @@ export default function StartScreen() {
             <div className="toggle-sub">{t('start.liveTotalSub')}</div>
           </div>
         </label>
+        <label className={`toggle-row ${gameType === 'fizic' ? 'toggle-row-disabled' : ''}`}>
+          <button
+            type="button"
+            className={`checkbox ${learningMode ? 'checked' : ''}`}
+            onClick={() => gameType === 'virtual' && setLearningMode((v) => !v)}
+            disabled={gameType === 'fizic'}
+            aria-pressed={learningMode}
+          />
+          <div className="toggle-text">
+            <div className="toggle-title">{t('start.learningModeTitle')}</div>
+            <div className="toggle-sub">
+              {gameType === 'fizic' ? t('start.learningModeSubDisabled') : t('start.learningModeSub')}
+            </div>
+          </div>
+        </label>
       </section>
 
       <div className="spacer" />
       <button
         className="start-btn"
         disabled={!canStart}
-        onClick={() => dispatch({ type: 'START_GAME', setup: { playerCount, gameType, names, showLiveTotal } })}
+        onClick={() => dispatch({ type: 'START_GAME', setup: { playerCount, gameType, names, showLiveTotal, learningMode } })}
       >
         {t('start.startButton')}
       </button>

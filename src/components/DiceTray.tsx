@@ -102,8 +102,8 @@ export default function DiceTray({ dice, onRoll, onToggleHold, locked = false }:
   // not React state) so the browser interpolates the spin itself — no rAF polling needed. Each
   // roll targets the exact resting rotation for the real result, plus a few random extra full
   // turns purely for visual spin; the transition always lands exactly on the correct face.
-  const cubeRefs = useRef<(HTMLDivElement | null)[]>([])
-  const hopRefs = useRef<(HTMLDivElement | null)[]>([])
+  const cubeRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const hopRefs = useRef<(HTMLSpanElement | null)[]>([])
   const prevRollsUsedRef = useRef(dice.rollsUsed)
 
   useEffect(() => {

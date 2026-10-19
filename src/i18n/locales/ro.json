@@ -24,6 +24,9 @@
     "playerNamePlaceholder": "Nume jucător {{n}}",
     "liveTotalTitle": "Afișează scorul total general în timp real",
     "liveTotalSub": "Opțional — ținut ascuns până la final e mai captivant, dar poți porni afișarea live oricând.",
+    "learningModeTitle": "Mod de învățare",
+    "learningModeSub": "Evidențiază căsuțele pe care le poate completa aruncarea curentă, cu un puls verde pal — și sugerează una de tăiat când nu se potrivește nimic.",
+    "learningModeSubDisabled": "Disponibil doar la zaruri virtuale, ca aplicația să poată citi aruncarea reală.",
     "startButton": "Start joc"
   },
   "rules": {

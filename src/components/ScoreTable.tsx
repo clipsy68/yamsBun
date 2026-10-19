@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { COLUMNS, LOWER_ROWS, UPPER_ROWS, type Cell, type ColumnKey, type FillableRowKey, type PlayerTable } from '../lib/types'
 import { upperColumnStatus } from '../lib/scoring'
+import type { CellSuggestion } from '../lib/learningMode'
 import { cellDisplayText, COLUMN_LABELS, ROW_LABELS } from '../lib/format'
 import { useLongPress } from '../lib/useLongPress'
 import './ScoreTable.css'
@@ -11,6 +12,9 @@ interface ScoreTableProps {
   onCellTap?: (column: ColumnKey, row: FillableRowKey) => void
   onCellLongPress?: (column: ColumnKey, row: FillableRowKey) => void
   mirrorLabel?: boolean
+  /** Learning-mode hints for the active player — which empty cells the current roll would fill,
+   * or (when nothing fits) one to cross out. See src/lib/learningMode.ts. */
+  suggestions?: CellSuggestion[]
 }
 
 const DISPLAY_ROWS: FillableRowKey[] = [...UPPER_ROWS]
@@ -21,11 +25,12 @@ interface DataCellProps {
   cell: Cell
   interactive: boolean
   isY: boolean
+  suggestion?: 'fill' | 'cross'
   onTap?: (column: ColumnKey, row: FillableRowKey) => void
   onLongPress?: (column: ColumnKey, row: FillableRowKey) => void
 }
 
-function DataCell({ column, row, cell, interactive, isY, onTap, onLongPress }: DataCellProps) {
+function DataCell({ column, row, cell, interactive, isY, suggestion, onTap, onLongPress }: DataCellProps) {
   const longPress = useLongPress({
     onTap: () => onTap?.(column, row),
     onLongPress: () => onLongPress?.(column, row),
@@ -36,6 +41,8 @@ function DataCell({ column, row, cell, interactive, isY, onTap, onLongPress }: D
     isY ? 'st-bold-row' : '',
     cell.kind === 'crossed' ? 'st-crossed' : '',
     interactive ? 'st-tappable' : '',
+    cell.kind === 'empty' && suggestion === 'fill' ? 'st-suggest-fill' : '',
+    cell.kind === 'empty' && suggestion === 'cross' ? 'st-suggest-cross' : '',
   ]
     .filter(Boolean)
     .join(' ')
@@ -47,8 +54,18 @@ function DataCell({ column, row, cell, interactive, isY, onTap, onLongPress }: D
   )
 }
 
-export default function ScoreTable({ table, interactive = false, onCellTap, onCellLongPress, mirrorLabel = true }: ScoreTableProps) {
+export default function ScoreTable({
+  table,
+  interactive = false,
+  onCellTap,
+  onCellLongPress,
+  mirrorLabel = true,
+  suggestions = [],
+}: ScoreTableProps) {
   const { t } = useTranslation()
+  function suggestionFor(column: ColumnKey, row: FillableRowKey) {
+    return suggestions.find((s) => s.column === column && s.row === row)?.kind
+  }
   function renderLabelCell(text: string, key: string, extraClass = '') {
     return (
       <div className={`st-cell st-label ${extraClass}`} key={key}>
@@ -66,6 +83,7 @@ export default function ScoreTable({ table, interactive = false, onCellTap, onCe
         cell={table[column][row]}
         interactive={interactive}
         isY={row === 'Y'}
+        suggestion={suggestionFor(column, row)}
         onTap={onCellTap}
         onLongPress={onCellLongPress}
       />
