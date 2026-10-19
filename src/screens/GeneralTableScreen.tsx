@@ -8,6 +8,7 @@ import CellDialog from '../components/dialogs/CellDialog'
 import { useGame } from '../state/GameContext'
 import { emptyCell, isRowUnlocked, playerGrandTotal, siblingChanceSum } from '../lib/scoring'
 import { suggestedCells } from '../lib/learningMode'
+import { useSuggestionsReady } from '../lib/useSuggestionsReady'
 import { useToast } from '../lib/useToast'
 import { useElapsedTime } from '../lib/useElapsedTime'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
@@ -24,8 +25,11 @@ export default function GeneralTableScreen() {
     useGame()
   const elapsed = useElapsedTime(startedAt)
   const active = players[activePlayerIndex]
+  const suggestionsReady = useSuggestionsReady(dice.rollsUsed)
   const suggestions =
-    learningMode && gameType === 'virtual' && active && dice.rollsUsed > 0 ? suggestedCells(dice, active.table) : []
+    learningMode && gameType === 'virtual' && active && dice.rollsUsed > 0 && suggestionsReady
+      ? suggestedCells(dice, active.table)
+      : []
   const [confirmingQuit, setConfirmingQuit] = useState(false)
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const { toast, showToast } = useToast()

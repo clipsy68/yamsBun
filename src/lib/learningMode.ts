@@ -33,12 +33,18 @@ function servitTimingOk(dice: DiceState, column: ColumnKey): boolean {
 }
 
 /** Would the live dice validly fill this specific empty, reachable q/Q/F/K/Y or upper-row cell
- * right now? Mirrors CellDialog's diceCriteriaMet exactly, so a suggestion here always means
- * "open this cell now and Confirm is already enabled with the dice as-is". Chance (m/M) is handled
- * separately below, as a fallback rather than a first-class match. */
+ * right now? Mirrors CellDialog's diceCriteriaMet, so a suggestion here always means "open this
+ * cell now and Confirm is already enabled with the dice as-is" — with one deliberate exception: an
+ * upper row (1-6) on column S only counts as a match with 3+ of that face. Column S is one-shot
+ * (first roll only), so a 1-2 match there isn't a real "servit" opportunity worth nudging toward,
+ * even though CellDialog would still accept it if confirmed. Chance (m/M) is handled separately
+ * below, as a fallback rather than a first-class match. */
 function diceMatchesCell(dice: DiceState, column: ColumnKey, row: FillableRowKey): boolean {
   if (!servitTimingOk(dice, column)) return false
-  if ((UPPER_ROWS as readonly string[]).includes(row)) return countFace(dice, faceOf(row)) >= 1
+  if ((UPPER_ROWS as readonly string[]).includes(row)) {
+    const count = countFace(dice, faceOf(row))
+    return column === 'S' ? count >= 3 : count >= 1
+  }
   switch (row) {
     case 'q':
       return detectSmallStraight(dice)
@@ -71,11 +77,14 @@ function chanceWouldFit(dice: DiceState, table: PlayerTable, column: ColumnKey, 
  * about what's "good" play. Pure and dice/table-only so it can be reused later for a virtual-bot
  * player without rework (see the Learning Mode plan this was built from).
  *
- * Chance (m/M) is a fallback: only considered when there are 0 or 1 other matches, so it doesn't
- * drown out more specific suggestions. When nothing matches anywhere (not even chance), falls back
- * to a single cross-out suggestion — skipping upper rows 1-6 unless that column's live bank is
- * already negative (behind pace for the 63-point bonus), so Learning mode doesn't nudge a player to
- * give up on the bonus while they're still realistically on track for it.
+ * Chance (m/M) and the cross-out fallback are both "give up on something more specific" moves, so
+ * neither is considered before the turn's last roll (rollsUsed === 3) — suggesting either earlier
+ * would nudge a player to settle while they could still reroll for something better. Once on the
+ * last roll: Chance is only considered when there are 0 or 1 other matches, so it doesn't drown out
+ * more specific suggestions; if STILL nothing matches anywhere (not even chance), falls back to a
+ * single cross-out suggestion — skipping upper rows 1-6 unless that column's live bank is already
+ * negative (behind pace for the 63-point bonus), so it doesn't nudge a player to give up on the
+ * bonus while they're still realistically on track for it.
  */
 export function suggestedCells(dice: DiceState, table: PlayerTable): CellSuggestion[] {
   if (dice.rollsUsed === 0) return []
@@ -88,6 +97,8 @@ export function suggestedCells(dice: DiceState, table: PlayerTable): CellSuggest
       if (diceMatchesCell(dice, column, row)) fills.push({ column, row, kind: 'fill' })
     }
   }
+
+  if (dice.rollsUsed < 3) return fills
 
   if (fills.length <= 1) {
     for (const column of COLUMNS) {

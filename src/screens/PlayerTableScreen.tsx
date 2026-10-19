@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/dialogs/ConfirmDialog'
 import { useGame } from '../state/GameContext'
 import { emptyCell, isRowUnlocked, playerGrandTotal, siblingChanceSum } from '../lib/scoring'
 import { suggestedCells } from '../lib/learningMode'
+import { useSuggestionsReady } from '../lib/useSuggestionsReady'
 import { useToast } from '../lib/useToast'
 import type { Cell, ColumnKey, FillableRowKey } from '../lib/types'
 import './PlayerTableScreen.css'
@@ -21,6 +22,7 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
   const [open, setOpen] = useState<{ column: ColumnKey; row: FillableRowKey } | null>(null)
   const [confirmingQuit, setConfirmingQuit] = useState(false)
   const { toast, showToast } = useToast()
+  const suggestionsReady = useSuggestionsReady(dice.rollsUsed)
 
   const activePlayer = players[activePlayerIndex]
   const player = (playerId && players.find((p) => p.id === playerId)) || activePlayer
@@ -29,7 +31,9 @@ export default function PlayerTableScreen({ playerId }: PlayerTableScreenProps) 
   if (!player) return null
 
   const suggestions =
-    learningMode && gameType === 'virtual' && isActive && dice.rollsUsed > 0 ? suggestedCells(dice, player.table) : []
+    learningMode && gameType === 'virtual' && isActive && dice.rollsUsed > 0 && suggestionsReady
+      ? suggestedCells(dice, player.table)
+      : []
 
   function handleCellTap(column: ColumnKey, row: FillableRowKey) {
     if (!isActive) return

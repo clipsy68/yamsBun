@@ -27,6 +27,13 @@ describe('suggestedCells', () => {
     expect(result).toContainEqual({ column: 'L', row: 'F', kind: 'fill' })
   })
 
+  it('requires 3+ of a kind for an upper row (1-6) suggestion on column S, but just 1+ everywhere else', () => {
+    // only two 3s on the dice — not enough to suggest Servit '3', but still enough for L's '3'
+    const result = suggestedCells(withFaces([3, 3, 1, 2, 6]), createEmptyTable())
+    expect(result.find((s) => s.column === 'S' && s.row === '3')).toBeUndefined()
+    expect(result).toContainEqual({ column: 'L', row: '3', kind: 'fill' })
+  })
+
   it('stops suggesting column S once the dice have been rolled more than once, but keeps suggesting elsewhere', () => {
     const result = suggestedCells(withFaces([3, 3, 3, 6, 6], 2), createEmptyTable())
     expect(result.find((s) => s.column === 'S')).toBeUndefined()
@@ -34,7 +41,7 @@ describe('suggestedCells', () => {
     expect(result).toContainEqual({ column: 'L', row: 'F', kind: 'fill' })
   })
 
-  it('suggests Chance (m) when nothing else matches', () => {
+  it('never suggests Chance or a cross-out before the final (3rd) roll, even with nothing else matching', () => {
     const table = createEmptyTable()
     for (const row of ALL_ROWS) {
       if (row !== 'm') table.L[row] = { kind: 'crossed' }
@@ -42,7 +49,19 @@ describe('suggestedCells', () => {
     for (const column of ['D', 'U', 'DU', 'S'] as const) {
       for (const row of ALL_ROWS) table[column][row] = { kind: 'crossed' }
     }
-    const result = suggestedCells(withFaces([1, 1, 1, 1, 1]), table)
+    expect(suggestedCells(withFaces([1, 1, 1, 1, 1], 1), table)).toEqual([])
+    expect(suggestedCells(withFaces([1, 1, 1, 1, 1], 2), table)).toEqual([])
+  })
+
+  it('suggests Chance (m) on the final roll when nothing else matches', () => {
+    const table = createEmptyTable()
+    for (const row of ALL_ROWS) {
+      if (row !== 'm') table.L[row] = { kind: 'crossed' }
+    }
+    for (const column of ['D', 'U', 'DU', 'S'] as const) {
+      for (const row of ALL_ROWS) table[column][row] = { kind: 'crossed' }
+    }
+    const result = suggestedCells(withFaces([1, 1, 1, 1, 1], 3), table)
     expect(result).toEqual([{ column: 'L', row: 'm', kind: 'fill' }])
   })
 
@@ -54,7 +73,7 @@ describe('suggestedCells', () => {
     for (const column of ['D', 'U', 'DU', 'S'] as const) {
       for (const row of ALL_ROWS) table[column][row] = { kind: 'crossed' }
     }
-    const result = suggestedCells(withFaces([1, 1, 2, 2, 2]), table)
+    const result = suggestedCells(withFaces([1, 1, 2, 2, 2], 3), table)
     expect(result).toHaveLength(2)
     expect(result.find((s) => s.row === 'm')).toBeUndefined()
   })
@@ -71,7 +90,7 @@ describe('suggestedCells', () => {
     // five 6s -> sum 30, which is >= the sibling M's 20, so 'm' can't legally take it — with
     // nothing else open anywhere, that correctly falls through to suggesting 'm' be crossed out
     // instead (there's genuinely nothing left to fill).
-    const result = suggestedCells(withFaces([6, 6, 6, 6, 6]), table)
+    const result = suggestedCells(withFaces([6, 6, 6, 6, 6], 3), table)
     expect(result).toEqual([{ column: 'L', row: 'm', kind: 'cross' }])
   })
 
@@ -94,7 +113,7 @@ describe('suggestedCells', () => {
     for (const column of ['D', 'U', 'DU', 'S'] as const) {
       for (const row of ALL_ROWS) table[column][row] = { kind: 'crossed' }
     }
-    const result = suggestedCells(withFaces([6, 6, 6, 6, 6]), table)
+    const result = suggestedCells(withFaces([6, 6, 6, 6, 6], 3), table)
     // row '1' is still "on pace" (bank 0) so it must be skipped in favor of the lower-section row
     expect(result).toEqual([{ column: 'L', row: 'q', kind: 'cross' }])
   })
@@ -115,7 +134,7 @@ describe('suggestedCells', () => {
     for (const column of ['D', 'U', 'DU', 'S'] as const) {
       for (const row of ALL_ROWS) table[column][row] = { kind: 'crossed' }
     }
-    const result = suggestedCells(withFaces([6, 6, 6, 6, 6]), table)
+    const result = suggestedCells(withFaces([6, 6, 6, 6, 6], 3), table)
     expect(result).toEqual([{ column: 'L', row: '1', kind: 'cross' }])
   })
 })

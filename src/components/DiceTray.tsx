@@ -5,7 +5,9 @@ import type { DiceState } from '../lib/dice'
 import './DiceTray.css'
 
 const ROLL_COOLDOWN_MS = 2000
-const ROLL_ANIM_MS = 1000
+// Exported so screens that show Learning-mode suggestions can hold off until the roll animation
+// below has actually settled, instead of revealing the answer while the dice are still tumbling.
+export const ROLL_ANIM_MS = 1000
 
 // Each physical cube face always shows the same pip value (front=1, back=6, right=2, left=5,
 // top=3, bottom=4) — only the cube's rotation changes between rolls. Rotating to REST_ROTATION[v]
