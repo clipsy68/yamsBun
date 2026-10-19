@@ -20,6 +20,7 @@
     "virtualDiceSub": "La app tira los dados, con animación",
     "playerNamesLabel": "Nombres de los jugadores",
     "playerNamesHint": "Complétalos en el orden en que están sentados",
+    "duplicateNamesWarning": "Dos jugadores no pueden tener el mismo nombre",
     "playerNamePlaceholder": "Nombre del jugador {{n}}",
     "liveTotalTitle": "Mostrar puntuación total en vivo",
     "liveTotalSub": "Opcional: se mantiene oculta hasta el final para más emoción, pero puedes activar la visualización en vivo cuando quieras.",

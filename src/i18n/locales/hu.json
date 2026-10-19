@@ -20,6 +20,7 @@
     "virtualDiceSub": "Az app dob a kockákkal, animációval",
     "playerNamesLabel": "Játékosok nevei",
     "playerNamesHint": "Töltsd ki ülésrend szerint",
+    "duplicateNamesWarning": "Két játékosnak nem lehet ugyanaz a neve",
     "playerNamePlaceholder": "{{n}}. játékos neve",
     "liveTotalTitle": "Élő összpontszám megjelenítése",
     "liveTotalSub": "Opcionális — alapértelmezésben rejtve marad, hogy izgalmasabb legyen a vége, de bármikor bekapcsolhatod az élő megjelenítést.",

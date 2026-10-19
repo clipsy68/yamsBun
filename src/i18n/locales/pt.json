@@ -20,6 +20,7 @@
     "virtualDiceSub": "O app lança os dados, com animação",
     "playerNamesLabel": "Nomes dos jogadores",
     "playerNamesHint": "Preencha na ordem em que estão sentados",
+    "duplicateNamesWarning": "Dois jogadores não podem ter o mesmo nome",
     "playerNamePlaceholder": "Nome do jogador {{n}}",
     "liveTotalTitle": "Mostrar pontuação total em tempo real",
     "liveTotalSub": "Opcional: fica oculta até o fim para dar mais emoção, mas você pode ativar a exibição em tempo real quando quiser.",

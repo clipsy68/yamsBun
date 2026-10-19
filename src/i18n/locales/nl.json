@@ -20,6 +20,7 @@
     "virtualDiceSub": "De app gooit de dobbelstenen, met animatie",
     "playerNamesLabel": "Namen van de spelers",
     "playerNamesHint": "Vul in op volgorde van zitplaats",
+    "duplicateNamesWarning": "Twee spelers kunnen niet dezelfde naam hebben",
     "playerNamePlaceholder": "Naam van speler {{n}}",
     "liveTotalTitle": "Totale live score tonen",
     "liveTotalSub": "Optioneel — blijft verborgen tot het einde, voor extra spanning, maar je kunt de live weergave altijd inschakelen.",

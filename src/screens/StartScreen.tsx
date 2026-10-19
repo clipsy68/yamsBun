@@ -46,7 +46,23 @@ export default function StartScreen() {
     setSuggestIndex(null)
   }
 
-  const canStart = names.every((n) => n.trim().length > 0)
+  // Two players sharing a name isn't just confusing at the table — history and the leaderboard
+  // both key a finished game's winner(s) by name string (not player identity, which isn't kept
+  // in persisted history), so a duplicate name would show BOTH players marked as winner on a tie
+  // that was really only one of them, and silently merge their saved stats into one entry.
+  const normalizedNames = names.map((n) => n.trim().toLowerCase())
+  const duplicateIndices = new Set<number>()
+  normalizedNames.forEach((n, i) => {
+    if (!n) return
+    const firstIdx = normalizedNames.indexOf(n)
+    if (firstIdx !== i) {
+      duplicateIndices.add(i)
+      duplicateIndices.add(firstIdx)
+    }
+  })
+  const hasDuplicateNames = duplicateIndices.size > 0
+
+  const canStart = names.every((n) => n.trim().length > 0) && !hasDuplicateNames
 
   return (
     <div className="start-screen">
@@ -138,7 +154,7 @@ export default function StartScreen() {
             <div className="name-row" key={i}>
               <div className="name-badge">{i + 1}</div>
               <input
-                className="name-input"
+                className={`name-input ${duplicateIndices.has(i) ? 'name-input-duplicate' : ''}`}
                 placeholder={t('start.playerNamePlaceholder', { n: i + 1 })}
                 value={name}
                 onChange={(e) => handleNameChange(i, e.target.value)}
@@ -163,6 +179,7 @@ export default function StartScreen() {
             </div>
           ))}
         </div>
+        {hasDuplicateNames && <div className="name-duplicate-warning">{t('start.duplicateNamesWarning')}</div>}
       </section>
 
       <section>

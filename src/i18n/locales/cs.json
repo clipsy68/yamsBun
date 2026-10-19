@@ -20,6 +20,7 @@
     "virtualDiceSub": "Aplikace hází kostkami, s animací",
     "playerNamesLabel": "Jména hráčů",
     "playerNamesHint": "Vyplňte v pořadí, jak sedíte",
+    "duplicateNamesWarning": "Dva hráči nemohou mít stejné jméno",
     "playerNamePlaceholder": "Jméno hráče {{n}}",
     "liveTotalTitle": "Zobrazit celkové skóre v reálném čase",
     "liveTotalSub": "Nepovinné — raději skryté, aby byl konec zajímavější, ale živé zobrazení můžete kdykoli zapnout.",

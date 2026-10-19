@@ -20,6 +20,7 @@
     "virtualDiceSub": "Aplikacja rzuca kośćmi, z animacją",
     "playerNamesLabel": "Imiona graczy",
     "playerNamesHint": "Wypełnij w porządku, w jakim siedzicie",
+    "duplicateNamesWarning": "Dwóch graczy nie może mieć tej samej nazwy",
     "playerNamePlaceholder": "Imię gracza {{n}}",
     "liveTotalTitle": "Pokaż łączny wynik na żywo",
     "liveTotalSub": "Opcjonalnie — domyślnie skryty, żeby zakończenie było bardziej emocjonujące, ale podgląd na żywo możesz włączyć w każdej chwili.",

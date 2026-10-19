@@ -138,6 +138,16 @@ section {
   gap: 10px;
 }
 
+.name-duplicate-warning {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.name-input-duplicate {
+  border-color: var(--red);
+}
+
 .name-row {
   position: relative;
   display: flex;

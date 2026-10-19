@@ -20,6 +20,7 @@
     "virtualDiceSub": "アプリがアニメーション付きでダイスを振ります",
     "playerNamesLabel": "プレイヤー名",
     "playerNamesHint": "座る順番で入力してください",
+    "duplicateNamesWarning": "2人のプレイヤーが同じ名前にはできません",
     "playerNamePlaceholder": "プレイヤー{{n}}の名前",
     "liveTotalTitle": "合計スコアをリアルタイムで表示",
     "liveTotalSub": "任意 — 最後まで隠しておくとより盛り上がりますが、いつでもリアルタイム表示をオンにできます。",

@@ -20,6 +20,7 @@
     "virtualDiceSub": "Uygulama zarları animasyonla atar",
     "playerNamesLabel": "Oyuncu isimleri",
     "playerNamesHint": "Oturma sırasına göre doldurun",
+    "duplicateNamesWarning": "İki oyuncu aynı isme sahip olamaz",
     "playerNamePlaceholder": "{{n}}. oyuncunun adı",
     "liveTotalTitle": "Genel canlı skoru göster",
     "liveTotalSub": "İsteğe bağlı — sonu daha heyecanlı kılmak için varsayılan olarak gizli tutulur, ama canlı görünümü istediğin zaman açabilirsin.",

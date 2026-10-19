@@ -20,6 +20,7 @@
     "virtualDiceSub": "L'app lancia i dadi, con animazione",
     "playerNamesLabel": "Nomi dei giocatori",
     "playerNamesHint": "Compilali nell'ordine in cui siete seduti",
+    "duplicateNamesWarning": "Due giocatori non possono avere lo stesso nome",
     "playerNamePlaceholder": "Nome del giocatore {{n}}",
     "liveTotalTitle": "Mostra il punteggio totale in tempo reale",
     "liveTotalSub": "Facoltativo: resta nascosto fino alla fine per più suspense, ma puoi attivare la visualizzazione in tempo reale quando vuoi.",

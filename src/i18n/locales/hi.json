@@ -20,6 +20,7 @@
     "virtualDiceSub": "ऐप एनिमेशन के साथ डाइस फेंकता है",
     "playerNamesLabel": "खिलाड़ियों के नाम",
     "playerNamesHint": "बैठने के क्रम में भरें",
+    "duplicateNamesWarning": "दो खिलाड़ियों का नाम एक जैसा नहीं हो सकता",
     "playerNamePlaceholder": "खिलाड़ी {{n}} का नाम",
     "liveTotalTitle": "कुल लाइव स्कोर दिखाएं",
     "liveTotalSub": "वैकल्पिक — अंत को रोमांचक बनाने के लिए यह छुपा रहता है, लेकिन आप कभी भी लाइव दिखाना चालू कर सकते हैं।",

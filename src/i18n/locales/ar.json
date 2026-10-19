@@ -20,6 +20,7 @@
     "virtualDiceSub": "يرمي التطبيق النرد مع حركة متحركة",
     "playerNamesLabel": "أسماء اللاعبين",
     "playerNamesHint": "عبّئها بترتيب الجلوس",
+    "duplicateNamesWarning": "لا يمكن أن يكون لدى لاعبين نفس الاسم",
     "playerNamePlaceholder": "اسم اللاعب {{n}}",
     "liveTotalTitle": "إظهار النتيجة الإجمالية المباشرة",
     "liveTotalSub": "اختياري — تبقى مخفية حتى تكون النهاية أكثر إثارة، ولكن يمكنك تفعيل العرض المباشر في أي وقت.",

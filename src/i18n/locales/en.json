@@ -20,6 +20,7 @@
     "virtualDiceSub": "The app rolls the dice, with animation",
     "playerNamesLabel": "Player names",
     "playerNamesHint": "Fill in, in seating order",
+    "duplicateNamesWarning": "Two players can't have the same name",
     "playerNamePlaceholder": "Player {{n}} name",
     "liveTotalTitle": "Show overall live score",
     "liveTotalSub": "Optional — kept hidden until the end is more exciting, but you can turn on live display anytime.",

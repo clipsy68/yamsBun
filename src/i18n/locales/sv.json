@@ -20,6 +20,7 @@
     "virtualDiceSub": "Appen kastar tärningarna, med animation",
     "playerNamesLabel": "Spelarnamn",
     "playerNamesHint": "Fyll i enligt sittordning",
+    "duplicateNamesWarning": "Två spelare kan inte ha samma namn",
     "playerNamePlaceholder": "Namn på spelare {{n}}",
     "liveTotalTitle": "Visa totalpoäng live",
     "liveTotalSub": "Valfritt — hålls dold till slutet för extra spänning, men du kan slå på live-visningen när du vill.",

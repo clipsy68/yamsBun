@@ -20,6 +20,7 @@
     "virtualDiceSub": "Aplicația aruncă zarurile, cu animație",
     "playerNamesLabel": "Nume jucători",
     "playerNamesHint": "Completează în ordinea așezării jucătorilor",
+    "duplicateNamesWarning": "Doi jucători nu pot avea același nume",
     "playerNamePlaceholder": "Nume jucător {{n}}",
     "liveTotalTitle": "Afișează scorul total general în timp real",
     "liveTotalSub": "Opțional — ținut ascuns până la final e mai captivant, dar poți porni afișarea live oricând.",

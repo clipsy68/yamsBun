@@ -20,6 +20,7 @@
     "virtualDiceSub": "Die App würfelt, mit Animation",
     "playerNamesLabel": "Spielernamen",
     "playerNamesHint": "In Sitzreihenfolge ausfüllen",
+    "duplicateNamesWarning": "Zwei Spieler können nicht denselben Namen haben",
     "playerNamePlaceholder": "Name von Spieler {{n}}",
     "liveTotalTitle": "Gesamtpunktzahl live anzeigen",
     "liveTotalSub": "Optional — bleibt bis zum Schluss verborgen, damit es spannender bleibt, aber du kannst die Live-Anzeige jederzeit einschalten.",

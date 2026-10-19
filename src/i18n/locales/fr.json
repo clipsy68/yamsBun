@@ -20,6 +20,7 @@
     "virtualDiceSub": "L'appli lance les dés, avec animation",
     "playerNamesLabel": "Noms des joueurs",
     "playerNamesHint": "Remplissez-les dans l'ordre des places",
+    "duplicateNamesWarning": "Deux joueurs ne peuvent pas avoir le même nom",
     "playerNamePlaceholder": "Nom du joueur {{n}}",
     "liveTotalTitle": "Afficher le score total en direct",
     "liveTotalSub": "Facultatif : reste caché jusqu'à la fin pour plus de suspense, mais vous pouvez activer l'affichage en direct à tout moment.",

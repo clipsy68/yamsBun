@@ -20,6 +20,7 @@
     "virtualDiceSub": "应用会带动画掷骰子",
     "playerNamesLabel": "玩家姓名",
     "playerNamesHint": "按座位顺序填写",
+    "duplicateNamesWarning": "两位玩家不能使用相同的名字",
     "playerNamePlaceholder": "玩家 {{n}} 的姓名",
     "liveTotalTitle": "显示实时总分",
     "liveTotalSub": "可选 — 默认隐藏,让结局更精彩,但你可以随时打开实时显示。",
