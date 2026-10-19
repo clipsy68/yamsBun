@@ -139,19 +139,20 @@
 /* Learning mode: a pale green pulse on an empty cell the current roll would fill. Opaque colors
    throughout (not a transparent green over the grid's own grey gap background, which read as dingy
    grey at the low point instead of white) — troughs at the cell's normal paper-white, peaks at a
-   solid pale green. */
+   soft, muted pale green (kept subtle on purpose — a hint, not an attention-grabbing flash), with a
+   slower cycle so it reads as a gentle ambient glow rather than a sharp blink. */
 @keyframes gst-suggest-pulse {
   0%,
   100% {
     background-color: var(--paper);
   }
   50% {
-    background-color: #b7e3ca;
+    background-color: #e2f4e9;
   }
 }
 
 .gst-cell.gst-suggest-fill {
-  animation: gst-suggest-pulse 1600ms ease-in-out infinite;
+  animation: gst-suggest-pulse 2400ms ease-in-out infinite;
 }
 
 /* Learning mode: when nothing fits, a one-shot diagonal red line drawn bottom-left -> top-right,
@@ -189,7 +190,7 @@
 @media (prefers-reduced-motion: reduce) {
   .gst-cell.gst-suggest-fill {
     animation: none;
-    background-color: #b7e3ca;
+    background-color: #e2f4e9;
   }
 
   .gst-cell.gst-suggest-cross::after {
