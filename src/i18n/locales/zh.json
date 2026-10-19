@@ -113,6 +113,7 @@
     "groupSubDefault": "格子「{{row}}」· 第 {{column}} 列",
     "select": "选择",
     "criteriaWarning": "你无法填写这个格子,因为不符合{{category}}的条件",
+    "upperMismatchWarning": "这个数量与骰子上显示的不符",
     "categorySmallStraight": "小顺",
     "categoryLargeStraight": "大顺",
     "categoryFullHouse": "葫芦",

@@ -115,6 +115,7 @@
     "groupSubDefault": "सेल \"{{row}}\" · कॉलम {{column}}",
     "select": "चुनें",
     "criteriaWarning": "आप यह सेल नहीं भर सकते क्योंकि आप {{category}} की शर्तें पूरी नहीं करते",
+    "upperMismatchWarning": "यह संख्या पासों पर दिख रही संख्या से मेल नहीं खाती",
     "categorySmallStraight": "स्मॉल स्ट्रेट",
     "categoryLargeStraight": "लार्ज स्ट्रेट",
     "categoryFullHouse": "फुल हाउस",

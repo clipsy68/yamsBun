@@ -115,6 +115,7 @@
     "groupSubDefault": "cella \"{{row}}\" · colonna {{column}}",
     "select": "seleziona",
     "criteriaWarning": "Non puoi compilare questa cella perché non soddisfi i criteri per {{category}}",
+    "upperMismatchWarning": "Questo numero non corrisponde a quello sui dadi",
     "categorySmallStraight": "Scala piccola",
     "categoryLargeStraight": "Scala grande",
     "categoryFullHouse": "Full",

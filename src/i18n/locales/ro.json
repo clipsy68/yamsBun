@@ -115,6 +115,7 @@
     "groupSubDefault": "căsuța „{{row}}” · coloana {{column}}",
     "select": "alege",
     "criteriaWarning": "Nu puteți completa această căsuță deoarece nu îndepliniți criteriile pentru {{category}}",
+    "upperMismatchWarning": "Acest număr nu corespunde cu ce este pe zaruri",
     "categorySmallStraight": "Chintă mică",
     "categoryLargeStraight": "Chintă mare",
     "categoryFullHouse": "Full",

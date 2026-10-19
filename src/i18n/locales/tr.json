@@ -113,6 +113,7 @@
     "groupSubDefault": "“{{row}}” hücresi · {{column}}. sütun",
     "select": "seç",
     "criteriaWarning": "Bu hücreyi dolduramazsın çünkü {{category}} için gereken kriterleri karşılamıyorsun",
+    "upperMismatchWarning": "Bu sayı zarlarda görünenle eşleşmiyor",
     "categorySmallStraight": "Küçük Straight",
     "categoryLargeStraight": "Büyük Straight",
     "categoryFullHouse": "Full House",

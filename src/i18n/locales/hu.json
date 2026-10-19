@@ -113,6 +113,7 @@
     "groupSubDefault": "„{{row}}” cella · {{column}}. oszlop",
     "select": "kiválasztás",
     "criteriaWarning": "Nem tudod kitölteni ezt a cellát, mert nem felelsz meg a {{category}} feltételeinek",
+    "upperMismatchWarning": "Ez a szám nem egyezik a kockákon láthatóval",
     "categorySmallStraight": "Kis sor",
     "categoryLargeStraight": "Nagy sor",
     "categoryFullHouse": "Full House",

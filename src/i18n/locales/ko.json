@@ -113,6 +113,7 @@
     "groupSubDefault": "“{{row}}” 칸 · {{column}} 열",
     "select": "선택",
     "criteriaWarning": "{{category}} 조건을 충족하지 않아서 이 칸을 채울 수 없어요",
+    "upperMismatchWarning": "이 개수는 주사위 눈과 일치하지 않아요",
     "categorySmallStraight": "스몰 스트레이트",
     "categoryLargeStraight": "라지 스트레이트",
     "categoryFullHouse": "풀 하우스",

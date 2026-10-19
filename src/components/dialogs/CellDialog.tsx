@@ -172,13 +172,21 @@ export default function CellDialog({
     }
   }
 
-  // Playing with zaruri virtuale: q/Q/F/K/Y can only be confirmed FRESH when the actual current roll
-  // satisfies that combination — otherwise the dialog previously let a player cross-check nothing
-  // and just confirm any pattern by hand (e.g. picking a Full House face pair that isn't on the
-  // table). Chance (m/M) and upper rows have no dice-dependent requirement, so they're left alone.
-  // Gated on isFresh: an already-confirmed cell's combination was already validated against the roll
-  // that produced it — re-checking it against whatever the dice show NOW (they can keep being rolled
-  // after a cell is filled) would falsely flag a valid save as invalid the moment the roll changes.
+  // Playing with zaruri virtuale: every dice-dependent row (upper counts, q/Q/F/K/Y) can only be
+  // confirmed with a value that actually matches the current roll — not just "some qualifying
+  // combination exists somewhere on the dice" (that alone let a player e.g. keep a real Careu-of-1s
+  // but hand-pick face 6 in the picker, or claim 5 of a face when only 2 are showing). Chance (m/M)
+  // is the one category with no dice-dependent requirement (its value is read straight off the
+  // roll in virtual mode, never freely chosen — see diceChanceValue above).
+  //
+  // Not gated on isFresh: re-opening the cell filled THIS turn only happens while DiceTray is
+  // locked (see the `locked` prop threaded from PlayerTableScreen/GeneralTableScreen) — the dice
+  // that produced the original fill cannot have changed by the time a same-turn re-edit happens, so
+  // validating against the current dice on a re-edit is exactly as safe as on the original fill, and
+  // closes the loophole of swapping in an unearned value after the fact.
+  const realFullHouse = dice && category === 'fullHouse' ? detectFullHouse(dice) : null
+  const realFourKind = dice && category === 'fourKind' ? detectFourKind(dice) : null
+  const realYams = dice && category === 'yams' ? detectYams(dice) : null
   const DICE_CRITERIA_LABEL: Record<Exclude<RowCategory, 'upper' | 'chance'>, string> = {
     fixed: row === 'q' ? t('cellDialog.categorySmallStraight') : t('cellDialog.categoryLargeStraight'),
     fullHouse: t('cellDialog.categoryFullHouse'),
@@ -186,17 +194,19 @@ export default function CellDialog({
     yams: t('cellDialog.categoryYams'),
   }
   const diceCriteriaMet =
-    !dice || category === 'upper' || category === 'chance' || !isFresh
+    !dice || category === 'chance'
       ? true
-      : category === 'fixed'
-        ? row === 'q'
-          ? detectSmallStraight(dice)
-          : detectLargeStraight(dice)
-        : category === 'fullHouse'
-          ? detectFullHouse(dice) !== null
-          : category === 'fourKind'
-            ? detectFourKind(dice) !== null
-            : detectYams(dice) !== null
+      : category === 'upper'
+        ? count === countFace(dice, Number(row))
+        : category === 'fixed'
+          ? row === 'q'
+            ? detectSmallStraight(dice)
+            : detectLargeStraight(dice)
+          : category === 'fullHouse'
+            ? realFullHouse !== null && realFullHouse.tripleFace === tripleFace && realFullHouse.pairFace === pairFace
+            : category === 'fourKind'
+              ? realFourKind !== null && realFourKind === face
+              : realYams !== null && realYams === face
 
   const previewCell = buildCell()
   const score = previewCell ? cellPoints(previewCell, row, column) : 0
@@ -301,9 +311,11 @@ export default function CellDialog({
         {category === 'fourKind' && <DiceSlots n={4} value={face} onTap={() => setActivePicker('single')} />}
         {category === 'yams' && <DiceSlots n={5} value={face} onTap={() => setActivePicker('single')} />}
 
-        {dice && isFresh && !diceCriteriaMet && category !== 'upper' && category !== 'chance' && (
+        {dice && !diceCriteriaMet && category !== 'chance' && (
           <div className="cd-warning">
-            {t('cellDialog.criteriaWarning', { category: DICE_CRITERIA_LABEL[category] })}
+            {category === 'upper'
+              ? t('cellDialog.upperMismatchWarning')
+              : t('cellDialog.criteriaWarning', { category: DICE_CRITERIA_LABEL[category] })}
           </div>
         )}
 

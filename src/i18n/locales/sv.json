@@ -115,6 +115,7 @@
     "groupSubDefault": "rutan ”{{row}}” · kolumn {{column}}",
     "select": "välj",
     "criteriaWarning": "Du kan inte fylla i den här rutan eftersom du inte uppfyller kriterierna för {{category}}",
+    "upperMismatchWarning": "Det här antalet matchar inte det som visas på tärningarna",
     "categorySmallStraight": "Liten stege",
     "categoryLargeStraight": "Stor stege",
     "categoryFullHouse": "Kåk",

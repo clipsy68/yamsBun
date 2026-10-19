@@ -119,6 +119,7 @@
     "groupSubDefault": "клітинка «{{row}}» · стовпець {{column}}",
     "select": "вибрати",
     "criteriaWarning": "Ви не можете заповнити цю клітинку, бо не виконано умови для «{{category}}»",
+    "upperMismatchWarning": "Це число не збігається з тим, що випало на кубиках",
     "categorySmallStraight": "Малий стрит",
     "categoryLargeStraight": "Великий стрит",
     "categoryFullHouse": "Фул-хаус",

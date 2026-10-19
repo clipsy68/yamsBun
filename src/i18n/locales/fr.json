@@ -115,6 +115,7 @@
     "groupSubDefault": "case \"{{row}}\" · colonne {{column}}",
     "select": "sélectionner",
     "criteriaWarning": "Vous ne pouvez pas remplir cette case car vous ne remplissez pas les critères pour {{category}}",
+    "upperMismatchWarning": "Ce nombre ne correspond pas à ce qui est affiché sur les dés",
     "categorySmallStraight": "Petite Suite",
     "categoryLargeStraight": "Grande Suite",
     "categoryFullHouse": "Full",

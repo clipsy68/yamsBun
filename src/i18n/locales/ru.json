@@ -119,6 +119,7 @@
     "groupSubDefault": "клетка «{{row}}» · столбец {{column}}",
     "select": "выбрать",
     "criteriaWarning": "Вы не можете заполнить эту клетку, так как не выполнены условия для «{{category}}»",
+    "upperMismatchWarning": "Это число не совпадает с тем, что выпало на кубиках",
     "categorySmallStraight": "Малый стрит",
     "categoryLargeStraight": "Большой стрит",
     "categoryFullHouse": "Фулл-хаус",

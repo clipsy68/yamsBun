@@ -117,6 +117,7 @@
     "groupSubDefault": "komórka „{{row}}” · kolumna {{column}}",
     "select": "wybierz",
     "criteriaWarning": "Nie możesz wypełnić tej komórki, bo nie spełniasz kryteriów dla {{category}}",
+    "upperMismatchWarning": "Ta liczba nie zgadza się z tym, co jest na kostkach",
     "categorySmallStraight": "Mały strit",
     "categoryLargeStraight": "Duży strit",
     "categoryFullHouse": "Full House",

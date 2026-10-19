@@ -115,6 +115,7 @@
     "groupSubDefault": "клетка „{{row}}“ · колона {{column}}",
     "select": "избор",
     "criteriaWarning": "Не можете да попълните тази клетка, защото не отговаряте на условията за {{category}}",
+    "upperMismatchWarning": "Това число не съответства на това, което е на заровете",
     "categorySmallStraight": "Малка поредица",
     "categoryLargeStraight": "Голяма поредица",
     "categoryFullHouse": "Фул хаус",

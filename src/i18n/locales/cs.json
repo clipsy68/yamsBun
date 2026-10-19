@@ -117,6 +117,7 @@
     "groupSubDefault": "buňka „{{row}}“ · sloupec {{column}}",
     "select": "vybrat",
     "criteriaWarning": "Tuto buňku nemůžete vyplnit, protože nesplňujete podmínky pro {{category}}",
+    "upperMismatchWarning": "Tento počet neodpovídá tomu, co je na kostkách",
     "categorySmallStraight": "Malá postupka",
     "categoryLargeStraight": "Velká postupka",
     "categoryFullHouse": "Full House",

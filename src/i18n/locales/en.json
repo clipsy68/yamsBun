@@ -115,6 +115,7 @@
     "groupSubDefault": "cell \"{{row}}\" · column {{column}}",
     "select": "select",
     "criteriaWarning": "You can't fill this cell because you don't meet the criteria for {{category}}",
+    "upperMismatchWarning": "This count doesn't match what's on the dice",
     "categorySmallStraight": "Small Straight",
     "categoryLargeStraight": "Large Straight",
     "categoryFullHouse": "Full House",

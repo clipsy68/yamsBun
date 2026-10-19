@@ -115,6 +115,7 @@
     "groupSubDefault": "Zelle „{{row}}“ · Spalte {{column}}",
     "select": "auswählen",
     "criteriaWarning": "Du kannst diese Zelle nicht ausfüllen, weil du die Kriterien für {{category}} nicht erfüllst",
+    "upperMismatchWarning": "Diese Anzahl stimmt nicht mit den Würfeln überein",
     "categorySmallStraight": "Kleine Straße",
     "categoryLargeStraight": "Große Straße",
     "categoryFullHouse": "Full House",

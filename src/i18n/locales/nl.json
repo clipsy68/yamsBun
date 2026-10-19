@@ -115,6 +115,7 @@
     "groupSubDefault": "vakje “{{row}}” · kolom {{column}}",
     "select": "selecteren",
     "criteriaWarning": "Je kunt dit vakje niet invullen omdat je niet aan de criteria voor {{category}} voldoet",
+    "upperMismatchWarning": "Dit aantal komt niet overeen met wat op de dobbelstenen staat",
     "categorySmallStraight": "Kleine Straat",
     "categoryLargeStraight": "Grote Straat",
     "categoryFullHouse": "Full House",

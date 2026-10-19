@@ -123,6 +123,7 @@
     "groupSubDefault": "الخلية \"{{row}}\" · العمود {{column}}",
     "select": "اختيار",
     "criteriaWarning": "لا يمكنك تعبئة هذه الخلية لأنك لا تحقق شروط {{category}}",
+    "upperMismatchWarning": "هذا العدد لا يتطابق مع ما هو موجود على النرد",
     "categorySmallStraight": "تتابع صغير",
     "categoryLargeStraight": "تتابع كبير",
     "categoryFullHouse": "فل هاوس",

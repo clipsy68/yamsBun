@@ -113,6 +113,7 @@
     "groupSubDefault": "セル「{{row}}」· 列 {{column}}",
     "select": "選択",
     "criteriaWarning": "{{category}}の条件を満たしていないため、このセルには記入できません",
+    "upperMismatchWarning": "この個数はサイコロの出目と一致しません",
     "categorySmallStraight": "スモールストレート",
     "categoryLargeStraight": "ラージストレート",
     "categoryFullHouse": "フルハウス",

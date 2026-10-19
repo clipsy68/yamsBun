@@ -115,6 +115,7 @@
     "groupSubDefault": "célula \"{{row}}\" · coluna {{column}}",
     "select": "selecionar",
     "criteriaWarning": "Você não pode preencher esta célula porque não cumpre os critérios de {{category}}",
+    "upperMismatchWarning": "Esta quantidade não corresponde ao que está nos dados",
     "categorySmallStraight": "Sequência pequena",
     "categoryLargeStraight": "Sequência grande",
     "categoryFullHouse": "Full House",

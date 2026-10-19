@@ -115,6 +115,7 @@
     "groupSubDefault": "casilla \"{{row}}\" · columna {{column}}",
     "select": "seleccionar",
     "criteriaWarning": "No puedes rellenar esta casilla porque no cumples los criterios de {{category}}",
+    "upperMismatchWarning": "Esta cantidad no coincide con lo que hay en los dados",
     "categorySmallStraight": "Escalera pequeña",
     "categoryLargeStraight": "Escalera grande",
     "categoryFullHouse": "Full",
