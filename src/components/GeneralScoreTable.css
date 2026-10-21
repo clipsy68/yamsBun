@@ -158,10 +158,11 @@
 /* Learning mode: when nothing fits, a thin diagonal red line (bottom-left -> top-right) suggesting
    that cell be crossed out instead — a real SVG line (not a CSS gradient band, which turned out to
    visually run the OTHER diagonal: a gradient's color stops form a band *perpendicular* to its
-   named direction, not *along* it) with explicit endpoints. stroke-dashoffset (the drawn-in length)
-   and opacity animate together in one keyframe set, both bottoming out at the same instant — at the
-   low point nothing is drawn AND it's fully transparent, so there's never a faint/dim remnant,
-   only ever a clean red line growing in and shrinking back out as one continuous motion. */
+   named direction, not *along* it) with explicit endpoints. Draws in once (stroke-dashoffset +
+   opacity together), holds fully drawn and visible for a moment, then fades out via opacity ALONE
+   while staying fully drawn — never shrinking/retracting back — before resetting to undrawn while
+   invisible and drawing in again. So the motion always reads as "draw, then disappear, then draw
+   again", never as a draw reversing itself. */
 .gst-cell.gst-suggest-cross {
   position: relative;
 }
@@ -185,14 +186,22 @@
 }
 
 @keyframes gst-suggest-cross-pulse {
-  0%,
-  100% {
+  0% {
     stroke-dashoffset: 125;
     opacity: 0;
   }
-  50% {
+  35% {
     stroke-dashoffset: 0;
-    opacity: 0.85;
+    opacity: 1;
+  }
+  45% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  70%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
   }
 }
 
