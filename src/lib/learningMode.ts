@@ -14,8 +14,12 @@ import {
 export interface CellSuggestion {
   column: ColumnKey
   row: FillableRowKey
-  kind: 'fill' | 'cross'
+  kind: 'fill' | 'cross' | 'near'
 }
+
+const SMALL_STRAIGHT_FACES = new Set([1, 2, 3, 4, 5])
+const LARGE_STRAIGHT_FACES = new Set([2, 3, 4, 5, 6])
+const NEAR_MISS_ROWS = ['q', 'Q', 'F', 'K', 'Y'] as const
 
 function faceOf(row: string): number {
   return Number(row)
@@ -70,12 +74,53 @@ function chanceWouldFit(dice: DiceState, table: PlayerTable, column: ColumnKey, 
 }
 
 /**
+ * Which of q/Q/F/K/Y are one reroll away from matching the dice as-is — "worth keeping these dice
+ * and rerolling the rest" territory, distinct from an actual match. Each pattern below is mutually
+ * exclusive with every other (including its own row's exact-match pattern), so there's never a
+ * question of which one "wins" for a given roll:
+ *   - K: exactly three of a kind (four+ is already an exact Careu match).
+ *   - Y: exactly four of a kind (five is already an exact Yams match) — also a legitimate near-miss
+ *     even when the same roll is an exact Full House (3+2), since breaking the pair for a reroll at
+ *     the triple is a real option.
+ *   - F: exactly two pairs (the lone fifth die is the one to reroll, hoping to match either pair).
+ *   - q/Q: exactly 4 distinct faces, where that 4-value set sits entirely inside the small and/or
+ *     large straight's 5-value set — e.g. {2,3,4,5} is one reroll from EITHER straight (the 5th die
+ *     could come up 1 or 6), so both q and Q apply at once there; {1,2,3,4} only reaches q (a 6
+ *     can't complete it), {3,4,5,6} only reaches Q.
+ */
+function nearMissRows(dice: DiceState): Set<FillableRowKey> {
+  const near = new Set<FillableRowKey>()
+  const counts = new Map<number, number>()
+  for (const f of dice.faces) counts.set(f, (counts.get(f) ?? 0) + 1)
+  const countValues = [...counts.values()]
+  const maxCount = Math.max(...countValues)
+  const pairCount = countValues.filter((c) => c === 2).length
+
+  if (maxCount === 3) near.add('K')
+  if (maxCount === 4) near.add('Y')
+  if (pairCount === 2) near.add('F')
+
+  const distinct = new Set(dice.faces)
+  if (distinct.size === 4) {
+    const within = (target: Set<number>) => [...distinct].every((f) => target.has(f))
+    if (within(SMALL_STRAIGHT_FACES)) near.add('q')
+    if (within(LARGE_STRAIGHT_FACES)) near.add('Q')
+  }
+
+  return near
+}
+
+/**
  * The cells the current roll would validly fill right now, for "Learning mode". Reuses the same
  * validation CellDialog already enforces (countFace, the detect-* helpers, isRowUnlocked,
  * siblingChanceSum) so a
  * suggestion here always matches what the dialog would actually accept — never a separate opinion
  * about what's "good" play. Pure and dice/table-only so it can be reused later for a virtual-bot
  * player without rework (see the Learning Mode plan this was built from).
+ *
+ * While a reroll is still available (rollsUsed < 3), also surfaces "near-miss" nudges — see
+ * nearMissRows — alongside any exact matches; these never apply once the turn's last roll is spent,
+ * since there's nothing left to reroll for by then.
  *
  * Chance (m/M) and the cross-out fallback are both "give up on something more specific" moves, so
  * neither is considered before the turn's last roll (rollsUsed === 3) — suggesting either earlier
@@ -98,7 +143,21 @@ export function suggestedCells(dice: DiceState, table: PlayerTable): CellSuggest
     }
   }
 
-  if (dice.rollsUsed < 3) return fills
+  if (dice.rollsUsed < 3) {
+    // Near-miss nudges only make sense while a reroll is still possible — and never for column S,
+    // since chasing one always means rolling again, which disqualifies S's first-roll-only rule
+    // before the completed combination could ever be banked there.
+    const near = nearMissRows(dice)
+    for (const column of COLUMNS) {
+      if (column === 'S' || near.size === 0) continue
+      for (const row of NEAR_MISS_ROWS) {
+        if (!near.has(row)) continue
+        if (!isReachableEmpty(table, column, row)) continue
+        fills.push({ column, row, kind: 'near' })
+      }
+    }
+    return fills
+  }
 
   if (fills.length <= 1) {
     for (const column of COLUMNS) {

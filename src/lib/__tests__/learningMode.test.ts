@@ -137,4 +137,56 @@ describe('suggestedCells', () => {
     const result = suggestedCells(withFaces([6, 6, 6, 6, 6], 3), table)
     expect(result).toEqual([{ column: 'L', row: '1', kind: 'cross' }])
   })
+
+  describe('near-miss nudges (one reroll away, only while rerolls remain)', () => {
+    it("the user's worked example: 2,3,4,5 present suggests BOTH q and Q as near-misses", () => {
+      const result = suggestedCells(withFaces([2, 3, 4, 5, 2]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: 'q', kind: 'near' })
+      expect(result).toContainEqual({ column: 'L', row: 'Q', kind: 'near' })
+    })
+
+    it('4 distinct faces within only the small straight suggests q but not Q', () => {
+      const result = suggestedCells(withFaces([1, 2, 3, 4, 1]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: 'q', kind: 'near' })
+      expect(result.find((s) => s.row === 'Q')).toBeUndefined()
+    })
+
+    it('4 distinct faces within only the large straight suggests Q but not q', () => {
+      const result = suggestedCells(withFaces([3, 4, 5, 6, 3]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: 'Q', kind: 'near' })
+      expect(result.find((s) => s.row === 'q')).toBeUndefined()
+    })
+
+    it('exactly three of a kind suggests Careu (K) as a near-miss', () => {
+      const result = suggestedCells(withFaces([5, 5, 5, 1, 2]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: 'K', kind: 'near' })
+    })
+
+    it('exactly four of a kind suggests Yams (Y) as a near-miss', () => {
+      const result = suggestedCells(withFaces([4, 4, 4, 4, 1]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: 'Y', kind: 'near' })
+    })
+
+    it('two pairs suggests Full House (F) as a near-miss', () => {
+      const result = suggestedCells(withFaces([2, 2, 3, 3, 4]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: 'F', kind: 'near' })
+    })
+
+    it('never suggests a near-miss on the final (3rd) roll', () => {
+      const result = suggestedCells(withFaces([2, 3, 4, 5, 2], 3), createEmptyTable())
+      expect(result.find((s) => s.kind === 'near')).toBeUndefined()
+    })
+
+    it('never suggests a near-miss on column S, even on the first roll', () => {
+      const result = suggestedCells(withFaces([5, 5, 5, 1, 2]), createEmptyTable())
+      expect(result.find((s) => s.kind === 'near' && s.column === 'S')).toBeUndefined()
+    })
+
+    it('respects column order locks and already-filled cells for near-misses too', () => {
+      const table = createEmptyTable()
+      // D's order starts at '1' — K is locked there until 1..Y are resolved
+      const result = suggestedCells(withFaces([5, 5, 5, 1, 2]), table)
+      expect(result.find((s) => s.kind === 'near' && s.column === 'D')).toBeUndefined()
+    })
+  })
 })

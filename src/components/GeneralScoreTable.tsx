@@ -149,11 +149,11 @@ export default function GeneralScoreTable({
           const crossed = cell.kind === 'crossed'
           const suggestion = cell.kind === 'empty' && showSuggestions ? suggestionFor(col, row) : undefined
           const showCross = suggestion === 'cross'
+          const suggestClass =
+            suggestion === 'fill' ? 'gst-suggest-fill' : suggestion === 'near' ? 'gst-suggest-near' : showCross ? 'gst-suggest-cross' : ''
           cells.push({
             text: crossed ? '' : cellDisplayText(cell, row, col),
-            className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''} ${
-              suggestion === 'fill' ? 'gst-suggest-fill' : showCross ? 'gst-suggest-cross' : ''
-            }`.trim(),
+            className: `gst-val ${rowClass} ${crossed ? 'gst-crossed' : ''} ${tappableRow ? 'gst-tappable' : ''} ${suggestClass}`.trim(),
             onClick: tappableRow ? () => onCellTap!(p.id, col, row) : undefined,
             onLongPress: tappableRow && onCellLongPress ? () => onCellLongPress(p.id, col, row) : undefined,
             showCross,

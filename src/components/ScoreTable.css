@@ -116,6 +116,23 @@
   animation: st-suggest-pulse 2400ms ease-in-out infinite;
 }
 
+/* Learning mode: a pale amber/gold pulse — same mechanic as the green fill pulse, different color —
+   on an empty cell that's one reroll away from matching (not a match yet). Deliberately NOT orange
+   (the app's interactive/selected accent elsewhere) to avoid reading as "active"/"selected". */
+@keyframes st-suggest-near-pulse {
+  0%,
+  100% {
+    background-color: var(--paper);
+  }
+  50% {
+    background-color: #f3e6c4;
+  }
+}
+
+.st-cell.st-suggest-near {
+  animation: st-suggest-near-pulse 2400ms ease-in-out infinite;
+}
+
 /* Learning mode: when nothing fits, a thin diagonal red line (bottom-left -> top-right) suggesting
    that cell be crossed out instead — a real SVG line (not a CSS gradient band, which turned out to
    visually run the OTHER diagonal: a gradient's color stops form a band *perpendicular* to its
@@ -170,6 +187,11 @@
   .st-cell.st-suggest-fill {
     animation: none;
     background-color: #e2f4e9;
+  }
+
+  .st-cell.st-suggest-near {
+    animation: none;
+    background-color: #f3e6c4;
   }
 
   .st-suggest-cross-svg line {

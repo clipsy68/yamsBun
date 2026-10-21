@@ -13,7 +13,8 @@ interface ScoreTableProps {
   onCellLongPress?: (column: ColumnKey, row: FillableRowKey) => void
   mirrorLabel?: boolean
   /** Learning-mode hints for the active player — which empty cells the current roll would fill,
-   * or (when nothing fits) one to cross out. See src/lib/learningMode.ts. */
+   * which are one reroll away ('near', only while a reroll is still available), or (when nothing
+   * fits) one to cross out. See src/lib/learningMode.ts. */
   suggestions?: CellSuggestion[]
 }
 
@@ -25,7 +26,7 @@ interface DataCellProps {
   cell: Cell
   interactive: boolean
   isY: boolean
-  suggestion?: 'fill' | 'cross'
+  suggestion?: 'fill' | 'cross' | 'near'
   onTap?: (column: ColumnKey, row: FillableRowKey) => void
   onLongPress?: (column: ColumnKey, row: FillableRowKey) => void
 }
@@ -43,6 +44,7 @@ function DataCell({ column, row, cell, interactive, isY, suggestion, onTap, onLo
     cell.kind === 'crossed' ? 'st-crossed' : '',
     interactive ? 'st-tappable' : '',
     cell.kind === 'empty' && suggestion === 'fill' ? 'st-suggest-fill' : '',
+    cell.kind === 'empty' && suggestion === 'near' ? 'st-suggest-near' : '',
     showCross ? 'st-suggest-cross' : '',
   ]
     .filter(Boolean)
