@@ -116,13 +116,13 @@
   animation: st-suggest-pulse 2400ms ease-in-out infinite;
 }
 
-/* Learning mode: when nothing fits, a diagonal red line drawn bottom-left -> top-right, suggesting
+/* Learning mode: when nothing fits, a thin diagonal red line (bottom-left -> top-right) suggesting
    that cell be crossed out instead — a real SVG line (not a CSS gradient band, which turned out to
    visually run the OTHER diagonal: a gradient's color stops form a band *perpendicular* to its
-   named direction, not *along* it) with explicit endpoints, animated via stroke-dashoffset — the
-   standard, smooth "line being drawn" technique, unlike the earlier clip-path-triangle attempt
-   (which only revealed a sliver near one corner until snapping in near-complete at the very end).
-   Repeats continuously (draw in, hold, draw back out), echoing the fill pulse's breathing rhythm. */
+   named direction, not *along* it) with explicit endpoints. Always fully drawn — no more
+   stroke-dashoffset draw/erase (that read as a disjointed two-step "draw, pause, erase" rather than
+   one continuous motion) — just a smooth opacity breathe, on the same rhythm as the fill pulse, so
+   both suggestion types read as the same family of "hint", not two different animation languages. */
 .st-cell.st-suggest-cross {
   position: relative;
 }
@@ -138,24 +138,19 @@
 .st-suggest-cross-svg line {
   fill: none;
   stroke: var(--red);
-  stroke-width: 5;
+  stroke-width: 3;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  stroke-dasharray: 125;
-  stroke-dashoffset: 125;
-  animation: st-suggest-draw-cross 2200ms ease-in-out infinite;
+  animation: st-suggest-cross-pulse 2400ms ease-in-out infinite;
 }
 
-@keyframes st-suggest-draw-cross {
-  0% {
-    stroke-dashoffset: 125;
-  }
-  40%,
-  60% {
-    stroke-dashoffset: 0;
-  }
+@keyframes st-suggest-cross-pulse {
+  0%,
   100% {
-    stroke-dashoffset: 125;
+    opacity: 0.32;
+  }
+  50% {
+    opacity: 0.85;
   }
 }
 
@@ -167,6 +162,6 @@
 
   .st-suggest-cross-svg line {
     animation: none;
-    stroke-dashoffset: 0;
+    opacity: 0.6;
   }
 }
