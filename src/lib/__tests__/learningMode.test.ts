@@ -73,9 +73,14 @@ describe('suggestedCells', () => {
       expect(result).toContainEqual({ column: 'L', row: '3', kind: 'near' })
     })
 
-    it('D/U/DU keep the simple 1+ -> green rule (only L gets the richer treatment)', () => {
+    it('D/U/DU keep the 1+ threshold (only L requires 2+), but still use the bank-aware color', () => {
       const result = suggestedCells(withFaces([1, 2, 3, 4, 6]), createEmptyTable())
-      // D's order starts at '1', so a single 1 there is a real, confirmable fill
+      // D's order starts at '1', so a single 1 there is shown — but only as near (count 1 < 3)
+      expect(result).toContainEqual({ column: 'D', row: '1', kind: 'near' })
+    })
+
+    it('D/U/DU go green at 3+ matching dice when the bank stays non-negative, same rule as L', () => {
+      const result = suggestedCells(withFaces([1, 1, 1, 3, 4]), createEmptyTable())
       expect(result).toContainEqual({ column: 'D', row: '1', kind: 'fill' })
     })
   })
@@ -235,7 +240,7 @@ describe('suggestedCells', () => {
       const table = createEmptyTable()
       // D's order starts at '1' — K is locked there until 1..Y are resolved
       const result = suggestedCells(withFaces([5, 5, 5, 1, 2]), table)
-      expect(result.find((s) => s.kind === 'near' && s.column === 'D')).toBeUndefined()
+      expect(result.find((s) => s.kind === 'near' && s.column === 'D' && s.row === 'K')).toBeUndefined()
     })
   })
 })

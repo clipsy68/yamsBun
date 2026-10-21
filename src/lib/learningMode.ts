@@ -36,20 +36,12 @@ function servitTimingOk(dice: DiceState, column: ColumnKey): boolean {
   return column !== 'S' || dice.rollsUsed <= 1
 }
 
-/** Would the live dice validly fill this specific empty, reachable q/Q/F/K/Y or upper-row (D/U/DU
- * only — column L has its own richer rule, see upperFreeSuggestionKind; S has its own 3+ rule)
- * cell right now? Mirrors CellDialog's diceCriteriaMet, so a suggestion here always means "open
- * this cell now and Confirm is already enabled with the dice as-is" — with one deliberate
- * exception: an upper row on column S only counts as a match with 3+ of that face. Column S is
- * one-shot (first roll only), so a 1-2 match there isn't a real "servit" opportunity worth nudging
- * toward, even though CellDialog would still accept it if confirmed. Chance (m/M) is handled
- * separately below, as a fallback rather than a first-class match. */
-function diceMatchesCell(dice: DiceState, column: ColumnKey, row: FillableRowKey): boolean {
-  if (!servitTimingOk(dice, column)) return false
-  if ((UPPER_ROWS as readonly string[]).includes(row)) {
-    const count = countFace(dice, faceOf(row))
-    return column === 'S' ? count >= 3 : count >= 1
-  }
+/** Would the live dice validly fill this specific empty, reachable q/Q/F/K/Y cell right now? Mirrors
+ * CellDialog's diceCriteriaMet, so a suggestion here always means "open this cell now and Confirm is
+ * already enabled with the dice as-is". Upper rows (1-6) are handled separately for every column —
+ * see upperRowSuggestionKind (L/D/U/DU) and the S-specific 3+ check below. Chance (m/M) is handled
+ * separately too, as a fallback rather than a first-class match. */
+function diceMatchesCell(dice: DiceState, row: FillableRowKey): boolean {
   switch (row) {
     case 'q':
       return detectSmallStraight(dice)
@@ -67,23 +59,28 @@ function diceMatchesCell(dice: DiceState, column: ColumnKey, row: FillableRowKey
 }
 
 /**
- * Column L (Liber) has no order lock, so all 6 upper rows are simultaneously reachable at all
- * times — the plain "1+ match -> green" rule used for D/U/DU would light up several of them on
- * almost every roll, which is noisy specifically there. So on L, upper rows get a richer 3-tier
- * rule instead: fewer than 2 matching dice isn't worth a suggestion at all; 2 is a real but weak
- * option, styled as a near-miss hint rather than a confident green fill; 3 or more is a strong,
- * confirmable fill — green PROVIDED it doesn't hurt the upper-section bonus pace, i.e. the live
- * bank (see upperColumnStatus) stays at 0 or above once this row's actual contribution is added
- * (count*face - the 3*face par); if it would leave the bank negative, it's downgraded to the same
- * near-miss styling as the 2-match case. Unlike the q/Q/F/K/Y near-misses, this one isn't gated to
- * "while a reroll remains" — every count here is already directly confirmable right now, so it
- * stays relevant through the final roll too (if anything, more so, since it may be the last
- * decision point of the turn). */
-function upperFreeSuggestionKind(dice: DiceState, table: PlayerTable, row: FillableRowKey): 'fill' | 'near' | null {
+ * Upper-row (1-6) suggestion kind for any non-S column. Every column uses the same bank-aware
+ * color rule — green only when it doesn't hurt the 63-point bonus pace, i.e. the live bank (see
+ * upperColumnStatus) for THAT column stays at 0 or above once this row's actual contribution is
+ * added (count*face - the 3*face par); short of that, it's downgraded to the same near-miss
+ * (amber) styling used elsewhere. 3+ matching dice is always required for green; 1-2 is never
+ * green, only ever near (if shown at all).
+ *
+ * The one thing that DOES differ by column is the minimum count to show anything at all: column L
+ * (Liber) has no order lock, so all 6 upper rows are simultaneously reachable at all times — a 1+
+ * threshold there would light up several cells on almost every roll, noisy specifically because of
+ * that always-all-unlocked shape. D/U/DU only ever have ONE reachable upper row at a time (their
+ * order lock takes care of the rest), so they keep the original 1+ threshold.
+ *
+ * Unlike the q/Q/F/K/Y near-misses, none of this is gated to "while a reroll remains" — every count
+ * here is already directly confirmable right now, so it stays relevant through the final roll too
+ * (if anything, more so, since it may be the last decision point of the turn). */
+function upperRowSuggestionKind(dice: DiceState, table: PlayerTable, column: ColumnKey, row: FillableRowKey): 'fill' | 'near' | null {
   const face = faceOf(row)
   const count = countFace(dice, face)
-  if (count < 2) return null
-  const bank = upperColumnStatus(table, 'L').bank
+  const minCount = column === 'L' ? 2 : 1
+  if (count < minCount) return null
+  const bank = upperColumnStatus(table, column).bank
   const projectedBank = bank + (count * face - 3 * face)
   return count >= 3 && projectedBank >= 0 ? 'fill' : 'near'
 }
@@ -162,12 +159,16 @@ export function suggestedCells(dice: DiceState, table: PlayerTable): CellSuggest
     for (const row of ALL_ROWS) {
       if (row === 'm' || row === 'M') continue
       if (!isReachableEmpty(table, column, row)) continue
-      if (column === 'L' && (UPPER_ROWS as readonly string[]).includes(row)) {
-        const kind = upperFreeSuggestionKind(dice, table, row)
+      if ((UPPER_ROWS as readonly string[]).includes(row)) {
+        if (column === 'S') {
+          if (servitTimingOk(dice, column) && countFace(dice, faceOf(row)) >= 3) fills.push({ column, row, kind: 'fill' })
+          continue
+        }
+        const kind = upperRowSuggestionKind(dice, table, column, row)
         if (kind) fills.push({ column, row, kind })
         continue
       }
-      if (diceMatchesCell(dice, column, row)) fills.push({ column, row, kind: 'fill' })
+      if (servitTimingOk(dice, column) && diceMatchesCell(dice, row)) fills.push({ column, row, kind: 'fill' })
     }
   }
 
