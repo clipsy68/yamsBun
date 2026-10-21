@@ -27,11 +27,57 @@ describe('suggestedCells', () => {
     expect(result).toContainEqual({ column: 'L', row: 'F', kind: 'fill' })
   })
 
-  it('requires 3+ of a kind for an upper row (1-6) suggestion on column S, but just 1+ everywhere else', () => {
-    // only two 3s on the dice — not enough to suggest Servit '3', but still enough for L's '3'
+  it('requires 3+ of a kind for an upper row (1-6) suggestion on column S', () => {
+    // only two 3s on the dice — not enough to suggest Servit '3' at all
     const result = suggestedCells(withFaces([3, 3, 1, 2, 6]), createEmptyTable())
     expect(result.find((s) => s.column === 'S' && s.row === '3')).toBeUndefined()
-    expect(result).toContainEqual({ column: 'L', row: '3', kind: 'fill' })
+  })
+
+  describe('column L (Liber) upper-row 3-tier rule — no order lock means all 6 rows are always reachable at once', () => {
+    it('suggests nothing for a single matching die (count 1)', () => {
+      const result = suggestedCells(withFaces([3, 1, 2, 4, 6]), createEmptyTable())
+      expect(result.find((s) => s.column === 'L' && s.row === '3')).toBeUndefined()
+    })
+
+    it('suggests a near-miss (not green) for exactly 2 matching dice', () => {
+      const result = suggestedCells(withFaces([3, 3, 1, 2, 6]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: '3', kind: 'near' })
+    })
+
+    it('suggests green for 3+ matching dice when the bank stays non-negative', () => {
+      // empty table -> bank starts at 0; three 3s keeps it at par (0)
+      const result = suggestedCells(withFaces([3, 3, 3, 1, 2]), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: '3', kind: 'fill' })
+    })
+
+    it('downgrades to a near-miss when 3+ matching dice would still leave the bank negative', () => {
+      const table = createEmptyTable()
+      // crossing every other upper row of L pulls the bank well into the negative
+      for (const row of ['1', '2', '4', '5', '6'] as const) table.L[row] = { kind: 'crossed' }
+      // bank is now -(3*1+3*2+3*4+3*5+3*6) = -54; three 3s only adds 9-9=0, bank stays -54
+      const result = suggestedCells(withFaces([3, 3, 3, 1, 2]), table)
+      expect(result).toContainEqual({ column: 'L', row: '3', kind: 'near' })
+    })
+
+    it('still suggests green for 4+ matching dice when that recovers a negative bank to 0+', () => {
+      const table = createEmptyTable()
+      // bank at -3 (one crossed row '1', par 3, achieved 0)
+      table.L['1'] = { kind: 'crossed' }
+      // four 6s: contributes 24 - 18(par) = +6 -> projected bank = -3 + 6 = 3 >= 0
+      const result = suggestedCells(withFaces([6, 6, 6, 6, 1]), table)
+      expect(result).toContainEqual({ column: 'L', row: '6', kind: 'fill' })
+    })
+
+    it('keeps suggesting (as near, not gated by roll number) a weak upper-row L option on the final roll', () => {
+      const result = suggestedCells(withFaces([3, 3, 1, 2, 6], 3), createEmptyTable())
+      expect(result).toContainEqual({ column: 'L', row: '3', kind: 'near' })
+    })
+
+    it('D/U/DU keep the simple 1+ -> green rule (only L gets the richer treatment)', () => {
+      const result = suggestedCells(withFaces([1, 2, 3, 4, 6]), createEmptyTable())
+      // D's order starts at '1', so a single 1 there is a real, confirmable fill
+      expect(result).toContainEqual({ column: 'D', row: '1', kind: 'fill' })
+    })
   })
 
   it('stops suggesting column S once the dice have been rolled more than once, but keeps suggesting elsewhere', () => {
@@ -172,9 +218,12 @@ describe('suggestedCells', () => {
       expect(result).toContainEqual({ column: 'L', row: 'F', kind: 'near' })
     })
 
-    it('never suggests a near-miss on the final (3rd) roll', () => {
+    it('never suggests a q/Q/F/K/Y near-miss on the final (3rd) roll', () => {
       const result = suggestedCells(withFaces([2, 3, 4, 5, 2], 3), createEmptyTable())
-      expect(result.find((s) => s.kind === 'near')).toBeUndefined()
+      expect(result.find((s) => s.kind === 'near' && s.row !== '2')).toBeUndefined()
+      // the upper-row-L 2-match case is a different, roll-independent mechanism (see its own
+      // describe block below) — it's expected to still show here, unrelated to this gating rule
+      expect(result).toContainEqual({ column: 'L', row: '2', kind: 'near' })
     })
 
     it('never suggests a near-miss on column S, even on the first roll', () => {
