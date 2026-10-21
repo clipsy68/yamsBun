@@ -119,10 +119,10 @@
 /* Learning mode: when nothing fits, a thin diagonal red line (bottom-left -> top-right) suggesting
    that cell be crossed out instead — a real SVG line (not a CSS gradient band, which turned out to
    visually run the OTHER diagonal: a gradient's color stops form a band *perpendicular* to its
-   named direction, not *along* it) with explicit endpoints. Always fully drawn — no more
-   stroke-dashoffset draw/erase (that read as a disjointed two-step "draw, pause, erase" rather than
-   one continuous motion) — just a smooth opacity breathe, on the same rhythm as the fill pulse, so
-   both suggestion types read as the same family of "hint", not two different animation languages. */
+   named direction, not *along* it) with explicit endpoints. stroke-dashoffset (the drawn-in length)
+   and opacity animate together in one keyframe set, both bottoming out at the same instant — at the
+   low point nothing is drawn AND it's fully transparent, so there's never a faint/dim remnant,
+   only ever a clean red line growing in and shrinking back out as one continuous motion. */
 .st-cell.st-suggest-cross {
   position: relative;
 }
@@ -141,15 +141,18 @@
   stroke-width: 3;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
+  stroke-dasharray: 125;
   animation: st-suggest-cross-pulse 2400ms ease-in-out infinite;
 }
 
 @keyframes st-suggest-cross-pulse {
   0%,
   100% {
-    opacity: 0.32;
+    stroke-dashoffset: 125;
+    opacity: 0;
   }
   50% {
+    stroke-dashoffset: 0;
     opacity: 0.85;
   }
 }
@@ -162,6 +165,7 @@
 
   .st-suggest-cross-svg line {
     animation: none;
+    stroke-dashoffset: 0;
     opacity: 0.6;
   }
 }
